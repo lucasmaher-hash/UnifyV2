@@ -1,0 +1,409 @@
+/* ============================================================
+   Unify — design tokens (shared across all screens)
+   Source of truth: Figma file mZYC8gCyBesazgN5qpV0JR
+   Pages: "prototyping aktuell" + "Components aktuell"
+   ============================================================ */
+:root{
+  /* colour */
+  --pink:  #FF88C8;   /* hero bg, accents, active icon, bubble outline */
+  --dark:  #292925;   /* dark section, monster, primary text */
+  --cream: #F9F2EB;   /* card fill, inverse text, eye-whites */
+
+  /* type — Nunito */
+  --font: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* device */
+  --screen-w: 402px;
+  --screen-h: 874px;
+
+  /* fit-to-viewport scale (set by the inline script in index.html) */
+  --scale: 1;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; }
+
+body{
+  font-family:var(--font);
+  background:#e8e8ec;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Reserves the *scaled* footprint so the page never overflows */
+.phone-stage{
+  flex:none;
+  width:calc(var(--screen-w) * var(--scale));
+  height:calc(var(--screen-h) * var(--scale));
+}
+
+/* ---------- Phone shell (Figma frame "landing page", 402×874) ---------- */
+.phone{
+  position:relative;
+  width:var(--screen-w);
+  height:var(--screen-h);
+  background:var(--pink);
+  overflow:hidden;
+  box-shadow:0 24px 70px rgba(0,0,0,.30);
+  transform:scale(var(--scale));
+  transform-origin:top left;
+}
+
+/* Scrollable content (Figma "scroll") */
+.screen{
+  width:var(--screen-w);
+  height:var(--screen-h);
+  overflow-y:auto;
+  overflow-x:hidden;
+  overflow-anchor:none;          /* card open/close reflow must never auto-adjust scrollTop */
+  scrollbar-width:none;          /* Firefox */
+}
+.screen::-webkit-scrollbar{ width:0; height:0; background:transparent; }
+
+/* =========================== HERO (pink) =========================== */
+.hero{
+  height:395px;
+  padding:103px 20px 35px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:10px;
+}
+.hero__title{
+  margin:0;
+  width:214px;
+  font-weight:800;            /* Nunito ExtraBold */
+  font-size:48px;
+  line-height:40px;
+  color:var(--dark);
+}
+.hero__sub{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  width:265px;
+}
+.hero__sub p{
+  margin:0;
+  padding-left:10px;
+  width:199px;
+  font-weight:700;            /* Nunito Bold */
+  font-size:18px;
+  line-height:normal;
+  color:var(--cream);
+}
+
+/* ======================= DARK SECTION + MONSTER ==================== */
+.dark{
+  position:relative;
+  /* 470, i.e. 4px LESS than the monster's 474px height, so the dark panel
+     starts 4px early and slides under the monster's (solid-dark) bottom edge.
+     Both are #292925, so the overlap is invisible — but it closes the
+     sub-pixel seam that otherwise let the pink background peek through
+     between the figure and the panel (worse once the phone is scaled). */
+  padding-top:470px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.dark__panel{
+  width:100%;
+  background:var(--dark);
+  padding:15px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.monster{
+  position:absolute;
+  top:0;
+  left:0;
+  width:503.52px;
+  height:474px;
+  pointer-events:none;
+}
+.monster svg{ display:block; width:100%; height:100%; }
+/* Pupils track scroll position via JS (see index.html), translated straight
+   down as the page scrolls. A short transition smooths out the per-event
+   jumps without introducing noticeable lag behind the actual scroll. */
+.monster-pupil{ transition:transform .12s linear; }
+
+/* ============================== CARDS ============================= */
+.cards{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:20px;
+  padding-bottom:130px;       /* clears the fixed nav */
+  isolation:isolate;
+}
+.card{
+  position:relative;
+  width:377px;
+  flex:none;
+  overflow:visible;
+  transition:height .9s cubic-bezier(.4,0,.2,1);
+}
+/* Adds scroll headroom uniformly (regardless of which card is open) so the
+   connect_now/socials dwell thresholds in index.html's scroll script are
+   actually reachable — see the comment there for the exact numbers. */
+.scroll-spacer{ width:100%; height:178px; flex:none; }
+/* Two stacked states that cross-fade (opacity) AND scale/slide from the top
+   edge, kept in sync with .card's own height transition above. Opacity
+   alone rendered the open panel at its full, already-formed size the instant
+   it started appearing, which read as "fading into existence" in place
+   rather than actually growing/unfurling out of the closed bubble — adding
+   a scaleY+translateY anchored to the top edge gives that growing motion.
+   (A clip-path wipe was tried first for a literal reveal effect, but
+   animating percentage-based clip-path on these auto-height absolutely-
+   positioned elements made the closed bubble fail to render entirely in
+   Safari — reverted to this more reliable transform-based approach.) */
+.card__closed,
+.card__open{
+  position:absolute;
+  top:0;
+  left:0;
+  width:377px;
+  transform-origin:top center;
+  transition:opacity .9s cubic-bezier(.4,0,.2,1), transform .9s cubic-bezier(.4,0,.2,1);
+}
+.card__open{ opacity:0; transform:scaleY(.75) translateY(-6px); pointer-events:none; }
+.card.is-open .card__closed{ opacity:0; transform:scaleY(.75) translateY(-6px); pointer-events:none; }
+.card.is-open .card__open{ opacity:1; transform:scaleY(1) translateY(0); }
+
+/* ---------------------- Open panel (reconstructed) ------------------ */
+.panel{
+  box-sizing:border-box;
+  width:377px;
+  padding:20px 19px 40px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:12px;
+  border-radius:43px;
+}
+.panel--pink{ background:var(--pink); }
+.panel--cream{ background:var(--cream); border-radius:30px; padding-top:18px; }
+
+.panel__header{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; width:100%; }
+.panel__title{
+  margin:0;
+  font-weight:800;
+  font-size:48px;
+  line-height:40px;
+  color:var(--dark);
+}
+.panel__divider{ width:100%; height:3px; border-radius:1.5px; background:var(--dark); }
+
+.panel__time-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+}
+.panel__time-row p{ margin:0; font-weight:800; font-size:19px; color:var(--dark); white-space:nowrap; }
+.panel__sub{ margin:0; font-weight:800; font-size:19px; color:var(--dark); }
+
+/* connect_now: scattered friend blobs */
+.friends{ position:relative; width:100%; height:188px; }
+.friend{
+  position:absolute;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+}
+.friend__figure{ display:block; }
+.friend__name{ margin:0; font-family:var(--font); font-weight:400; font-size:17.8px; color:var(--dark); white-space:nowrap; }
+.friend__name--lg{ font-size:25.1px; }
+.friend__name--md{ font-size:23.7px; }
+
+/* Same slow drift + breathing scale as the socials posters, tuned per figure
+   by how much clearance it actually has (worst-case reach = diagonal drift
+   distance + scale-pulse growth, NOT a simple sum of the two axes — a 9px/7px
+   diagonal move is a 11.4px reach, not 9px). Paul, Greg and Moritz each have
+   30px+ of room on every side and move freely (worst reach ~11-14px each,
+   comfortably under that). Nam and Yas sit only ~8px apart (their tightest
+   pairing) so both stay noticeably more restrained — worst case each
+   contributes ~3.8px, summing to ~7.4px, still under that 8px gap. */
+.friend{ transform-origin:center; }
+.friend:nth-of-type(1){ animation: drift-paul   12s ease-in-out infinite; animation-delay:-1.5s; }  /* Paul */
+.friend:nth-of-type(2){ animation: drift-nam    15s ease-in-out infinite; animation-delay:-6s;   }  /* Nam */
+.friend:nth-of-type(3){ animation: drift-greg   11s ease-in-out infinite; animation-delay:-3s;   }  /* Greg */
+.friend:nth-of-type(4){ animation: drift-yas    14s ease-in-out infinite; animation-delay:-9s;   }  /* Yas */
+.friend:nth-of-type(5){ animation: drift-moritz 13s ease-in-out infinite; animation-delay:-4.5s; }  /* Moritz */
+
+/* socials: 3 circular activity posters */
+.posters{ position:relative; width:346px; height:331.6px; }
+.poster{ position:absolute; display:block; border-radius:50%; object-fit:cover; transform-origin:center; }
+/* Tuned per poster by actual clearance, same idea as the friends above
+   (worst-case reach = diagonal drift distance + scale-pulse growth). Poster
+   1 sits 33-36px from its neighbors and moves the most dramatically (worst
+   reach ~21px, leaving ~5.5px margin against its 36.4px pairing with poster
+   2). Posters 2 and 3 are the tight pair (~19px apart) and stay more modest
+   — worst reach ~9.6px and ~8px, summing to ~17.6px, ~1.6px under that
+   19px gap. */
+.poster:nth-of-type(1){ animation: drift-poster-a 16s ease-in-out infinite; animation-delay:-2s; }
+.poster:nth-of-type(2){ animation: drift-poster-b 19s ease-in-out infinite; animation-delay:-8s; }
+.poster:nth-of-type(3){ animation: drift-poster-c 17s ease-in-out infinite; animation-delay:-11s; }
+
+/* Translate distances bumped up (scale pulses left untouched, per request)
+   — Paul/Greg/Moritz have 30px+ clearance so they got a full 1.4x boost;
+   Nam/Yas only have ~8px between them (already near their collision margin)
+   so they got a smaller, still-safe 1.1x nudge instead. */
+@keyframes drift-paul{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(12.6px,-9.8px) scale(1.07); }
+  66%{ transform:translate(-8.4px,8.4px) scale(0.94); }
+}
+@keyframes drift-nam{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(-1.87px,1.21px) scale(1.03); }
+  66%{ transform:translate(1.21px,-1.87px) scale(0.97); }
+}
+@keyframes drift-greg{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(9.8px,7.7px) scale(1.06); }
+  66%{ transform:translate(-7px,-5.6px) scale(0.95); }
+}
+@keyframes drift-yas{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(1.87px,-1.21px) scale(0.97); }
+  66%{ transform:translate(-1.21px,1.87px) scale(1.03); }
+}
+@keyframes drift-moritz{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(-9.8px,-7.7px) scale(1.06); }
+  66%{ transform:translate(7px,5.6px) scale(0.95); }
+}
+@keyframes drift-poster-a{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(13.75px,-11.9px) scale(1.09); }
+  66%{ transform:translate(-8.1px,10px) scale(0.92); }
+}
+@keyframes drift-poster-b{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(-4.6px,4.4px) scale(0.95); }
+  66%{ transform:translate(2.9px,-2.4px) scale(1.05); }
+}
+@keyframes drift-poster-c{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(4px,3.7px) scale(1.05); }
+  66%{ transform:translate(-2.9px,-2.4px) scale(0.95); }
+}
+
+/* map: floor-plan illustration */
+.floorplan{ display:flex; justify-content:center; width:100%; }
+.floorplan img{ display:block; width:339px; height:auto; }
+
+/* shared face (pill + eyes + round arrow button), pokes bottom-right */
+.panel__face{ position:absolute; width:119px; height:166px; }
+.panel__face-pill{
+  position:absolute;
+  left:9px; top:0;
+  width:82px; height:156px;
+  border-radius:41px;
+}
+.panel__face-pill--pink{ background:var(--pink); }
+.panel__face-pill--cream{ background:var(--cream); }
+.panel__face-eyes{
+  position:absolute;
+  left:19px; top:27px;
+  width:90.397px; height:71.653px;
+  display:flex; align-items:center; justify-content:center;
+}
+.panel__face-eyes img{ display:block; width:79.324px; height:52.543px; transform:rotate(15.34deg); }
+.panel__face-btn{
+  position:absolute;
+  left:18px; top:83px;
+  width:64px; height:64px;
+  border-radius:999px;
+  background:var(--dark);
+  display:flex; align-items:center; justify-content:center;
+}
+.panel__face-btn img{ display:block; width:28px; height:16px; }
+.card__bubble{ position:absolute; top:0; left:0; display:block; }
+.card__bubble img{ display:block; width:100%; height:100%; }
+.card__label{
+  position:absolute;
+  margin:0;
+  font-weight:800;
+  font-size:48px;
+  line-height:40px;
+  color:var(--dark);
+  white-space:nowrap;
+}
+.card__eyes{
+  position:absolute;
+  display:block;
+  width:67.561px;
+  height:49.939px;
+}
+.card__eyes img{ display:block; width:100%; height:100%; }
+
+/* first-on-top z-order (matches Figma itemReverseZIndex) */
+.card--connect{ height:72px; z-index:4; }
+.card--connect .card__bubble{ width:377px; height:99px; }
+.card--connect .card__label{ left:15px; top:11px; }
+.card--connect .card__eyes{ left:317px; top:33px; }
+
+.card--small{ height:64px; z-index:3; }
+.card--small .card__bubble{ width:294px; height:63.805px; }
+.card--small .card__label{ left:13.293px; top:9.748px; }
+
+.card--socials{ height:72px; z-index:2; }
+.card--socials .card__bubble{ width:377px; height:99px; }
+.card--socials .card__label{ left:15px; top:11px; }
+.card--socials .card__eyes{ left:318px; top:33px; }
+
+.card--map{ height:99px; z-index:1; }
+.card--map .card__bubble{ width:377px; height:99px; }
+.card--map .card__label{ left:15px; top:11px; }
+.card--map .card__eyes{ left:317px; top:27px; }
+
+/* expanded (open) heights — match the Figma Open variant heights */
+.card--connect.is-open{ height:347px; }
+.card--socials.is-open{ height:485px; }
+.card--map.is-open{ height:401px; }
+/* an open card floats above its neighbours while its face pokes into the gap */
+.card.is-open{ z-index:10; }
+
+/* =========================== BOTTOM NAV ========================== */
+.nav{
+  position:absolute;
+  bottom:15px;
+  left:50%;
+  transform:translateX(-50%);
+  width:363px;
+  height:92px;
+  background:var(--dark);
+  border-radius:29.5px;
+  display:flex;
+  align-items:center;
+  gap:40px;
+  padding:4px 9px 5px 40px;
+  /* Without an explicit z-index this defaults to auto, which loses to any
+     descendant elsewhere on the page with a positive z-index (e.g. the
+     friend-row face's z-index:1) regardless of DOM order — that let the
+     stundenplan friend list's monster faces paint over the nav bar. */
+  z-index:5;
+}
+.nav__btn{
+  flex:none;
+  display:block;
+  padding:0;
+  border:0;
+  background:none;
+  cursor:pointer;
+}
+.nav__btn img{ display:block; }
+.nav__home img{ width:38px;  height:44px; }
+.nav__cal  img{ width:43px;  height:46px; }
+.nav__pin  img{ width:37px;  height:44px; }
+.nav__star img{ width:44px;  height:49px; }

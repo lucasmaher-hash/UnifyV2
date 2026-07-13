@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unify — Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=10">
+</head>
+<body>
+  <!-- ================= HOME / LANDING PAGE (402×874) ================= -->
+  <div class="phone-stage">
+  <div class="phone" data-screen="home">
+    <div class="screen">
+
+      <!-- HERO -->
+      <section class="hero">
+        <h1 class="hero__title" id="hero-title"><span id="tw-line1"></span><br><span id="tw-line2"></span></h1>
+        <div class="hero__sub">
+          <p><span id="tw-sub1"></span></p>
+          <p><span id="tw-sub2"></span></p>
+        </div>
+      </section>
+
+      <!-- DARK SECTION: cards + monster -->
+      <section class="dark">
+        <div class="dark__panel">
+          <div class="cards">
+
+            <!-- connect_now (expandable) -->
+            <div class="card card--connect" data-expand>
+              <div class="card__closed">
+                <span class="card__bubble"><img src="assets/card_bubble_pink.svg" alt=""></span>
+                <p class="card__label">connect now</p>
+              </div>
+              <div class="card__open panel panel--pink" aria-hidden="true">
+                <div class="panel__header">
+                  <p class="panel__title">connect now</p>
+                  <div class="panel__divider"></div>
+                </div>
+                <div class="panel__time-row">
+                  <p>11:30</p><p>until</p><p>12:00</p>
+                </div>
+                <div class="friends">
+                  <div class="friend" style="left:14px; top:-1px; width:66.6px; height:62.2px;">
+                    <img class="friend__figure" src="assets/friend_paul.svg" alt="" style="width:46.8px;height:29.3px;">
+                    <p class="friend__name">Paul</p>
+                  </div>
+                  <div class="friend" style="left:128.75px; top:-1px; width:94px; height:87.7px;">
+                    <img class="friend__figure" src="assets/friend_nam.svg" alt="" style="width:66.6px;height:49.6px;">
+                    <p class="friend__name friend__name--lg">Nam</p>
+                  </div>
+                  <div class="friend" style="left:51px; top:92px; width:66.6px; height:62.2px;">
+                    <img class="friend__figure" src="assets/friend_greg.svg" alt="" style="width:47.2px;height:30.7px;">
+                    <p class="friend__name">Greg</p>
+                  </div>
+                  <div class="friend" style="left:193px; top:95px; width:89px; height:83px;">
+                    <img class="friend__figure" src="assets/friend_yas.svg" alt="" style="width:55.2px;height:50.8px;">
+                    <p class="friend__name friend__name--md">Yas</p>
+                  </div>
+                  <div class="friend" style="left:259px; top:37px; width:66.6px; height:62.2px;">
+                    <img class="friend__figure" src="assets/friend_moritz.svg" alt="" style="width:43.5px;height:32.6px;">
+                    <p class="friend__name">Moritz</p>
+                  </div>
+                </div>
+                <div class="panel__face" style="right:-28px; bottom:-56px;">
+                  <span class="panel__face-pill panel__face-pill--pink"></span>
+                  <span class="panel__face-btn"><img src="assets/icon_arrow.svg" alt=""></span>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- socials (expandable) -->
+            <div class="card card--socials" data-expand>
+              <div class="card__closed">
+                <span class="card__bubble"><img src="assets/card_bubble_cream.svg" alt=""></span>
+                <p class="card__label">socials</p>
+              </div>
+              <div class="card__open panel panel--cream" aria-hidden="true">
+                <div class="panel__header">
+                  <p class="panel__title">socials</p>
+                  <div class="panel__divider"></div>
+                </div>
+                <p class="panel__sub">activities past 16:00</p>
+                <div class="posters">
+                  <img class="poster" src="assets/poster_1.png" alt="" style="left:22.5px; top:15.3px; width:150.5px; height:150.5px;">
+                  <img class="poster" src="assets/poster_2.png" alt="" style="left:184.7px; top:108.1px; width:150.5px; height:150.5px;">
+                  <img class="poster" src="assets/poster_3.png" alt="" style="left:63.1px; top:197.3px; width:121.6px; height:121.6px;">
+                </div>
+                <div class="panel__face" style="right:-28px; bottom:-56px;">
+                  <span class="panel__face-pill panel__face-pill--cream"></span>
+                  <span class="panel__face-btn"><img src="assets/icon_arrow.svg" alt=""></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- map (expandable) -->
+            <div class="card card--map" data-expand>
+              <div class="card__closed">
+                <span class="card__bubble"><img src="assets/card_bubble_pink.svg" alt=""></span>
+                <p class="card__label">map</p>
+              </div>
+              <div class="card__open panel panel--pink" aria-hidden="true">
+                <div class="panel__header">
+                  <p class="panel__title">map</p>
+                  <div class="panel__divider"></div>
+                </div>
+                <p class="panel__sub">currently 3 friends nearby</p>
+                <div class="floorplan"><img src="assets/map_floorplan.svg" alt="floor plan"></div>
+                <div class="panel__face" style="right:-28px; bottom:-47px;">
+                  <span class="panel__face-pill panel__face-pill--pink"></span>
+                  <span class="panel__face-btn"><img src="assets/icon_arrow.svg" alt=""></span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- extra scroll headroom so connect_now/socials have enough room
+               to stay open before the sequence advances (see script below) -->
+          <div class="scroll-spacer" aria-hidden="true"></div>
+        </div>
+
+        <!-- big monster illustration (spills off the left, clipped).
+             Inlined (not <img>) so the two pupil paths can be targeted
+             directly and animated with scroll — see the script below. -->
+        <div class="monster" role="img" aria-label="Unify monster">
+          <svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 503.52 474" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="Screenshot 2026-06-24 at 18.11.37 1 [Vectorized]" clip-path="url(#clip0_0_416)">
+              <path id="Vector" d="M186.543 133.907C194.816 97.4674 228.901 7.55931 271.755 73.532C281.043 87.83 290.869 114.847 294.488 131.714L294.894 131.385C298.94 128.064 305.722 120.569 309.387 117.082C358.848 70.0235 411.719 57.7138 399.79 148.489C397.955 162.443 394.511 176.875 391.071 190.983C396.555 189.039 402.361 187.937 407.791 186.499C444.591 176.749 518.297 170.38 487.658 234.307C477.286 255.952 459.733 275.848 443.328 292.962C466.949 297.456 516.236 315.688 529.148 336.076C555.402 377.539 467.707 403.922 443.128 409.734C462.915 430.786 489.928 460.013 494.773 490H-15.1655C-13.372 465.794 5.80219 440.572 21.0385 422.984C24.519 418.965 30.6049 412.056 34.3784 408.706L34.7286 408.401C13.4471 405.137 -33.8327 385.158 -46.2266 367.388C-74.3652 327.043 8.11912 299.767 34.2605 293.814C30.0256 290.122 26.9458 285.903 23.1058 281.725C-0.935405 255.569 -47.5685 189.261 19.7291 183.98C42.5207 182.192 66.9786 188.252 89.2903 194.452C81.3678 169.569 71.3204 116.104 83.5651 94.0887C106.458 52.9267 170.641 116.886 186.543 133.907Z" fill="#292925"/>
+              <ellipse id="Vector_2" cx="314" cy="316" rx="42" ry="59" fill="#FEFEFE"/>
+              <ellipse id="Vector_3" class="monster-pupil" cx="314" cy="291" rx="20" ry="26" fill="#FF88C8"/>
+              <ellipse id="Vector_4" cx="205" cy="316" rx="45" ry="59" fill="#FEFEFE"/>
+              <ellipse id="Vector_5" class="monster-pupil" cx="205" cy="291" rx="20" ry="26" fill="#FF88C8"/>
+            </g>
+            <defs>
+              <clipPath id="clip0_0_416"><rect width="503.52" height="474" fill="white"/></clipPath>
+            </defs>
+          </svg>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- BOTTOM NAV (fixed) -->
+    <nav class="nav" aria-label="Primary">
+      <button class="nav__btn nav__home" aria-label="Home" aria-current="page"><img src="assets/icon_home.svg" alt=""></button>
+      <a class="nav__btn nav__cal" href="stundenplan.html" aria-label="Calendar"><img src="assets/icon_calendar.svg" alt=""></a>
+      <a class="nav__btn nav__pin" href="map.html" aria-label="Map"><img src="assets/icon_pin.svg" alt=""></a>
+      <button class="nav__btn nav__star" aria-label="Activities"><img src="assets/icon_star.svg" alt=""></button>
+    </nav>
+  </div>
+  </div>
+
+  <script>
+    // Types out the hero heading + subtext letter by letter, like Claude's
+    // own response-streaming animation: mildly randomized per-character
+    // timing (not a robotic fixed interval) and a brief extra pause after
+    // commas/exclamation marks so it reads naturally. No blinking cursor —
+    // just the text appearing.
+    (function () {
+      var segments = [
+        { el: document.getElementById('tw-line1'), text: 'hallo,' },
+        { el: document.getElementById('tw-line2'), text: 'moritz!' },
+        { el: document.getElementById('tw-sub1'),  text: '2 Freunde sind verfügbar,' },
+        { el: document.getElementById('tw-sub2'),  text: '3 Aktivitäten später' }
+      ];
+      if (segments.some(function (s) { return !s.el; })) return;
+
+      var BASE_DELAY = 24;    // ms, plus jitter below
+      var START_DELAY = 350;  // ms before typing starts
+
+      function delayFor(ch) {
+        var d = BASE_DELAY + Math.random() * 20;
+        if (ch === ',' || ch === '!') d += 90;
+        return d;
+      }
+
+      function typeSegment(i) {
+        if (i >= segments.length) return; // done
+        var seg = segments[i];
+        var chars = seg.text.split('');
+        var idx = 0;
+        (function step() {
+          if (idx < chars.length) {
+            seg.el.textContent += chars[idx];
+            var d = delayFor(chars[idx]);
+            idx++;
+            setTimeout(step, d);
+          } else {
+            typeSegment(i + 1); // straight into the next segment, no pause
+          }
+        })();
+      }
+
+      setTimeout(function () { typeSegment(0); }, START_DELAY);
+    })();
+
+    // Scale the phone down so the whole 402×874 frame always fits the window.
+    (function () {
+      var MARGIN = 40; // breathing room around the phone
+      function fit() {
+        var s = Math.min(
+          1,
+          (window.innerHeight - MARGIN) / 874,
+          (window.innerWidth - MARGIN) / 402
+        );
+        document.documentElement.style.setProperty('--scale', s);
+      }
+      fit();
+      window.addEventListener('resize', fit);
+    })();
+
+    // Scroll-driven expand/collapse: only one card is open at a time, chosen
+    // purely by CURRENT scroll position (not accumulated scroll history).
+    // This is deliberately position-based rather than a distance-accumulating
+    // stepper: a stepper "spends" a fixed budget of scroll distance going
+    // forward, but connect_now's own reachable range (~767px, capped by its
+    // own open height) is smaller than socials's (~905px) — so a step sized
+    // generously enough for socials, when walked backward from the bottom,
+    // could run out of budget before reaching scrollTop 0, causing an abrupt
+    // jump back to connect instead of socials properly re-opening on the way
+    // up. A pure function of scrollTop has no history to run out of: the same
+    // position always yields the same open card, so scrolling up naturally
+    // re-opens each one in reverse, exactly mirroring the way down.
+    (function () {
+      var screenEl = document.querySelector('.screen');
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.card[data-expand]'));
+      if (!screenEl || !cards.length) return;
+
+      // connect_now's own reachable scroll range (while it's the only open
+      // card) is normally capped at ~767px by its own open height, so
+      // index.html's .scroll-spacer (see styles.css) adds a bit of extra
+      // scrollable range purely to keep T1 safely reachable; the same fixed
+      // spacer also extends socials's own reachable range (it has no fixed
+      // upper threshold and always extends to the true bottom), so its
+      // dwell time scales along with T1 automatically. The spacer has been
+      // reduced twice since an earlier, larger pass (505px -> 223px -> 178px)
+      // to shrink the empty scroll gap that appears after map opens; T1 has
+      // stayed at 640 since the second pass.
+      var T1 = 640; // connect stays open below this
+      // No fixed upper threshold for socials — it stays open for as much of
+      // the remaining scroll as physically exists (as generous as possible);
+      // the true-bottom check below is what finally hands off to the last
+      // card once there's genuinely nowhere further to scroll.
+
+      function update() {
+        var st = screenEl.scrollTop;
+        var maxScroll = screenEl.scrollHeight - screenEl.clientHeight;
+        var target;
+        if (st <= 0) {
+          target = 0;
+        } else if (st >= maxScroll - 1) {
+          target = cards.length - 1;
+        } else if (st < T1) {
+          target = 0;
+        } else {
+          target = 1;
+        }
+        cards.forEach(function (card, i) {
+          card.classList.toggle('is-open', i === target);
+        });
+      }
+
+      screenEl.addEventListener('scroll', update, { passive: true });
+
+      update();
+    })();
+
+    // Monster's pupils (clean pink ellipses, ry=26, resting at cy=291) track
+    // scroll position — translated straight down as the page scrolls. The
+    // eye-whites are now clean ellipses (cy=316, ry=59) bottoming out at
+    // y=375; at full travel the pupil's bottom edge (cy + ry + CAP = 291 +
+    // 26 + 56 = 373) rests ~2px shy of the white's bottom so it visibly
+    // touches without any risk of poking past the rounded edge.
+    (function () {
+      var screenEl = document.querySelector('.screen');
+      var pupils = document.querySelectorAll('.monster-pupil');
+      if (!screenEl || !pupils.length) return;
+
+      var CAP = 56;   // px of downward travel at full effect
+      var RAMP = 400; // px of scroll to reach the full cap
+
+      function update() {
+        var t = Math.min(1, Math.max(0, screenEl.scrollTop / RAMP));
+        var y = t * CAP;
+        pupils.forEach(function (p) {
+          p.style.transform = 'translateY(' + y + 'px)';
+        });
+      }
+
+      screenEl.addEventListener('scroll', update, { passive: true });
+
+      update();
+    })();
+  </script>
+</body>
+</html>

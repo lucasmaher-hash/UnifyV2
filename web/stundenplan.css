@@ -1,0 +1,275 @@
+/* ============================================================
+   Stundenplan / Socials page — extends styles.css's shared tokens
+   (--pink, --dark, --cream, --font, phone shell, .nav, etc.)
+   Source: Figma nodes 959:11024 (Stundenplan tab) and 959:11037
+   (Socials tab) — same frame, two tab states, on prototyping aktuell.
+   ============================================================ */
+
+/* This page's phone background is dark throughout (no pink hero). */
+.phone--dark{ background:var(--dark); }
+
+.sp-screen{
+  padding:97px 15px 15px;  /* 97 = clearance for the eyes/pill peeking above the card */
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.sp-view{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:34px;                /* gap between the stundenplan card and the friends list */
+  width:100%;
+}
+/* Author CSS (this class) otherwise beats the UA default [hidden]{display:none},
+   so the "hidden" tab view would still render (and take up scroll height)
+   without this explicit override. */
+.sp-view[hidden]{ display:none; }
+
+/* =========================== TAB HEADER ============================ */
+.sp-card{ position:relative; width:377px; flex:none; }
+.sp-header{ display:flex; height:60px; }
+.sp-header__active{ flex:none; background:var(--pink); height:60px; }
+.sp-header__active--left{ width:184px; border-radius:25px 25px 0 0; }
+.sp-header__active--right{ width:149px; border-radius:25px 25px 0 0; margin-left:auto; }
+.sp-header__inactive{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:none;
+  border:0;
+  padding:0;
+  font-family:var(--font);
+  font-weight:800;
+  font-size:24px;
+  color:var(--cream);
+  cursor:pointer;
+}
+
+/* ============================ PANELS =============================== */
+.sp-panel{ width:377px; box-sizing:border-box; }
+.sp-panel--pink{
+  background:var(--pink);
+  border-radius:0 22px 0 0;
+  padding:10px 16px;
+}
+/* Socials tab's pink panel: rounded top-left (exposed against the dark bg,
+   next to the plain-text "Stundenplan" inactive tab) but square top-right
+   (sits flush directly under the Socials active pill's own bottom edge). */
+.sp-panel--rounded-all{ border-radius:22px 0 22px 22px; }
+.sp-panel--cream{
+  background:var(--cream);
+  border-radius:0 0 22px 22px;
+  padding:26px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+/* --------------------------- week selector --------------------------- */
+.sp-week{ display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 0; }
+.sp-week__arrow{ background:none; border:0; padding:16px; cursor:pointer; display:flex; align-items:center; }
+.sp-week__arrow--prev{ transform:rotate(180deg); }
+.sp-week__arrow img{ display:block; width:26px; height:20.9px; }
+.sp-week__date{ font-family:var(--font); font-weight:800; font-size:19px; color:var(--dark); width:39px; display:inline-block; }
+.sp-week__date--right{ width:50px; text-align:right; }
+.sp-week__till{ font-family:var(--font); font-weight:800; font-size:19px; color:var(--dark); width:123px; text-align:center; display:inline-block; }
+
+/* ---------------------------- day selector ---------------------------- */
+.sp-days{ display:flex; gap:42px; padding:10px 0; justify-content:center; }
+.sp-day{
+  width:32px; height:31.8px;
+  border-radius:27.6px;
+  border:3px solid var(--dark);
+  background:transparent;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font); font-weight:800; font-size:19px; color:var(--dark);
+  cursor:pointer; padding:0; box-sizing:border-box;
+}
+.sp-day--active{ background:var(--dark); color:var(--cream); cursor:default; }
+
+/* ----------------------------- course rows ----------------------------- */
+.sp-course{ width:100%; }
+.sp-course__divider{ height:3px; background:var(--dark); width:336px; margin:0 auto; }
+.sp-course__row{ display:flex; align-items:center; justify-content:space-between; padding:8px 0; width:336px; margin:0 auto; gap:8px; }
+.sp-course__title{ margin:0; font-family:var(--font); font-weight:800; font-size:19px; color:var(--dark); }
+.sp-course__time{ margin:0; font-family:var(--font); font-weight:500; font-size:19px; color:var(--dark); white-space:nowrap; }
+
+/* ===================== TAB OVERLAY (eyes + pill + label) ===================== */
+.sp-tab-overlay{ position:absolute; top:0; left:0; width:100%; height:0; pointer-events:none; }
+.sp-tab-overlay__eyes{ position:absolute; left:35px; top:-27px; width:116px; height:40px; display:block; }
+.sp-tab-overlay__pill{ position:absolute; left:16px; top:7px; width:157px; height:53px; display:block; }
+.sp-tab-overlay__label{
+  position:absolute; left:20px; top:15px; margin:0;
+  font-family:var(--font); font-weight:800; font-size:24px; color:var(--cream); white-space:nowrap;
+}
+
+/* socials tab: overlay mirrored to the right side */
+.sp-tab-overlay__pill--socials{ left:242px; top:4px; width:121px; height:53px; }
+.sp-tab-overlay__label--socials{ left:267px; top:14px; }
+.sp-socials-eyes{ position:absolute; left:0; top:0; }
+.sp-socials-eyes__white{ position:absolute; top:-24px; width:58px; height:35px; display:block; }
+.sp-socials-eyes__white--l{ left:247px; }
+.sp-socials-eyes__white--r{ left:300px; }
+.sp-socials-eyes__heart{ position:absolute; top:-12px; display:block; }
+.sp-socials-eyes__heart--l{ left:270px; width:27px; height:18px; }
+.sp-socials-eyes__heart--r{ left:308px; width:26px; height:18px; }
+
+/* ============================ SEARCH BAR ============================ */
+.sp-search{
+  width:377px; box-sizing:border-box;
+  display:flex; align-items:center; gap:11px;
+  padding:10px 11px 10px 20px;
+  border-radius:23px;
+  background:rgba(255,255,255,0.2);
+  border:3px solid #fff;
+}
+.sp-search__icon{ width:20px; height:20px; display:block; flex:none; }
+.sp-search__label{ margin:0; font-family:var(--font); font-weight:800; font-size:19px; color:#fff; }
+.sp-search--plus{ justify-content:space-between; padding:10px 13px; }
+.sp-search__plus{ margin:0; font-family:var(--font); font-weight:500; font-size:18px; color:#fff; }
+
+/* ========================= FRIENDS (stundenplan tab) ========================= */
+.sp-friends{ display:flex; flex-direction:column; align-items:center; gap:22px; width:100%; padding-bottom:130px; box-sizing:border-box; }
+.sp-friend-row{
+  position:relative;
+  width:362px; height:71px;
+  padding:0 0 0 73px;
+  border:0; background:none; cursor:pointer;
+  display:flex; align-items:center;
+  box-sizing:border-box;
+}
+.sp-friend-row__face{ position:absolute; left:0; top:5px; width:73px; height:62px; z-index:1; pointer-events:none; }
+.sp-friend-row__bubble{
+  position:relative; z-index:0;
+  flex:1; height:47px;
+  background:var(--cream);
+  border-radius:0 22px 22px 0;
+  display:flex; align-items:center; gap:8px;
+  padding:0 12px; box-sizing:border-box;
+}
+.sp-friend-row__name{ font-family:var(--font); font-weight:800; font-size:24px; color:var(--dark); flex:1; text-align:left; }
+.sp-friend-row__room{ font-family:var(--font); font-weight:800; font-size:24px; color:rgba(41,41,37,0.47); }
+.sp-friend-row__chevron{
+  width:35px; height:35px; flex:none;
+  border-radius:999px; border:3px solid var(--dark);
+  display:flex; align-items:center; justify-content:center;
+  transform:rotate(180deg);
+}
+.sp-friend-row__chevron img{ width:19px; height:19px; display:block; }
+
+/* ========================= SOCIALS TAB CARDS ========================= */
+.sp-cards-socials{ display:flex; flex-direction:column; align-items:center; gap:10px; width:100%; padding-bottom:130px; box-sizing:border-box; isolation:isolate; }
+.sp-header-group{ display:flex; flex-direction:column; align-items:center; gap:18px; width:377px; z-index:4; position:relative; }
+
+.sp-activity{
+  position:relative;
+  width:377px; box-sizing:border-box;
+  border-radius:30px;
+  padding:16px 16px 24px;
+  display:flex; flex-direction:column;
+  border:0; text-align:left; cursor:pointer;
+  font-family:var(--font);
+  /* overflow stays visible (default) here — the closed-state face pill pokes
+     35px below this box on purpose (bottom:-35px). Only .sp-activity__content
+     below clips for the collapse/expand animation. */
+}
+.sp-activity--pink{ background:var(--pink); }
+.sp-activity--cream{ background:var(--cream); }
+.sp-activity--open{ cursor:default; }
+
+/* Wraps poster/header/divider/desc — this is what actually grows/shrinks
+   and clips on open/close, kept separate from .sp-activity so the poking
+   face (a sibling, positioned outside this wrapper) is never clipped. */
+.sp-activity__content{
+  display:flex; flex-direction:column; gap:8px;
+  overflow:hidden;
+  /* Each card's poster now keeps its own natural aspect ratio (no more fixed
+     190px + object-fit:cover crop — see .sp-activity__poster below), so
+     every card needs a different closed-state height to fit exactly
+     "poster + gap + header" with zero slack. Set per-card via the --closed-h
+     custom property (inline style on the .sp-activity element); this shared
+     rule is just the fallback. */
+  max-height:var(--closed-h, 265px);
+  transition:max-height .85s cubic-bezier(.4,0,.2,1), gap .85s cubic-bezier(.4,0,.2,1);
+}
+.sp-activity--open .sp-activity__content{
+  max-height:900px;   /* generous fixed ceiling covering all four posters' full
+                          uncropped height + text — doesn't need to be exact,
+                          unlike the closed height, since it only needs to
+                          clear the tallest real content, not hug it. */
+  gap:26px;
+}
+/* The divider/desc deliberately stay in-flow (no display:none) even when
+   closed. display:none is not animatable — toggling it instantly collapses
+   the content's natural height in a single frame, which made max-height (the
+   thing actually transitioning) irrelevant on close: content height became
+   the bottleneck and just snapped, so closing looked instant while opening
+   (gated by max-height growing into already-visible content) looked smooth.
+   Keeping them in-flow and relying purely on the tight max-height/overflow
+   clip above makes the close animate exactly as smoothly as the open. */
+.sp-activity:not(.sp-activity--open) .sp-activity__face--open{
+  display:none;
+}
+.sp-activity--open .sp-activity__face--closed{
+  display:none;
+}
+/* first-on-top stacking so each card's poking face isn't covered by the one below */
+.sp-cards-socials .sp-activity:nth-of-type(1){ z-index:4; }
+.sp-cards-socials .sp-activity:nth-of-type(2){ z-index:3; }
+.sp-cards-socials .sp-activity:nth-of-type(3){ z-index:2; }
+.sp-cards-socials .sp-activity:nth-of-type(4){ z-index:1; }
+
+/* flex-shrink:0 on all of these — .sp-activity__content clips them via its
+   max-height/overflow:hidden for the collapse animation, but without
+   flex-shrink:0 the flex algorithm "helpfully" squishes these down to fit
+   the constrained container instead of letting them overflow to be clipped
+   (e.g. the poster would render at 0 height). They must keep their natural
+   size and simply overflow. */
+/* height:auto (not a fixed px + object-fit:cover) so each poster keeps its
+   own natural aspect ratio and is never cropped top/bottom — the card's own
+   height (via --closed-h and the generous open max-height above) adapts to
+   fit instead. */
+.sp-activity__poster{ width:100%; border-radius:12px; overflow:hidden; flex-shrink:0; }
+.sp-activity__poster img{ width:100%; height:auto; display:block; }
+.sp-activity__header{ display:flex; align-items:flex-start; gap:8px; width:100%; flex-shrink:0; }
+.sp-activity__titleblock{ display:flex; flex-direction:column; gap:8px; width:257px; }
+.sp-activity__title{ margin:0; font-weight:800; font-size:24px; color:var(--dark); }
+.sp-activity__time{ margin:0; font-weight:500; font-size:19px; color:var(--dark); }
+.sp-activity__date{ margin:0; flex:1; font-weight:500; font-size:19px; color:var(--dark); text-align:right; }
+.sp-activity__divider{ height:3px; background:var(--dark); border-radius:1.5px; width:100%; flex-shrink:0; }
+.sp-activity__desc{ margin:0; font-weight:800; font-size:19px; color:var(--dark); width:254px; line-height:normal; flex-shrink:0; }
+
+/* face — open state: eyes + round plus-button, bottom-right */
+.sp-activity__face--open{ position:absolute; bottom:12px; right:9px; width:68px; height:116px; }
+.sp-activity__eyes{ position:absolute; left:0; top:0; width:67.561px; height:49.939px; padding:0; border:0; background:none; cursor:pointer; }
+.sp-activity__eyes img{ width:100%; height:100%; display:block; }
+.sp-activity__plus-btn{
+  position:absolute; left:2px; top:52px; width:64px; height:64px;
+  border-radius:999px; background:var(--dark);
+  display:flex; align-items:center; justify-content:center;
+  border:0; padding:0; cursor:pointer;
+}
+.sp-activity__plus-btn img{
+  position:absolute; width:24px; height:24px; display:block;
+  transition:opacity .2s ease, transform .2s ease;
+}
+.sp-activity__check-icon{ opacity:0; transform:scale(.4) rotate(-45deg); }
+.sp-activity__plus-btn.is-joined .sp-activity__plus-icon{ opacity:0; transform:scale(.4) rotate(45deg); }
+.sp-activity__plus-btn.is-joined .sp-activity__check-icon{ opacity:1; transform:scale(1) rotate(0); }
+
+/* face — closed state: rounded pill + eyes poking off the right edge */
+.sp-activity__face--closed{ position:absolute; bottom:-35px; right:0; width:71px; height:67px; }
+/* Figma has this pill as a 67x71 box rounded on its right side, sitting
+   inside a rotate(90deg) wrapper — the rotation is what actually makes the
+   rendered shape rounded on the BOTTOM. Reproduced directly here (swapped
+   dimensions + border-radius moved to the bottom corners) instead of using
+   an actual CSS rotate transform, since the two are visually equivalent for
+   this symmetric shape and avoids transform-origin offset math. */
+.sp-activity__face-pill{ position:absolute; left:0; top:0; width:71px; height:67px; border-radius:0 0 43px 43px; display:block; }
+.sp-activity__face--cream .sp-activity__face-pill{ background:var(--cream); }
+.sp-activity__face--pink .sp-activity__face-pill{ background:var(--pink); }
+.sp-activity__face-eyes{ position:absolute; left:3px; top:0; width:67.561px; height:49.939px; display:block; }

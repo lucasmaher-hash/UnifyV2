@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unify — Stundenplan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=10">
+  <link rel="stylesheet" href="stundenplan.css?v=15">
+</head>
+<body>
+  <div class="phone-stage">
+  <div class="phone phone--dark" data-screen="stundenplan">
+    <div class="screen sp-screen">
+
+      <!-- ============== STUNDENPLAN TAB (default) ============== -->
+      <div class="sp-view" id="view-stundenplan">
+        <div class="sp-card">
+          <div class="sp-header">
+            <div class="sp-header__active sp-header__active--left"></div>
+            <button class="sp-header__inactive" data-switch-tab="socials">Socials</button>
+          </div>
+          <div class="sp-panel sp-panel--pink">
+            <div class="sp-week">
+              <button class="sp-week__arrow sp-week__arrow--prev" aria-label="Previous week"><img src="assets/icon_arrow_week.svg" alt=""></button>
+              <span class="sp-week__date">7.3</span>
+              <span class="sp-week__till">till</span>
+              <span class="sp-week__date sp-week__date--right">13.3</span>
+              <button class="sp-week__arrow" aria-label="Next week"><img src="assets/icon_arrow_week.svg" alt=""></button>
+            </div>
+            <div class="sp-days">
+              <span class="sp-day sp-day--active">m</span>
+              <button class="sp-day" type="button">d</button>
+              <button class="sp-day" type="button">m</button>
+              <button class="sp-day" type="button">d</button>
+              <button class="sp-day" type="button">f</button>
+            </div>
+            <div class="sp-course">
+              <div class="sp-course__divider"></div>
+              <div class="sp-course__row">
+                <p class="sp-course__title">Interface Design (1.019)</p>
+                <p class="sp-course__time">09:00-10:30</p>
+              </div>
+            </div>
+            <div class="sp-course">
+              <div class="sp-course__divider"></div>
+              <div class="sp-course__row">
+                <p class="sp-course__title">Interface Design (1.019)</p>
+                <p class="sp-course__time">09:00-10:30</p>
+              </div>
+            </div>
+          </div>
+          <div class="sp-panel sp-panel--cream">
+            <div class="sp-course">
+              <div class="sp-course__divider"></div>
+              <div class="sp-course__row">
+                <p class="sp-course__title">Interface Design (1.019)</p>
+                <p class="sp-course__time">09:00-10:30</p>
+              </div>
+            </div>
+            <div class="sp-course">
+              <div class="sp-course__divider"></div>
+              <div class="sp-course__row">
+                <p class="sp-course__title">Interface Design (1.019)</p>
+                <p class="sp-course__time">09:00-10:30</p>
+              </div>
+            </div>
+          </div>
+          <div class="sp-tab-overlay">
+            <img class="sp-tab-overlay__eyes" src="assets/tab_eyes_stundenplan.svg" alt="">
+            <img class="sp-tab-overlay__pill" src="assets/tab_pill_stundenplan.svg" alt="">
+            <p class="sp-tab-overlay__label">Stundenplan</p>
+          </div>
+        </div>
+
+        <div class="sp-friends">
+          <div class="sp-search">
+            <img class="sp-search__icon" src="assets/icon_search.svg" alt="">
+            <p class="sp-search__label">search friends</p>
+          </div>
+          <button class="sp-friend-row">
+            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__name">Emil</span>
+              <span class="sp-friend-row__room">0.012</span>
+              <span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>
+            </span>
+          </button>
+          <button class="sp-friend-row">
+            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__name">Emil</span>
+              <span class="sp-friend-row__room">0.012</span>
+              <span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>
+            </span>
+          </button>
+          <button class="sp-friend-row">
+            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__name">Emil</span>
+              <span class="sp-friend-row__room">0.012</span>
+              <span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>
+            </span>
+          </button>
+          <button class="sp-friend-row">
+            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__name">Emil</span>
+              <span class="sp-friend-row__room">0.012</span>
+              <span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ============== SOCIALS TAB (hidden by default) ============== -->
+      <div class="sp-view" id="view-socials" hidden>
+        <div class="sp-cards-socials">
+          <div class="sp-header-group">
+            <div class="sp-card sp-card--socials">
+              <div class="sp-header">
+                <button class="sp-header__inactive sp-header__inactive--left" data-switch-tab="stundenplan">Stundenplan</button>
+                <div class="sp-header__active sp-header__active--right"></div>
+              </div>
+              <div class="sp-panel sp-panel--pink sp-panel--rounded-all">
+                <div class="sp-week">
+                  <button class="sp-week__arrow sp-week__arrow--prev" aria-label="Previous week"><img src="assets/icon_arrow_week.svg" alt=""></button>
+                  <span class="sp-week__date">7.3</span>
+                  <span class="sp-week__till">till</span>
+                  <span class="sp-week__date sp-week__date--right">13.3</span>
+                  <button class="sp-week__arrow" aria-label="Next week"><img src="assets/icon_arrow_week.svg" alt=""></button>
+                </div>
+              </div>
+              <div class="sp-tab-overlay sp-tab-overlay--socials">
+                <span class="sp-socials-eyes">
+                  <img class="sp-socials-eyes__white sp-socials-eyes__white--l" src="assets/eye_heart_shape.svg" alt="">
+                  <img class="sp-socials-eyes__white sp-socials-eyes__white--r" src="assets/eye_heart_shape.svg" alt="">
+                  <img class="sp-socials-eyes__heart sp-socials-eyes__heart--l" src="assets/heart_pupil_l.svg" alt="">
+                  <img class="sp-socials-eyes__heart sp-socials-eyes__heart--r" src="assets/heart_pupil_r.svg" alt="">
+                </span>
+                <img class="sp-tab-overlay__pill sp-tab-overlay__pill--socials" src="assets/tab_pill_socials.svg" alt="">
+                <p class="sp-tab-overlay__label sp-tab-overlay__label--socials">Socials</p>
+              </div>
+            </div>
+
+            <div class="sp-search sp-search--plus">
+              <p class="sp-search__label">search friends</p>
+              <p class="sp-search__plus">+</p>
+            </div>
+          </div>
+
+          <!-- activity (Open, Pink) — Umtrunk Uniparty -->
+          <div class="sp-activity sp-activity--pink sp-activity--open" style="--closed-h:507px;">
+            <div class="sp-activity__content">
+              <div class="sp-activity__poster"><img src="assets/poster_umtrunk_uniparty.jpg" alt=""></div>
+              <div class="sp-activity__header">
+                <div class="sp-activity__titleblock">
+                  <p class="sp-activity__title">Umtrunk Uniparty</p>
+                  <p class="sp-activity__time">20:00-23:00</p>
+                </div>
+                <p class="sp-activity__date">07.06</p>
+              </div>
+              <div class="sp-activity__divider"></div>
+              <p class="sp-activity__desc">Der Semesterausklang mit Musik, Drinks und guter Stimmung. Bringt eure Freunde mit!</p>
+            </div>
+            <div class="sp-activity__face sp-activity__face--closed sp-activity__face--pink">
+              <span class="sp-activity__face-pill"></span>
+              <img class="sp-activity__face-eyes" src="assets/activity3_face_eyes.svg?v=2" alt="">
+            </div>
+            <div class="sp-activity__face sp-activity__face--open">
+              <button class="sp-activity__eyes"><img src="assets/activity1_face_eyes.svg?v=2" alt=""></button>
+              <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
+                <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
+                <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
+              </button>
+            </div>
+          </div>
+
+          <!-- activity (Closed, Cream) — Filmabend -->
+          <div class="sp-activity sp-activity--cream" style="--closed-h:563px;">
+            <div class="sp-activity__content">
+              <div class="sp-activity__poster"><img src="assets/poster_movie_night.jpg" alt=""></div>
+              <div class="sp-activity__header">
+                <div class="sp-activity__titleblock">
+                  <p class="sp-activity__title">Filmabend</p>
+                  <p class="sp-activity__time">19:00-21:30</p>
+                </div>
+                <p class="sp-activity__date">10.06</p>
+              </div>
+              <div class="sp-activity__divider"></div>
+              <p class="sp-activity__desc">Gemütlicher Kinoabend mit Popcorn und Decken. Der Film wird spontan gewählt.</p>
+            </div>
+            <div class="sp-activity__face sp-activity__face--closed sp-activity__face--cream">
+              <span class="sp-activity__face-pill"></span>
+              <img class="sp-activity__face-eyes" src="assets/activity2_face_eyes.svg?v=2" alt="">
+            </div>
+            <div class="sp-activity__face sp-activity__face--open">
+              <button class="sp-activity__eyes"><img src="assets/activity2_face_eyes.svg?v=2" alt=""></button>
+              <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
+                <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
+                <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
+              </button>
+            </div>
+          </div>
+
+          <!-- activity (Closed, Pink) — Buchclub -->
+          <div class="sp-activity sp-activity--pink" style="--closed-h:420px;">
+            <div class="sp-activity__content">
+              <div class="sp-activity__poster"><img src="assets/poster_book_club.jpg" alt=""></div>
+              <div class="sp-activity__header">
+                <div class="sp-activity__titleblock">
+                  <p class="sp-activity__title">Buchclub</p>
+                  <p class="sp-activity__time">17:00-18:30</p>
+                </div>
+                <p class="sp-activity__date">12.06</p>
+              </div>
+              <div class="sp-activity__divider"></div>
+              <p class="sp-activity__desc">Lesen, diskutieren und Buchtipps austauschen bei Tee und Keksen. Neue Gesichter willkommen.</p>
+            </div>
+            <div class="sp-activity__face sp-activity__face--closed sp-activity__face--pink">
+              <span class="sp-activity__face-pill"></span>
+              <img class="sp-activity__face-eyes" src="assets/activity3_face_eyes.svg?v=2" alt="">
+            </div>
+            <div class="sp-activity__face sp-activity__face--open">
+              <button class="sp-activity__eyes"><img src="assets/activity3_face_eyes.svg?v=2" alt=""></button>
+              <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
+                <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
+                <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
+              </button>
+            </div>
+          </div>
+
+          <!-- activity (Closed, Cream) — Ted Talk -->
+          <div class="sp-activity sp-activity--cream" style="--closed-h:564px;">
+            <div class="sp-activity__content">
+              <div class="sp-activity__poster"><img src="assets/poster_ted_talk.jpg" alt=""></div>
+              <div class="sp-activity__header">
+                <div class="sp-activity__titleblock">
+                  <p class="sp-activity__title">Ted Talk</p>
+                  <p class="sp-activity__time">16:00-17:00</p>
+                </div>
+                <p class="sp-activity__date">14.06</p>
+              </div>
+              <div class="sp-activity__divider"></div>
+              <p class="sp-activity__desc">Kurzvorträge zu spannenden Themen von Studierenden für Studierende, mit Fragerunde.</p>
+            </div>
+            <div class="sp-activity__face sp-activity__face--closed sp-activity__face--cream">
+              <span class="sp-activity__face-pill"></span>
+              <img class="sp-activity__face-eyes" src="assets/activity2_face_eyes.svg?v=2" alt="">
+            </div>
+            <div class="sp-activity__face sp-activity__face--open">
+              <button class="sp-activity__eyes"><img src="assets/activity2_face_eyes.svg?v=2" alt=""></button>
+              <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
+                <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
+                <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM NAV (fixed) -->
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__btn nav__home" href="index.html" aria-label="Home"><img src="assets/icon_home_outline.svg" alt=""></a>
+      <button class="nav__btn nav__cal" aria-label="Calendar" aria-current="page"><img src="assets/icon_calendar_filled.svg" alt=""></button>
+      <a class="nav__btn nav__pin" href="map.html" aria-label="Map"><img src="assets/icon_pin.svg" alt=""></a>
+      <button class="nav__btn nav__star" aria-label="Activities"><img src="assets/icon_star.svg" alt=""></button>
+    </nav>
+  </div>
+  </div>
+
+  <script>
+    // Scale the phone down so the whole 402×874 frame always fits the window.
+    (function () {
+      var MARGIN = 40;
+      function fit() {
+        var s = Math.min(1, (window.innerHeight - MARGIN) / 874, (window.innerWidth - MARGIN) / 402);
+        document.documentElement.style.setProperty('--scale', s);
+      }
+      fit();
+      window.addEventListener('resize', fit);
+    })();
+
+    // Tab switching between Stundenplan / Socials — same page, no navigation,
+    // matching the Figma prototype where these are two states of one frame.
+    (function () {
+      var views = { stundenplan: document.getElementById('view-stundenplan'), socials: document.getElementById('view-socials') };
+      document.querySelectorAll('[data-switch-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var target = btn.getAttribute('data-switch-tab');
+          Object.keys(views).forEach(function (key) {
+            views[key].hidden = key !== target;
+          });
+          document.querySelector('.sp-screen').scrollTop = 0;
+        });
+      });
+    })();
+
+    // Activity toggle: click to open/close
+    (function () {
+      var activities = document.querySelectorAll('.sp-cards-socials .sp-activity');
+      activities.forEach(function (activity) {
+        activity.addEventListener('click', function (e) {
+          e.preventDefault();
+          activity.classList.toggle('sp-activity--open');
+        });
+      });
+    })();
+
+    // Plus button: click to "join" (morphs into a checkmark) — stops the
+    // click from bubbling up to the card's own open/close toggle above.
+    (function () {
+      document.querySelectorAll('.sp-activity__plus-btn').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          btn.classList.toggle('is-joined');
+        });
+      });
+    })();
+
+    // Scroll-driven animation: activities expand/collapse based on scroll position
+    (function () {
+      var screen = document.querySelector('.sp-screen');
+      var activities = Array.from(document.querySelectorAll('.sp-cards-socials .sp-activity'));
+      if (!screen || activities.length === 0) return;
+
+      function update() {
+        var scrollTop = screen.scrollTop;
+        var viewportHeight = screen.clientHeight;
+        // The last card can never reach true viewport-center via scrolling —
+        // there's no more content below it for the container to scroll past,
+        // so its center-distance can get stuck above the open threshold even
+        // at max scroll. Workaround: once scrolled essentially to the bottom,
+        // force the last card open regardless of the distance calculation.
+        var atBottom = scrollTop + viewportHeight >= screen.scrollHeight - 4;
+
+        activities.forEach(function (activity, i) {
+          var isLast = i === activities.length - 1;
+          if (atBottom && isLast) {
+            activity.classList.add('sp-activity--open');
+            return;
+          }
+
+          var rect = activity.getBoundingClientRect();
+          var activityTop = scrollTop + rect.top;
+          var activityCenter = activityTop + rect.height / 2;
+          var viewportCenter = scrollTop + viewportHeight / 2;
+
+          // Distance from center: negative when above, positive when below
+          var distance = Math.abs(viewportCenter - activityCenter);
+          var maxDistance = viewportHeight / 2;
+
+          // Open if near center, close if far
+          var shouldOpen = distance < maxDistance * 0.4;
+          activity.classList.toggle('sp-activity--open', shouldOpen);
+        });
+      }
+
+      screen.addEventListener('scroll', update);
+      update();
+    })();
+  </script>
+</body>
+</html>
