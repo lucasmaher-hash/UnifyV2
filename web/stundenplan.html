@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=10">
-  <link rel="stylesheet" href="stundenplan.css?v=15">
+  <link rel="stylesheet" href="stundenplan.css?v=23">
 </head>
 <body>
   <div class="phone-stage">
@@ -22,7 +22,7 @@
             <div class="sp-header__active sp-header__active--left"></div>
             <button class="sp-header__inactive" data-switch-tab="socials">Socials</button>
           </div>
-          <div class="sp-panel sp-panel--pink">
+          <div class="sp-panel sp-panel--pink" id="sp-pink-courses">
             <div class="sp-week">
               <button class="sp-week__arrow sp-week__arrow--prev" aria-label="Previous week"><img src="assets/icon_arrow_week.svg" alt=""></button>
               <span class="sp-week__date">7.3</span>
@@ -31,43 +31,14 @@
               <button class="sp-week__arrow" aria-label="Next week"><img src="assets/icon_arrow_week.svg" alt=""></button>
             </div>
             <div class="sp-days">
-              <span class="sp-day sp-day--active">m</span>
-              <button class="sp-day" type="button">d</button>
-              <button class="sp-day" type="button">m</button>
-              <button class="sp-day" type="button">d</button>
-              <button class="sp-day" type="button">f</button>
-            </div>
-            <div class="sp-course">
-              <div class="sp-course__divider"></div>
-              <div class="sp-course__row">
-                <p class="sp-course__title">Interface Design (1.019)</p>
-                <p class="sp-course__time">09:00-10:30</p>
-              </div>
-            </div>
-            <div class="sp-course">
-              <div class="sp-course__divider"></div>
-              <div class="sp-course__row">
-                <p class="sp-course__title">Interface Design (1.019)</p>
-                <p class="sp-course__time">09:00-10:30</p>
-              </div>
+              <span class="sp-day sp-day--active" data-day="montag">m</span>
+              <button class="sp-day" type="button" data-day="dienstag">d</button>
+              <button class="sp-day" type="button" data-day="mittwoch">m</button>
+              <button class="sp-day" type="button" data-day="donnerstag">d</button>
+              <button class="sp-day" type="button" data-day="freitag">f</button>
             </div>
           </div>
-          <div class="sp-panel sp-panel--cream">
-            <div class="sp-course">
-              <div class="sp-course__divider"></div>
-              <div class="sp-course__row">
-                <p class="sp-course__title">Interface Design (1.019)</p>
-                <p class="sp-course__time">09:00-10:30</p>
-              </div>
-            </div>
-            <div class="sp-course">
-              <div class="sp-course__divider"></div>
-              <div class="sp-course__row">
-                <p class="sp-course__title">Interface Design (1.019)</p>
-                <p class="sp-course__time">09:00-10:30</p>
-              </div>
-            </div>
-          </div>
+          <div class="sp-panel sp-panel--cream" id="sp-cream-courses"></div>
           <div class="sp-tab-overlay">
             <img class="sp-tab-overlay__eyes" src="assets/tab_eyes_stundenplan.svg" alt="">
             <img class="sp-tab-overlay__pill" src="assets/tab_pill_stundenplan.svg" alt="">
@@ -80,38 +51,7 @@
             <img class="sp-search__icon" src="assets/icon_search.svg" alt="">
             <p class="sp-search__label">search friends</p>
           </div>
-          <button class="sp-friend-row">
-            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__name">Emil</span>
-              <span class="sp-friend-row__room">0.012</span>
-              <span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>
-            </span>
-          </button>
-          <button class="sp-friend-row">
-            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__name">Emil</span>
-              <span class="sp-friend-row__room">0.012</span>
-              <span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>
-            </span>
-          </button>
-          <button class="sp-friend-row">
-            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__name">Emil</span>
-              <span class="sp-friend-row__room">0.012</span>
-              <span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>
-            </span>
-          </button>
-          <button class="sp-friend-row">
-            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__name">Emil</span>
-              <span class="sp-friend-row__room">0.012</span>
-              <span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>
-            </span>
-          </button>
+          <div id="sp-friend-list"></div>
         </div>
       </div>
 
@@ -274,6 +214,162 @@
   </div>
 
   <script>
+    // Character figure mapping
+    var figureMap = {
+      'Greg': 'assets/figur_1.svg?v=2',
+      'Anna': 'assets/figur_2.svg?v=2',
+      'James': 'assets/figur_3.svg?v=2',
+      'Sophia': 'assets/figur_4.svg?v=2',
+      'Naomi': 'assets/figur_3.svg?v=2',
+      'Michi': 'assets/figur_5.svg?v=2',
+      'Konst': 'assets/figur_6.svg?v=2',
+      'Zoe': 'assets/figur_4.svg?v=2',
+      'Nam': 'assets/figur_7.svg?v=2'
+    };
+
+    // Course data for all 5 weekdays
+    var courseData = {
+      montag: {
+        pink: [
+          { title: 'Interface Design', room: '(1.019)', time: '09:00-10:30' },
+          { title: 'Mathe', room: '(2.013)', time: '09:00-10:30' }
+        ],
+        cream: [
+          { title: 'Ping Pong Duel', room: '(1.001)', time: '09:00-10:30' }
+        ]
+      },
+      dienstag: {
+        pink: [
+          { title: 'Prototyping', room: '(1.019)', time: '09:00-10:30' },
+          { title: 'ID Grundlagen', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Sophia', 'Michi'] }
+        ],
+        cream: [
+          { title: 'Movie day', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Michi'] }
+        ]
+      },
+      mittwoch: {
+        pink: [
+          { title: 'Modelbau Analog', room: '(1.019)', time: '09:00-10:30' },
+          { title: 'Modelbau Digital', room: '(1.019)', time: '09:00-10:30' }
+        ],
+        cream: []
+      },
+      donnerstag: {
+        pink: [
+          { title: 'Ergonomie', room: '(1.019)', time: '09:00-10:30' }
+        ],
+        cream: [
+          { title: 'Bücherclub', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Michi'] }
+        ]
+      },
+      freitag: {
+        pink: [
+          { title: 'Interface Design', room: '(1.019)', time: '09:00-10:30' },
+          { title: 'Interface Design', room: '(1.019)', time: '09:00-10:30' }
+        ],
+        cream: [
+          { title: 'Umtrunk', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Sophia', 'Naomi', 'Michi', 'Konst', 'Zoe', 'Nam'] }
+        ]
+      }
+    };
+
+    // ---- Week model (matches Figma "select week": 4 weeks, clamped, no loop) ----
+    var WEEKS = [
+      { start: '7.3',  end: '13.3' },
+      { start: '14.3', end: '20.3' },
+      { start: '21.3', end: '27.3' },
+      { start: '28.3', end: '3.4'  }
+    ];
+    // Each week shifts the class times a bit...
+    var TIME_BY_WEEK = ['09:00-10:30', '10:00-11:30', '11:30-13:00', '08:30-10:00'];
+    // ...and swaps a couple of course titles so weeks aren't identical.
+    var TITLE_SWAPS = {
+      1: { 'Interface Design': 'Design Systems', 'Prototyping': 'Motion Design' },
+      2: { 'Mathe': 'Statistik', 'Modelbau Analog': 'Keramik', 'Ergonomie': 'UX Research' },
+      3: { 'Interface Design': 'Portfolio', 'Bücherclub': 'Schreibwerkstatt', 'Umtrunk': 'Sommerfest' }
+    };
+
+    var currentWeek = 0;   // 0-based index into WEEKS
+    var currentDay = 'montag';
+
+    // Derive a given week's schedule for a day from the base (week-1) data.
+    function scheduleFor(weekIndex, day) {
+      var base = courseData[day];
+      var swaps = TITLE_SWAPS[weekIndex] || {};
+      function mapCourse(c) {
+        return {
+          title: swaps[c.title] || c.title,
+          room: c.room,
+          time: TIME_BY_WEEK[weekIndex],
+          people: c.people
+        };
+      }
+      return { pink: base.pink.map(mapCourse), cream: base.cream.map(mapCourse) };
+    }
+
+    // Update the "7.3 till 13.3" label + arrow enabled/disabled state (clamped).
+    function updateWeekLabel() {
+      var pink = document.getElementById('sp-pink-courses');
+      var w = WEEKS[currentWeek];
+      pink.querySelector('.sp-week__date:not(.sp-week__date--right)').textContent = w.start;
+      pink.querySelector('.sp-week__date--right').textContent = w.end;
+      pink.querySelector('.sp-week__arrow--prev').classList.toggle('is-disabled', currentWeek === 0);
+      pink.querySelector('.sp-week__arrow:not(.sp-week__arrow--prev)').classList.toggle('is-disabled', currentWeek === WEEKS.length - 1);
+    }
+
+    // Render courses function
+    function renderCourses(day) {
+      currentDay = day;
+      var courses = scheduleFor(currentWeek, day);
+      var pinkContainer = document.getElementById('sp-pink-courses');
+      var creamContainer = document.getElementById('sp-cream-courses');
+
+      // Remove all existing courses from pink container (keep first 2 children: week & days)
+      var children = pinkContainer.children;
+      while (children.length > 2) {
+        pinkContainer.removeChild(children[children.length - 1]);
+      }
+
+      // Helper function to render a course
+      function renderCourse(course) {
+        var hasPeople = course.people && course.people.length > 0;
+        var courseClass = hasPeople ? 'sp-course sp-course--people' : 'sp-course';
+        var courseHtml = '<div class="' + courseClass + '"><div class="sp-course__divider"></div><div class="sp-course__row"><div class="sp-course__title-block"><p class="sp-course__title">' + course.title + '</p><p class="sp-course__title">' + course.room + '</p></div><p class="sp-course__time">' + course.time + '</p></div>';
+
+        // Add people row if course has people
+        if (hasPeople) {
+          courseHtml += '<div class="sp-course__people">';
+          course.people.forEach(function (person) {
+            var figureUrl = figureMap[person] || 'assets/figur_1.svg';
+            courseHtml += '<div class="sp-course__person"><img class="sp-course__person-figure" src="' + figureUrl + '" alt="' + person + '"><p class="sp-course__person-name">' + person + '</p></div>';
+          });
+          courseHtml += '</div>';
+        }
+
+        courseHtml += '</div>';
+        return courseHtml;
+      }
+
+      // Add pink courses
+      courses.pink.forEach(function (course) {
+        pinkContainer.insertAdjacentHTML('beforeend', renderCourse(course));
+      });
+
+      // Clear and add cream courses
+      creamContainer.innerHTML = '';
+      var creamEmpty = courses.cream.length === 0;
+      creamContainer.classList.toggle('is-empty', creamEmpty);
+      if (creamEmpty) {
+        // No cream courses (e.g. Wednesday) — still show a divider line at the
+        // top of the beige section so it reads as a proper closing row.
+        creamContainer.insertAdjacentHTML('beforeend', '<div class="sp-course__divider"></div>');
+      } else {
+        courses.cream.forEach(function (course) {
+          creamContainer.insertAdjacentHTML('beforeend', renderCourse(course));
+        });
+      }
+    }
+
     // Scale the phone down so the whole 402×874 frame always fits the window.
     (function () {
       var MARGIN = 40;
@@ -283,6 +379,68 @@
       }
       fit();
       window.addEventListener('resize', fit);
+    })();
+
+    // Day + week switching for Stundenplan
+    (function () {
+      var pink = document.getElementById('sp-pink-courses');
+      var dayButtons = pink.querySelectorAll('.sp-day');
+      dayButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var day = btn.getAttribute('data-day');
+
+          // Update active state
+          dayButtons.forEach(function (b) { b.classList.remove('sp-day--active'); });
+          btn.classList.add('sp-day--active');
+
+          // Render courses for selected day (keeps the current week)
+          renderCourses(day);
+        });
+      });
+
+      // Week arrows — clamped, no wraparound (matches Figma select_week)
+      var prevArrow = pink.querySelector('.sp-week__arrow--prev');
+      var nextArrow = pink.querySelector('.sp-week__arrow:not(.sp-week__arrow--prev)');
+      prevArrow.addEventListener('click', function () {
+        if (currentWeek === 0) return;
+        currentWeek--;
+        updateWeekLabel();
+        renderCourses(currentDay);
+      });
+      nextArrow.addEventListener('click', function () {
+        if (currentWeek === WEEKS.length - 1) return;
+        currentWeek++;
+        updateWeekLabel();
+        renderCourses(currentDay);
+      });
+
+      // Initialize: week 1, Monday
+      updateWeekLabel();
+      renderCourses('montag');
+    })();
+
+    // Friend list — varied monster shapes (Figma figur 1–8), names, and rooms.
+    (function () {
+      var friends = [
+        { name: 'Emil',    room: '0.012', monster: 'friend_monster_1.svg' },
+        { name: 'Yasira',  room: '1.104', monster: 'friend_monster_3.svg' },
+        { name: 'Jonas',   room: '2.007', monster: 'friend_monster_6.svg' },
+        { name: 'Lena',    room: '0.220', monster: 'friend_monster_8.svg' },
+        { name: 'Theo',    room: '1.019', monster: 'friend_monster_2.svg' },
+        { name: 'Marlene', room: '2.113', monster: 'friend_monster_9.svg' }
+      ];
+      var list = document.getElementById('sp-friend-list');
+      if (!list) return;
+      list.innerHTML = friends.map(function (f) {
+        return '<button class="sp-friend-row">' +
+          '<img class="sp-friend-row__face" src="assets/' + f.monster + '" alt="">' +
+          '<span class="sp-friend-row__bubble">' +
+            '<span class="sp-friend-row__name">' + f.name + '</span>' +
+            '<span class="sp-friend-row__room">' + f.room + '</span>' +
+            '<span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>' +
+          '</span>' +
+        '</button>';
+      }).join('');
     })();
 
     // Tab switching between Stundenplan / Socials — same page, no navigation,
