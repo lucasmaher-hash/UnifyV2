@@ -54,7 +54,13 @@
 .sp-panel--pink{
   background:var(--pink);
   border-radius:0 22px 0 0;
-  padding:20px 16px 0;   /* Figma: outer pt-10 + inner pt-10 = 20 top, no bottom */
+  /* -1px overlaps the pink header above so the fractional --scale transform
+     can't leave a hairline of the dark background showing between the two
+     (previously hidden by the taller old mouth). padding-top gains the same
+     1px back so the content doesn't shift.
+     Figma: outer pt-10 + inner pt-10 = 20 top, no bottom. */
+  margin-top:-1px;
+  padding:21px 16px 0;
   display:flex;
   flex-direction:column;
   gap:4px;
@@ -143,23 +149,24 @@
 
 /* ===================== TAB OVERLAY (eyes + pill + label) ===================== */
 .sp-tab-overlay{ position:absolute; top:0; left:0; width:100%; height:0; pointer-events:none; }
-.sp-tab-overlay__eyes{ position:absolute; left:35px; top:-27px; width:116px; height:40px; display:block; }
-.sp-tab-overlay__pill{ position:absolute; left:16px; top:7px; width:157px; height:53px; display:block; }
+/* Toggle face = pink blob + white eyes + pupils, exported from Figma (the
+   "face" groups). Sits BEFORE the pill in the DOM so the pill paints over its
+   lower edge. Positions are the Figma face bounds relative to the card's top-
+   left (Figma's frame origin lines up with .sp-card — both start with the 60px
+   tab_switcher / .sp-header). */
+.sp-tab-overlay__face{ position:absolute; left:20px; top:-36px; width:142px; height:46px; display:block; }
+.sp-tab-overlay__face--socials{ left:237.5px; top:-33px; width:131px; height:46px; }
+/* Mouth (the dark pill holding the label), exported from Figma's Ellipse 169.
+   Position/size are the Figma bounds relative to the card's top-left. */
+.sp-tab-overlay__pill{ position:absolute; left:8.4px; top:10.8px; width:167.6px; height:48.2px; display:block; }
 .sp-tab-overlay__label{
-  position:absolute; left:20px; top:15px; margin:0;
+  position:absolute; left:18px; top:19px; margin:0;
   font-family:var(--font); font-weight:800; font-size:24px; color:var(--cream); white-space:nowrap;
 }
 
 /* socials tab: overlay mirrored to the right side */
-.sp-tab-overlay__pill--socials{ left:242px; top:4px; width:121px; height:53px; }
-.sp-tab-overlay__label--socials{ left:267px; top:14px; }
-.sp-socials-eyes{ position:absolute; left:0; top:0; }
-.sp-socials-eyes__white{ position:absolute; top:-24px; width:58px; height:35px; display:block; }
-.sp-socials-eyes__white--l{ left:247px; }
-.sp-socials-eyes__white--r{ left:300px; }
-.sp-socials-eyes__heart{ position:absolute; top:-12px; display:block; }
-.sp-socials-eyes__heart--l{ left:270px; width:27px; height:18px; }
-.sp-socials-eyes__heart--r{ left:308px; width:26px; height:18px; }
+.sp-tab-overlay__pill--socials{ left:242.5px; top:13.7px; width:121px; height:45.3px; }
+.sp-tab-overlay__label--socials{ left:267.5px; top:16px; }
 
 /* ============================ SEARCH BAR ============================ */
 .sp-search{
@@ -303,9 +310,13 @@
    (gated by max-height growing into already-visible content) looked smooth.
    Keeping them in-flow and relying purely on the tight max-height/overflow
    clip above makes the close animate exactly as smoothly as the open. */
-/* The lip shows in both states; the plus-button only appears once open. */
+/* The lip shows in both states; the plus-button only appears once open.
+   Fades via opacity rather than display:none — display isn't animatable, which
+   is what made it pop in/out. pointer-events:none keeps the faded-out button
+   unclickable. */
 .sp-activity:not(.sp-activity--open) .sp-activity__plus-btn{
-  display:none;
+  opacity:0;
+  pointer-events:none;
 }
 /* first-on-top stacking so each card's poking face isn't covered by the one below */
 .sp-cards-socials .sp-activity:nth-of-type(1){ z-index:4; }
@@ -353,6 +364,12 @@
   border-radius:999px; background:var(--dark);
   display:flex; align-items:center; justify-content:center;
   border:0; padding:0; cursor:pointer;
+  opacity:1;
+  /* dissolves in/out as the card opens/closes */
+  transition:opacity .45s ease;
+}
+@media (prefers-reduced-motion: reduce){
+  .sp-activity__plus-btn{ transition:none; }
 }
 .sp-activity__plus-btn img{
   position:absolute; width:24px; height:24px; display:block;
