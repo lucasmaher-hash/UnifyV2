@@ -211,20 +211,44 @@
 .map-sheet__toggle-chevron img{ display:block; width:100%; height:100%; }
 
 .map-sheet__body{ width:100%; overflow-y:auto; flex:0 1 auto; }
-.map-sheet__panel{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+.map-sheet__panel{ display:flex; flex-direction:column; align-items:center; gap:22px; }
+/* A friend row is min-height:71 but its bubble is only 47 tall at margin-top:12,
+   so every row carries 12px of dead space under its bubble. The gap the eye
+   actually sees between two bubbles is therefore 24 + gap — it was 24+22 = 46.
+   35% less ≈ 30 visible, so gap:6.
+   Course tiles are the bare 47px card with no dead space, so their gap IS the
+   visible spacing — 30px to match the friends. */
+#sheetFriends{ gap:6px; }
+#sheetCourses{ gap:30px; }
+
+/* Equal 30px of breathing room above the first card and below the last one, in
+   both tabs — matching the 30px between cards. The two panels need different
+   numbers because .map-sheet__inner already contributes a 14px gap under the
+   toggle, and a friend row hides 12px of offset at each end (bubble
+   margin-top:12, plus 12px of dead space below it inside the 71px row):
+     friends  top: 14 + 4 + 12 = 30   bottom: 12 + 6 + 12 = 30
+     courses  top: 14 + 16     = 30   bottom: 30 (panel gap) */
+#sheetFriends{ padding-top:4px; }
+#sheetFriends .sp-search{ margin-top:12px; }
+#sheetCourses{ padding-top:16px; }
 /* Author CSS above otherwise beats the UA default [hidden]{display:none} —
    without this, a "hidden" panel would still render and take up space. */
 .map-sheet__panel[hidden]{ display:none; }
 .map-sheet__empty{ margin:20px 0; font-family:var(--font); font-weight:700; color:var(--cream); text-align:center; }
 
+/* Same card as the stundenplan friend bubble (cream, 47 tall, 24px name +
+   muted room), but with no monster to tuck under — so it spans the full row
+   width left-to-right and is rounded on all four corners. Padding matches the
+   friend bubble's own border padding (12px). */
 .map-course-row{
-  width:362px; height:47px;
+  width:362px; min-height:47px;
   background:var(--cream);
-  border-radius:23.5px;
+  border-radius:22px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 20px;
+  gap:8px;
+  padding:6px 12px;
   box-sizing:border-box;
   flex:none;
 }

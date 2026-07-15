@@ -7,9 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=10">
-  <link rel="stylesheet" href="stundenplan.css?v=15">
-  <link rel="stylesheet" href="map.css?v=10">
+  <link rel="stylesheet" href="styles.css?v=12">
+  <link rel="stylesheet" href="stundenplan.css?v=35">
+  <link rel="stylesheet" href="map.css?v=13">
 </head>
 <body>
   <div class="phone-stage">
@@ -253,21 +253,45 @@
 
       <div class="map-sheet__body" id="sheetBody">
         <div class="map-sheet__panel" id="sheetFriends">
-          <div class="sp-friend-row" style="cursor:default;">
-            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble"><span class="sp-friend-row__name">Emil</span><span class="sp-friend-row__room">0.012</span></span>
+          <!-- Same markup/sizing as the stundenplan friend rows, minus the
+               chevron + expand wrapper — these are display-only (not openable).
+               --bubble-left / --name-pad mirror the stundenplan per-friend
+               tuning; the inline `top` is that monster's FACE_DY. -->
+          <div class="sp-friend-row" style="cursor:default;--bubble-left:47px;--name-pad:36px">
+            <img class="sp-friend-row__face" style="top:0" src="assets/friend_monster_1.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__head">
+                <span class="sp-friend-row__name">Emil</span>
+                <span class="sp-friend-row__room">0.012</span>
+              </span>
+            </span>
           </div>
-          <div class="sp-friend-row" style="cursor:default;">
-            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble"><span class="sp-friend-row__name">Emil</span><span class="sp-friend-row__room">0.012</span></span>
+          <div class="sp-friend-row" style="cursor:default;--bubble-left:57px;--name-pad:26px">
+            <img class="sp-friend-row__face" style="top:0" src="assets/friend_monster_3.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__head">
+                <span class="sp-friend-row__name">Yasira</span>
+                <span class="sp-friend-row__room">1.104</span>
+              </span>
+            </span>
           </div>
-          <div class="sp-friend-row" style="cursor:default;">
-            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble"><span class="sp-friend-row__name">Emil</span><span class="sp-friend-row__room">0.012</span></span>
+          <div class="sp-friend-row" style="cursor:default;--bubble-left:47px;--name-pad:36px">
+            <img class="sp-friend-row__face" style="top:0" src="assets/friend_monster_6.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__head">
+                <span class="sp-friend-row__name">Jonas</span>
+                <span class="sp-friend-row__room">2.007</span>
+              </span>
+            </span>
           </div>
-          <div class="sp-friend-row" style="cursor:default;">
-            <img class="sp-friend-row__face" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble"><span class="sp-friend-row__name">Emil</span><span class="sp-friend-row__room">0.012</span></span>
+          <div class="sp-friend-row" style="cursor:default;--bubble-left:32px;--name-pad:51px">
+            <img class="sp-friend-row__face" style="top:-6px" src="assets/friend_monster_8.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__head">
+                <span class="sp-friend-row__name">Lena</span>
+                <span class="sp-friend-row__room">0.220</span>
+              </span>
+            </span>
           </div>
           <div class="sp-search">
             <img class="sp-search__icon" src="assets/icon_search.svg" alt="">

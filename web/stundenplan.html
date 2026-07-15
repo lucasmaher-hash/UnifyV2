@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=10">
-  <link rel="stylesheet" href="stundenplan.css?v=26">
+  <link rel="stylesheet" href="stundenplan.css?v=35">
 </head>
 <body>
   <div class="phone-stage">
@@ -85,9 +85,9 @@
               </div>
             </div>
 
-            <div class="sp-search sp-search--plus">
-              <p class="sp-search__label">search friends</p>
-              <p class="sp-search__plus">+</p>
+            <div class="sp-search">
+              <img class="sp-search__icon" src="assets/icon_search.svg" alt="">
+              <p class="sp-search__label">search activities</p>
             </div>
           </div>
 
@@ -275,6 +275,9 @@
 
     var currentWeek = 0;   // 0-based index into WEEKS
     var currentDay = 'montag';
+    // Left-to-right order of the day circles — drives both the slide direction
+    // and swipe navigation.
+    var DAYS = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag'];
 
     // Derive a given week's schedule for a day from the base (week-1) data.
     function scheduleFor(weekIndex, day) {
@@ -291,18 +294,19 @@
       return { pink: base.pink.map(mapCourse), cream: base.cream.map(mapCourse) };
     }
 
-    // Update the "7.3 till 13.3" label + arrow enabled/disabled state (clamped).
+    // Update the "7.3 till 13.3" label. Both arrows stay active at all times —
+    // the weeks wrap around rather than clamping at the ends.
     function updateWeekLabel() {
       var pink = document.getElementById('sp-pink-courses');
       var w = WEEKS[currentWeek];
       pink.querySelector('.sp-week__date:not(.sp-week__date--right)').textContent = w.start;
       pink.querySelector('.sp-week__date--right').textContent = w.end;
-      pink.querySelector('.sp-week__arrow--prev').classList.toggle('is-disabled', currentWeek === 0);
-      pink.querySelector('.sp-week__arrow:not(.sp-week__arrow--prev)').classList.toggle('is-disabled', currentWeek === WEEKS.length - 1);
     }
 
-    // Render courses function
-    function renderCourses(day) {
+    // Render courses function. `dir` drives the slide-in animation:
+    // 1 = new day is to the right (slide in from the right), -1 = from the left,
+    // 0/undefined = no animation (initial render, week change).
+    function renderCourses(day, dir) {
       currentDay = day;
       var courses = scheduleFor(currentWeek, day);
       var pinkContainer = document.getElementById('sp-pink-courses');
@@ -352,6 +356,33 @@
           creamContainer.insertAdjacentHTML('beforeend', renderCourse(course));
         });
       }
+
+      // Courses are re-created on every render, so simply adding the class runs
+      // the animation fresh each time — no need to remove/restart it.
+      if (dir) {
+        var cls = dir > 0 ? 'sp-slide-from-right' : 'sp-slide-from-left';
+        var animated = [].slice.call(pinkContainer.querySelectorAll('.sp-course'))
+          .concat([].slice.call(creamContainer.children));
+        animated.forEach(function (el) { el.classList.add(cls); });
+      }
+    }
+
+    // Switch to a day, working out the slide direction from the day order.
+    function selectDay(day) {
+      if (day === currentDay) return;
+      var dir = DAYS.indexOf(day) > DAYS.indexOf(currentDay) ? 1 : -1;
+      var pink = document.getElementById('sp-pink-courses');
+      pink.querySelectorAll('.sp-day').forEach(function (b) {
+        b.classList.toggle('sp-day--active', b.getAttribute('data-day') === day);
+      });
+      renderCourses(day, dir);
+    }
+
+    // Step n days from the current one (used by swipe). Clamped, no wraparound.
+    function stepDay(delta) {
+      var i = DAYS.indexOf(currentDay) + delta;
+      if (i < 0 || i >= DAYS.length) return;
+      selectDay(DAYS[i]);
     }
 
     // Scale the phone down so the whole 402×874 frame always fits the window.
@@ -371,32 +402,43 @@
       var dayButtons = pink.querySelectorAll('.sp-day');
       dayButtons.forEach(function (btn) {
         btn.addEventListener('click', function () {
-          var day = btn.getAttribute('data-day');
-
-          // Update active state
-          dayButtons.forEach(function (b) { b.classList.remove('sp-day--active'); });
-          btn.classList.add('sp-day--active');
-
-          // Render courses for selected day (keeps the current week)
-          renderCourses(day);
+          selectDay(btn.getAttribute('data-day'));   // keeps the current week
         });
       });
 
-      // Week arrows — clamped, no wraparound (matches Figma select_week)
+      // Swipe horizontally across the timetable card to change day.
+      // Pointer events cover both trackpad/mouse drag and touch.
+      (function () {
+        var card = document.querySelector('#view-stundenplan .sp-card');
+        if (!card) return;
+        var sx = 0, sy = 0, down = false;
+        var THRESHOLD = 40;   // px; keeps taps on day/week buttons from swiping
+        card.addEventListener('pointerdown', function (e) {
+          sx = e.clientX; sy = e.clientY; down = true;
+        });
+        card.addEventListener('pointerup', function (e) {
+          if (!down) return;
+          down = false;
+          var dx = e.clientX - sx, dy = e.clientY - sy;
+          // Ignore short drags and anything more vertical than horizontal, so
+          // scrolling the page never flips the day.
+          if (Math.abs(dx) < THRESHOLD || Math.abs(dx) <= Math.abs(dy)) return;
+          stepDay(dx < 0 ? 1 : -1);   // swipe left → next day, right → previous
+        });
+        card.addEventListener('pointercancel', function () { down = false; });
+      })();
+
+      // Week arrows — loop around: back from week 1 lands on the last week,
+      // forward from the last week lands on week 1. Never disabled.
       var prevArrow = pink.querySelector('.sp-week__arrow--prev');
       var nextArrow = pink.querySelector('.sp-week__arrow:not(.sp-week__arrow--prev)');
-      prevArrow.addEventListener('click', function () {
-        if (currentWeek === 0) return;
-        currentWeek--;
+      function stepWeek(delta) {
+        currentWeek = (currentWeek + delta + WEEKS.length) % WEEKS.length;
         updateWeekLabel();
         renderCourses(currentDay);
-      });
-      nextArrow.addEventListener('click', function () {
-        if (currentWeek === WEEKS.length - 1) return;
-        currentWeek++;
-        updateWeekLabel();
-        renderCourses(currentDay);
-      });
+      }
+      prevArrow.addEventListener('click', function () { stepWeek(-1); });
+      nextArrow.addEventListener('click', function () { stepWeek(1); });
 
       // Initialize: week 1, Monday
       updateWeekLabel();
@@ -426,27 +468,67 @@
       // the edge never drags the text under the monster.
       var NAME_X = 83;
       var friends = [
-        { name: 'Emil',    room: '0.012', monster: 'friend_monster_1.svg' },
-        { name: 'Yasira',  room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57 },
-        { name: 'Jonas',   room: '2.007', monster: 'friend_monster_6.svg' },
-        { name: 'Lena',    room: '0.220', monster: 'friend_monster_8.svg', bubbleLeft: 32 },
-        { name: 'Theo',    room: '1.019', monster: 'friend_monster_2.svg' },
-        { name: 'Marlene', room: '2.113', monster: 'friend_monster_9.svg' }
+        { name: 'Emil', room: '0.012', monster: 'friend_monster_1.svg', courses: [
+          { title: 'Interface Design', time: '09:00-10:30', room: '1.019' },
+          { title: 'Typografie',       time: '11:00-12:30', room: '2.004' },
+          { title: 'Fotografie',       time: '14:00-15:30', room: '0.112' }
+        ] },
+        { name: 'Yasira', room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57, courses: [
+          { title: 'Prototyping', time: '08:30-10:00', room: '1.104' },
+          { title: 'Ergonomie',   time: '10:15-11:45', room: '1.019' }
+        ] },
+        { name: 'Jonas', room: '2.007', monster: 'friend_monster_6.svg', courses: [
+          { title: 'Modelbau',  time: '09:00-12:00', room: '2.007' },
+          { title: 'Mathe',     time: '13:00-14:30', room: '2.013' },
+          { title: 'Statistik', time: '15:00-16:30', room: '2.101' }
+        ] },
+        { name: 'Lena', room: '0.220', monster: 'friend_monster_8.svg', bubbleLeft: 32, courses: [
+          { title: 'Illustration',   time: '09:30-11:00', room: '0.220' },
+          { title: 'Design Systems', time: '11:30-13:00', room: '1.019' }
+        ] },
+        { name: 'Theo', room: '1.019', monster: 'friend_monster_2.svg', courses: [
+          { title: 'Motion Design',  time: '10:00-11:30', room: '1.019' },
+          { title: 'ID Grundlagen',  time: '12:00-13:30', room: '1.019' },
+          { title: 'Keramik',        time: '14:30-16:00', room: '0.004' }
+        ] },
+        { name: 'Marlene', room: '2.113', monster: 'friend_monster_9.svg', courses: [
+          { title: 'UX Research', time: '08:00-09:30', room: '2.113' },
+          { title: 'Portfolio',   time: '10:00-11:30', room: '2.113' }
+        ] }
       ];
       var list = document.getElementById('sp-friend-list');
       if (!list) return;
       list.innerHTML = friends.map(function (f) {
         var dy = FACE_DY[f.monster] || 0;
         var bl = f.bubbleLeft || BUBBLE_LEFT;
-        return '<button class="sp-friend-row" style="padding-left:' + bl + 'px">' +
+        var coursesHtml = (f.courses || []).map(function (c) {
+          return '<span class="sp-friend-course">' +
+            '<span class="sp-friend-course__divider"></span>' +
+            '<span class="sp-friend-course__row">' +
+              '<span class="sp-friend-course__name">' + c.title + '</span>' +
+              '<span class="sp-friend-course__time">' + c.time + '</span>' +
+            '</span>' +
+            '<span class="sp-friend-course__room">' + c.room + '</span>' +
+          '</span>';
+        }).join('');
+        return '<button class="sp-friend-row" style="--bubble-left:' + bl + 'px;--name-pad:' + (NAME_X - bl) + 'px">' +
           '<img class="sp-friend-row__face" style="top:' + dy + 'px" src="assets/' + f.monster + '" alt="">' +
-          '<span class="sp-friend-row__bubble" style="padding-left:' + (NAME_X - bl) + 'px">' +
-            '<span class="sp-friend-row__name">' + f.name + '</span>' +
-            '<span class="sp-friend-row__room">' + f.room + '</span>' +
-            '<span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>' +
+          '<span class="sp-friend-row__bubble">' +
+            '<span class="sp-friend-row__head">' +
+              '<span class="sp-friend-row__name">' + f.name + '</span>' +
+              '<span class="sp-friend-row__room">' + f.room + '</span>' +
+              '<span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>' +
+            '</span>' +
+            '<span class="sp-friend-row__expand"><span class="sp-friend-row__courses">' + coursesHtml + '</span></span>' +
           '</span>' +
         '</button>';
       }).join('');
+
+      // Click a friend row to expand it downwards into its course list.
+      list.addEventListener('click', function (e) {
+        var row = e.target.closest('.sp-friend-row');
+        if (row) row.classList.toggle('is-open');
+      });
     })();
 
     // Tab switching between Stundenplan / Socials — same page, no navigation,

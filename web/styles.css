@@ -302,13 +302,15 @@ body{
 .floorplan{ display:flex; justify-content:center; width:100%; }
 .floorplan img{ display:block; width:339px; height:auto; }
 
-/* shared face (pill + eyes + round arrow button), pokes bottom-right */
-.panel__face{ position:absolute; width:119px; height:166px; }
+/* shared face (lip + round arrow button), pokes bottom-right.
+   Same lip + button sizing as the socials activity card: an 80×80 lip whose
+   semicircular bottom (r=40) is concentric with the 64px button (r=32), so the
+   button sits perfectly centred inside an even 8px ring. Home keeps the arrow
+   icon rather than the plus. */
+.panel__face{ position:absolute; width:80px; height:80px; }
 .panel__face-pill{
-  position:absolute;
-  left:9px; top:0;
-  width:82px; height:156px;
-  border-radius:41px;
+  position:absolute; inset:0;
+  border-radius:0 0 999px 999px;
 }
 .panel__face-pill--pink{ background:var(--pink); }
 .panel__face-pill--cream{ background:var(--cream); }
@@ -321,7 +323,7 @@ body{
 .panel__face-eyes img{ display:block; width:79.324px; height:52.543px; transform:rotate(15.34deg); }
 .panel__face-btn{
   position:absolute;
-  left:18px; top:83px;
+  left:8px; top:8px;          /* centred in the 80×80 lip */
   width:64px; height:64px;
   border-radius:999px;
   background:var(--dark);
@@ -349,7 +351,7 @@ body{
 
 /* first-on-top z-order (matches Figma itemReverseZIndex) */
 .card--connect{ height:72px; z-index:4; }
-.card--connect .card__bubble{ width:377px; height:99px; }
+.card--connect .card__bubble{ width:377px; height:118px; }
 .card--connect .card__label{ left:15px; top:11px; }
 .card--connect .card__eyes{ left:317px; top:33px; }
 
@@ -358,12 +360,12 @@ body{
 .card--small .card__label{ left:13.293px; top:9.748px; }
 
 .card--socials{ height:72px; z-index:2; }
-.card--socials .card__bubble{ width:377px; height:99px; }
+.card--socials .card__bubble{ width:377px; height:118px; }
 .card--socials .card__label{ left:15px; top:11px; }
 .card--socials .card__eyes{ left:318px; top:33px; }
 
 .card--map{ height:99px; z-index:1; }
-.card--map .card__bubble{ width:377px; height:99px; }
+.card--map .card__bubble{ width:377px; height:118px; }
 .card--map .card__label{ left:15px; top:11px; }
 .card--map .card__eyes{ left:317px; top:27px; }
 
