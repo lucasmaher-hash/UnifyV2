@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=10">
-  <link rel="stylesheet" href="stundenplan.css?v=23">
+  <link rel="stylesheet" href="stundenplan.css?v=24">
 </head>
 <body>
   <div class="phone-stage">
@@ -421,6 +421,19 @@
 
     // Friend list — varied monster shapes (Figma figur 1–8), names, and rooms.
     (function () {
+      // Per-monster vertical nudge (px). Negative = up. Tall shapes are raised so
+      // their head pokes above the bubble instead of hanging below it; short/wide
+      // shapes sit near centered. Tune these individually if any looks off.
+      var FACE_DY = {
+        'friend_monster_1.svg': 0,
+        'friend_monster_2.svg': -2,
+        'friend_monster_3.svg': 0,
+        'friend_monster_4.svg': -6,
+        'friend_monster_6.svg': 0,
+        'friend_monster_7.svg': 1,
+        'friend_monster_8.svg': -6,
+        'friend_monster_9.svg': -7
+      };
       var friends = [
         { name: 'Emil',    room: '0.012', monster: 'friend_monster_1.svg' },
         { name: 'Yasira',  room: '1.104', monster: 'friend_monster_3.svg' },
@@ -432,8 +445,9 @@
       var list = document.getElementById('sp-friend-list');
       if (!list) return;
       list.innerHTML = friends.map(function (f) {
+        var dy = FACE_DY[f.monster] || 0;
         return '<button class="sp-friend-row">' +
-          '<img class="sp-friend-row__face" src="assets/' + f.monster + '" alt="">' +
+          '<img class="sp-friend-row__face" style="top:' + dy + 'px" src="assets/' + f.monster + '" alt="">' +
           '<span class="sp-friend-row__bubble">' +
             '<span class="sp-friend-row__name">' + f.name + '</span>' +
             '<span class="sp-friend-row__room">' + f.room + '</span>' +
