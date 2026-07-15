@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=10">
-  <link rel="stylesheet" href="stundenplan.css?v=24">
+  <link rel="stylesheet" href="stundenplan.css?v=26">
 </head>
 <body>
   <div class="phone-stage">
@@ -105,12 +105,8 @@
               <div class="sp-activity__divider"></div>
               <p class="sp-activity__desc">Der Semesterausklang mit Musik, Drinks und guter Stimmung. Bringt eure Freunde mit!</p>
             </div>
-            <div class="sp-activity__face sp-activity__face--closed sp-activity__face--pink">
-              <span class="sp-activity__face-pill"></span>
-              <img class="sp-activity__face-eyes" src="assets/activity3_face_eyes.svg?v=2" alt="">
-            </div>
-            <div class="sp-activity__face sp-activity__face--open">
-              <button class="sp-activity__eyes"><img src="assets/activity1_face_eyes.svg?v=2" alt=""></button>
+            <div class="sp-activity__face">
+              <span class="sp-activity__lip"></span>
               <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
                 <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
                 <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
@@ -132,12 +128,8 @@
               <div class="sp-activity__divider"></div>
               <p class="sp-activity__desc">Gemütlicher Kinoabend mit Popcorn und Decken. Der Film wird spontan gewählt.</p>
             </div>
-            <div class="sp-activity__face sp-activity__face--closed sp-activity__face--cream">
-              <span class="sp-activity__face-pill"></span>
-              <img class="sp-activity__face-eyes" src="assets/activity2_face_eyes.svg?v=2" alt="">
-            </div>
-            <div class="sp-activity__face sp-activity__face--open">
-              <button class="sp-activity__eyes"><img src="assets/activity2_face_eyes.svg?v=2" alt=""></button>
+            <div class="sp-activity__face">
+              <span class="sp-activity__lip"></span>
               <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
                 <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
                 <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
@@ -159,12 +151,8 @@
               <div class="sp-activity__divider"></div>
               <p class="sp-activity__desc">Lesen, diskutieren und Buchtipps austauschen bei Tee und Keksen. Neue Gesichter willkommen.</p>
             </div>
-            <div class="sp-activity__face sp-activity__face--closed sp-activity__face--pink">
-              <span class="sp-activity__face-pill"></span>
-              <img class="sp-activity__face-eyes" src="assets/activity3_face_eyes.svg?v=2" alt="">
-            </div>
-            <div class="sp-activity__face sp-activity__face--open">
-              <button class="sp-activity__eyes"><img src="assets/activity3_face_eyes.svg?v=2" alt=""></button>
+            <div class="sp-activity__face">
+              <span class="sp-activity__lip"></span>
               <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
                 <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
                 <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
@@ -186,12 +174,8 @@
               <div class="sp-activity__divider"></div>
               <p class="sp-activity__desc">Kurzvorträge zu spannenden Themen von Studierenden für Studierende, mit Fragerunde.</p>
             </div>
-            <div class="sp-activity__face sp-activity__face--closed sp-activity__face--cream">
-              <span class="sp-activity__face-pill"></span>
-              <img class="sp-activity__face-eyes" src="assets/activity2_face_eyes.svg?v=2" alt="">
-            </div>
-            <div class="sp-activity__face sp-activity__face--open">
-              <button class="sp-activity__eyes"><img src="assets/activity2_face_eyes.svg?v=2" alt=""></button>
+            <div class="sp-activity__face">
+              <span class="sp-activity__lip"></span>
               <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
                 <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
                 <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
@@ -434,11 +418,18 @@
         'friend_monster_8.svg': -6,
         'friend_monster_9.svg': -7
       };
+      // Where the cream bubble's left edge sits (px from the row's left edge).
+      // Default 47 tucks it under the monster; per-friend overrides trim/extend
+      // that edge so no cream sliver peeks out from under a given monster shape.
+      var BUBBLE_LEFT = 47;
+      // The name is pinned to this x regardless of the bubble edge, so moving
+      // the edge never drags the text under the monster.
+      var NAME_X = 83;
       var friends = [
         { name: 'Emil',    room: '0.012', monster: 'friend_monster_1.svg' },
-        { name: 'Yasira',  room: '1.104', monster: 'friend_monster_3.svg' },
+        { name: 'Yasira',  room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57 },
         { name: 'Jonas',   room: '2.007', monster: 'friend_monster_6.svg' },
-        { name: 'Lena',    room: '0.220', monster: 'friend_monster_8.svg' },
+        { name: 'Lena',    room: '0.220', monster: 'friend_monster_8.svg', bubbleLeft: 32 },
         { name: 'Theo',    room: '1.019', monster: 'friend_monster_2.svg' },
         { name: 'Marlene', room: '2.113', monster: 'friend_monster_9.svg' }
       ];
@@ -446,9 +437,10 @@
       if (!list) return;
       list.innerHTML = friends.map(function (f) {
         var dy = FACE_DY[f.monster] || 0;
-        return '<button class="sp-friend-row">' +
+        var bl = f.bubbleLeft || BUBBLE_LEFT;
+        return '<button class="sp-friend-row" style="padding-left:' + bl + 'px">' +
           '<img class="sp-friend-row__face" style="top:' + dy + 'px" src="assets/' + f.monster + '" alt="">' +
-          '<span class="sp-friend-row__bubble">' +
+          '<span class="sp-friend-row__bubble" style="padding-left:' + (NAME_X - bl) + 'px">' +
             '<span class="sp-friend-row__name">' + f.name + '</span>' +
             '<span class="sp-friend-row__room">' + f.room + '</span>' +
             '<span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>' +
