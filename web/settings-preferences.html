@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unify — Einstellungen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=16">
+  <link rel="stylesheet" href="settings.css?v=4">
+</head>
+<body>
+  <div class="phone-stage">
+  <div class="phone phone--cream" data-screen="settings-preferences">
+    <div class="settings-screen">
+
+      <!-- ================= BACK HEADER ================= -->
+      <div class="settings-sub-header">
+        <a class="settings-back" href="settings.html">
+          <img class="settings-back__icon" src="assets/icon_back_chevron.svg" alt="">
+          <span class="settings-back__label">einstellungen</span>
+        </a>
+      </div>
+
+      <!-- ================= PANEL ================= -->
+      <div class="settings-panel settings-panel--prefs">
+        <img class="settings-panel__figur" src="assets/nav_figur_peek.svg" alt="" aria-hidden="true">
+
+        <div class="settings-toggles">
+          <div class="settings-toggle-row">
+            <p class="settings-toggle-row__label">Push-Benachrichtigungen:</p>
+            <div class="settings-toggle is-left" data-toggle="push">
+              <span class="settings-toggle__fill"></span>
+              <img class="settings-toggle__edge" src="assets/toggle_bouncy_edge.svg" alt="">
+              <button class="settings-toggle__btn" type="button" data-value="aus">aus</button>
+              <button class="settings-toggle__btn" type="button" data-value="an">an</button>
+            </div>
+          </div>
+
+          <div class="settings-toggle-row">
+            <p class="settings-toggle-row__label">App-Darstellung:</p>
+            <div class="settings-toggle is-left" data-toggle="theme">
+              <span class="settings-toggle__fill"></span>
+              <img class="settings-toggle__edge" src="assets/toggle_bouncy_edge.svg" alt="">
+              <button class="settings-toggle__btn" type="button" data-value="light">light</button>
+              <button class="settings-toggle__btn" type="button" data-value="dark">dark</button>
+            </div>
+          </div>
+
+          <div class="settings-toggle-row">
+            <p class="settings-toggle-row__label">Standort-Freigabe:</p>
+            <div class="settings-toggle is-left" data-toggle="location">
+              <span class="settings-toggle__fill"></span>
+              <img class="settings-toggle__edge" src="assets/toggle_bouncy_edge.svg" alt="">
+              <button class="settings-toggle__btn" type="button" data-value="aus">aus</button>
+              <button class="settings-toggle__btn" type="button" data-value="an">an</button>
+            </div>
+          </div>
+        </div>
+
+        <nav class="settings-nav" aria-label="Primary">
+          <a class="settings-nav__btn" href="index.html" aria-label="Home"><img src="assets/icon_home_outline.svg" alt=""></a>
+          <a class="settings-nav__btn" href="stundenplan.html" aria-label="Calendar"><img src="assets/icon_calendar.svg" alt=""></a>
+          <a class="settings-nav__btn" href="map.html" aria-label="Map"><img src="assets/icon_pin.svg" alt=""></a>
+          <button class="settings-nav__btn" type="button" aria-label="Settings" aria-current="page"><img src="assets/icon_star_filled.svg" alt=""></button>
+        </nav>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+  <script>
+    // Scale the phone down so the whole 402×874 frame always fits the window.
+    (function () {
+      var MARGIN = 40;
+      function fit() {
+        var s = Math.min(1, (window.innerHeight - MARGIN) / 874, (window.innerWidth - MARGIN) / 402);
+        document.documentElement.style.setProperty('--scale', s);
+      }
+      fit();
+      window.addEventListener('resize', fit);
+    })();
+
+    // ===================== Bottom nav: bounce feedback =====================
+    (function () {
+      var current = document.querySelector('.settings-nav__btn[aria-current="page"]');
+      if (current) current.classList.add('nav-bounce');
+
+      document.querySelectorAll('.settings-nav__btn:not([href])').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btn.classList.remove('nav-bounce');
+          void btn.offsetWidth;
+          btn.classList.add('nav-bounce');
+        });
+      });
+    })();
+
+    // Bouncy segmented toggles: click either side to make it the active
+    // (pink) half — matches the day-selector/tab-switch click pattern used
+    // elsewhere in this app.
+    (function () {
+      document.querySelectorAll('.settings-toggle').forEach(function (toggle) {
+        var btns = toggle.querySelectorAll('.settings-toggle__btn');
+        btns.forEach(function (btn, i) {
+          btn.addEventListener('click', function () {
+            toggle.classList.toggle('is-left', i === 0);
+            toggle.classList.toggle('is-right', i === 1);
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -13,6 +13,262 @@
   display:flex;
   flex-direction:column;
   background:var(--cream);
+  /* Pages 2-4 fit within 874px by design (verified against Figma's own
+     measurements), same as page 1 — but auto (not visible/hidden) costs
+     nothing when unused and is a safety net if any page's content runs long. */
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:none;
+}
+.settings-screen::-webkit-scrollbar{ width:0; height:0; background:transparent; }
+
+/* ============================================================
+   SHARED: back header + dark "nav_bar_figur" panel, used by settings
+   pages 2/3/4 (account / friends / einstellungen). Source: Figma
+   959:11147, 959:11076, 959:11101 — all three share this exact
+   back-button + peeking-figur-panel shell, only the content inside
+   the panel differs per page.
+   ============================================================ */
+.settings-sub-header{
+  flex:1 0 0;
+  min-height:0;
+  width:100%;
+  box-sizing:border-box;
+  padding:57px 18px 27px;
+  display:flex;
+  align-items:flex-start;
+}
+.settings-back{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  text-decoration:none;
+  cursor:pointer;
+}
+.settings-back__icon{ display:block; width:52px; height:53.42px; transform:rotate(180deg); }
+.settings-back__label{
+  margin:0;
+  font-family:var(--font);
+  font-weight:800;
+  font-size:41.42px;
+  line-height:34.51px;
+  color:var(--dark);
+}
+
+/* dark panel: rounded on BOTH top corners here (page 1's profile_menu was
+   top-left only — these three use the "nav_bar_figur" shell instead). */
+.settings-panel{
+  position:relative;
+  flex:none;
+  width:100%;
+  background:var(--dark);
+  border-radius:44px 44px 0 0;
+  box-sizing:border-box;
+  padding:19px 10px 15px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  overflow:visible;
+}
+.settings-panel--account{ gap:72px; }
+.settings-panel--prefs{ gap:58px; }
+/* .settings-panel--friends needs no panel-level gap: the friends list's own
+   py-14 already provides clearance before the nav, matching Figma exactly. */
+
+/* small peeking monster (nav_bar_figur's "figur", NOT the big Figur=1 used on
+   page 1) — centred, poking up out of the panel's top edge. */
+.settings-panel__figur{
+  position:absolute;
+  left:50%; top:-59px;
+  width:178px; height:66px;
+  transform:translateX(-50%);
+  pointer-events:none;
+  display:block;
+}
+
+/* ============================================================
+   PAGE 2 — account
+   ============================================================ */
+.settings-account-info{
+  display:flex;
+  flex-direction:column;
+  gap:76px;
+  align-items:center;
+}
+.settings-account-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  width:368px;
+  padding:0 0 48px 12px;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+.settings-account-list p{
+  margin:0;
+  font-family:var(--font);
+  font-weight:800;
+  font-size:19px;
+  color:var(--cream);
+  white-space:nowrap;
+}
+.settings-account-list__name{ font-size:24px; }
+/* .settings-account-list p (0,1,1) otherwise beats this (0,1,0) regardless of
+   source order — specificity, not position, decides ties. Qualify with the
+   type selector to match/exceed it. */
+.settings-account-list p.settings-account-list__id{ color:var(--pink); }
+
+.settings-account-pillgroup{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:center;
+  width:376px;
+}
+.settings-account-pill{
+  width:371px; height:72px;
+  border-radius:34px;
+  background:var(--pink);
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  padding:0 16px 0 21px;
+}
+.settings-account-pill__label{
+  flex:1;
+  margin:0;
+  font-family:var(--font);
+  font-weight:800;
+  font-size:24px;
+  color:var(--dark);
+}
+.settings-account-pill__edit{
+  flex:none;
+  width:53px; height:53px;
+  border-radius:999px;
+  border:3px solid var(--dark);
+  background:none;
+  padding:0;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.settings-account-pill__edit img{ display:block; width:40px; height:41px; }
+.settings-account-help{
+  width:100%;
+  box-sizing:border-box;
+  padding:0 11px;
+  margin:0;
+  font-family:var(--font);
+  font-weight:400;
+  font-size:14px;
+  color:var(--pink);
+  text-align:center;
+}
+
+/* ============================================================
+   PAGE 3 — friends
+   ============================================================ */
+.settings-friends-list{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  height:493px;
+  padding:14px 0;
+  box-sizing:border-box;
+}
+.settings-friends-search{
+  width:377px;
+  box-sizing:border-box;
+  background:#fff;
+  border:1px solid #000;
+  border-radius:23px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:65px;
+  padding:10px 13px;
+  cursor:pointer;
+}
+.settings-friends-search span{
+  font-family:var(--font);
+  font-weight:500;
+  font-size:18px;
+  color:var(--dark);
+  white-space:nowrap;
+}
+/* action icon replaces the room-code slot in the reused .sp-friend-row —
+   green plus (re-add) for the one pending/removed friend, red trash (remove)
+   for the rest, matching Figma exactly. */
+.settings-friend-action{ flex:none; display:block; border:0; background:none; padding:0; cursor:pointer; }
+.settings-friend-action img{ display:block; }
+.settings-friend-action--add img{ width:37px; height:37px; }
+.settings-friend-action--remove img{ width:30px; height:34px; }
+
+/* ============================================================
+   PAGE 4 — einstellungen (preferences)
+   ============================================================ */
+.settings-toggles{
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+  align-items:flex-start;
+}
+.settings-toggle-row{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:flex-start;
+}
+.settings-toggle-row__label{
+  margin:0;
+  width:349px;
+  font-family:var(--font);
+  font-weight:800;
+  font-size:24px;
+  color:var(--cream);
+  text-align:left;
+}
+
+/* Bouncy segmented toggle (toggle_switch component, Shape=Bouncy). Two
+   flex:1 buttons split the 360px pill evenly; the active half gets a solid
+   pink fill reaching PAST the 50% line by half the edge graphic's width, and
+   the wavy edge graphic sits on top of that seam — same layering trick as
+   .map-sheet__toggle-rib on the map page: the solid fill guarantees no gap
+   ever shows through the wave's recesses, regardless of the exact path. */
+.settings-toggle{
+  position:relative;
+  width:360px; height:84px;
+  background:#fff;
+  border-radius:24px;
+  overflow:hidden;
+  display:flex;
+}
+.settings-toggle__fill{
+  position:absolute; top:0; bottom:0; z-index:0;
+  width:calc(50% + 16.5px);
+  background:var(--pink);
+}
+.settings-toggle.is-left .settings-toggle__fill{ left:0; }
+.settings-toggle.is-right .settings-toggle__fill{ right:0; }
+.settings-toggle__edge{
+  position:absolute; top:0; z-index:1;
+  width:33px; height:84px;
+  left:calc(50% - 16.5px);
+  pointer-events:none;
+  display:block;
+}
+.settings-toggle.is-right .settings-toggle__edge{ transform:scaleX(-1); }
+.settings-toggle__btn{
+  position:relative; z-index:2;
+  flex:1;
+  border:0; background:none; padding:0; margin:0;
+  cursor:pointer;
+  font-family:var(--font);
+  font-weight:800;
+  font-size:24px;
+  color:#000;
+  display:flex; align-items:center; justify-content:center;
 }
 
 /* ============================ HEADER ============================ */
@@ -118,11 +374,13 @@
 }
 .settings-btn{
   position:relative;
+  display:block;   /* now an <a> (navigates to settings-account/friends/preferences.html) — anchors are inline by default */
   width:371px; height:87px;
   flex:none;
   border:0; background:none; padding:0; margin:0 auto;
   cursor:pointer;
   text-align:left;
+  text-decoration:none;
 }
 .settings-btn__pill{
   position:absolute;

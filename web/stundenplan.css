@@ -232,6 +232,7 @@
 .sp-friend-row__head{ display:flex; align-items:center; gap:8px; width:100%; }
 .sp-friend-row__name{ font-family:var(--font); font-weight:800; font-size:24px; color:var(--dark); flex:1; text-align:left; }
 .sp-friend-row__room{ font-family:var(--font); font-weight:800; font-size:24px; color:rgba(41,41,37,0.47); }
+.sp-friend-row__room--online{ color:#37C35F; }
 /* the room moves into the course list once open, so hide it in the header */
 .sp-friend-row.is-open .sp-friend-row__room{ display:none; }
 .sp-friend-row__chevron{

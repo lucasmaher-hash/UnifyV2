@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unify — Friends</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=16">
+  <!-- reuses .sp-friend-row (+face/bubble/head/name) from the stundenplan
+       friend list — same component (friends_stundenplan_new) in Figma. -->
+  <link rel="stylesheet" href="stundenplan.css?v=39">
+  <link rel="stylesheet" href="settings.css?v=4">
+</head>
+<body>
+  <div class="phone-stage">
+  <div class="phone phone--cream" data-screen="settings-friends">
+    <div class="settings-screen">
+
+      <!-- ================= BACK HEADER ================= -->
+      <div class="settings-sub-header">
+        <a class="settings-back" href="settings.html">
+          <img class="settings-back__icon" src="assets/icon_back_chevron.svg" alt="">
+          <span class="settings-back__label">friends</span>
+        </a>
+      </div>
+
+      <!-- ================= PANEL ================= -->
+      <div class="settings-panel settings-panel--friends">
+        <img class="settings-panel__figur" src="assets/nav_figur_peek.svg" alt="" aria-hidden="true">
+
+        <div class="settings-friends-list">
+          <button class="settings-friends-search" type="button">
+            <span>name / matrikulationsnummer</span>
+            <span>+</span>
+          </button>
+
+          <!-- lemmy: pending re-add (green plus) -->
+          <div class="sp-friend-row" style="cursor:default;">
+            <img class="sp-friend-row__face" style="top:0" src="assets/face_lemmy.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__head">
+                <span class="sp-friend-row__name">lemmy</span>
+                <button class="settings-friend-action settings-friend-action--add" type="button" aria-label="Add friend back">
+                  <img src="assets/icon_plus_circle.svg" alt="">
+                </button>
+              </span>
+            </span>
+          </div>
+
+          <!-- mara / jonas / greta / emil: remove (red trash) -->
+          <div class="sp-friend-row" style="cursor:default;">
+            <img class="sp-friend-row__face" style="top:0" src="assets/face_lemmy.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__head">
+                <span class="sp-friend-row__name">mara</span>
+                <button class="settings-friend-action settings-friend-action--remove" type="button" aria-label="Remove friend">
+                  <img src="assets/icon_trash.svg" alt="">
+                </button>
+              </span>
+            </span>
+          </div>
+          <div class="sp-friend-row" style="cursor:default;">
+            <img class="sp-friend-row__face" style="top:0" src="assets/face_lemmy.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__head">
+                <span class="sp-friend-row__name">jonas</span>
+                <button class="settings-friend-action settings-friend-action--remove" type="button" aria-label="Remove friend">
+                  <img src="assets/icon_trash.svg" alt="">
+                </button>
+              </span>
+            </span>
+          </div>
+          <div class="sp-friend-row" style="cursor:default;">
+            <img class="sp-friend-row__face" style="top:0" src="assets/face_lemmy.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__head">
+                <span class="sp-friend-row__name">greta</span>
+                <button class="settings-friend-action settings-friend-action--remove" type="button" aria-label="Remove friend">
+                  <img src="assets/icon_trash.svg" alt="">
+                </button>
+              </span>
+            </span>
+          </div>
+          <div class="sp-friend-row" style="cursor:default;">
+            <img class="sp-friend-row__face" style="top:0" src="assets/face_lemmy.svg" alt="">
+            <span class="sp-friend-row__bubble">
+              <span class="sp-friend-row__head">
+                <span class="sp-friend-row__name">emil</span>
+                <button class="settings-friend-action settings-friend-action--remove" type="button" aria-label="Remove friend">
+                  <img src="assets/icon_trash.svg" alt="">
+                </button>
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <nav class="settings-nav" aria-label="Primary">
+          <a class="settings-nav__btn" href="index.html" aria-label="Home"><img src="assets/icon_home_outline.svg" alt=""></a>
+          <a class="settings-nav__btn" href="stundenplan.html" aria-label="Calendar"><img src="assets/icon_calendar.svg" alt=""></a>
+          <a class="settings-nav__btn" href="map.html" aria-label="Map"><img src="assets/icon_pin.svg" alt=""></a>
+          <button class="settings-nav__btn" type="button" aria-label="Settings" aria-current="page"><img src="assets/icon_star_filled.svg" alt=""></button>
+        </nav>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+  <script>
+    // Scale the phone down so the whole 402×874 frame always fits the window.
+    (function () {
+      var MARGIN = 40;
+      function fit() {
+        var s = Math.min(1, (window.innerHeight - MARGIN) / 874, (window.innerWidth - MARGIN) / 402);
+        document.documentElement.style.setProperty('--scale', s);
+      }
+      fit();
+      window.addEventListener('resize', fit);
+    })();
+
+    // ===================== Bottom nav: bounce feedback =====================
+    (function () {
+      var current = document.querySelector('.settings-nav__btn[aria-current="page"]');
+      if (current) current.classList.add('nav-bounce');
+
+      document.querySelectorAll('.settings-nav__btn:not([href])').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btn.classList.remove('nav-bounce');
+          void btn.offsetWidth;
+          btn.classList.add('nav-bounce');
+        });
+      });
+    })();
+
+    // Add/remove friend actions: toggle the row's visual state only — no
+    // backing data yet. Remove fades the row out; add just gives tap feedback.
+    (function () {
+      document.querySelectorAll('.settings-friend-action--remove').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var row = btn.closest('.sp-friend-row');
+          if (row) row.style.display = 'none';
+        });
+      });
+      document.querySelectorAll('.settings-friend-action--add').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btn.classList.remove('settings-btn-tap');
+          void btn.offsetWidth;
+          btn.classList.add('settings-btn-tap');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

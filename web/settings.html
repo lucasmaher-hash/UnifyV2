@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=16">
-  <link rel="stylesheet" href="settings.css?v=2">
+  <link rel="stylesheet" href="settings.css?v=4">
 </head>
 <body>
   <div class="phone-stage">
@@ -38,27 +38,25 @@
           </div>
         </div>
 
-        <!-- account / friends / settings — not yet wired to settings pages
-             2/3/4 (they don't exist yet); will get hrefs once those are built. -->
         <div class="settings-buttons">
-          <button class="settings-btn" type="button" data-settings-target="account">
+          <a class="settings-btn" href="settings-account.html">
             <span class="settings-btn__pill">
               <span class="settings-btn__label">account</span>
               <span class="settings-btn__arrow"><img src="assets/icon_arrow_white.svg" alt=""></span>
             </span>
-          </button>
-          <button class="settings-btn" type="button" data-settings-target="friends">
+          </a>
+          <a class="settings-btn" href="settings-friends.html">
             <span class="settings-btn__pill">
               <span class="settings-btn__label">friends</span>
               <span class="settings-btn__arrow"><img src="assets/icon_arrow_white.svg" alt=""></span>
             </span>
-          </button>
-          <button class="settings-btn" type="button" data-settings-target="settings">
+          </a>
+          <a class="settings-btn" href="settings-preferences.html">
             <span class="settings-btn__pill">
               <span class="settings-btn__label">settings</span>
               <span class="settings-btn__arrow"><img src="assets/icon_arrow_white.svg" alt=""></span>
             </span>
-          </button>
+          </a>
         </div>
 
         <!-- nav lives INSIDE profile_menu in Figma (last child) — same
@@ -106,19 +104,10 @@
       });
     })();
 
-    // account/friends/settings buttons: no destination yet (settings pages
-    // 2/3/4 aren't built) — just a very subtle tap acknowledgement (NOT the
-    // nav-bounce used for the bottom nav — that's too showy for a settings
-    // row) so the buttons don't feel dead while wiring the rest of this page.
-    (function () {
-      document.querySelectorAll('.settings-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          btn.classList.remove('settings-btn-tap');
-          void btn.offsetWidth;
-          btn.classList.add('settings-btn-tap');
-        });
-      });
-    })();
+    // account/friends/settings now navigate to their own pages (settings-
+    // account/friends/preferences.html) — no click-triggered animation here,
+    // same reliability reasoning as the bottom nav (see above): a link that
+    // navigates away shouldn't race an animation against the page unload.
   </script>
 </body>
 </html>

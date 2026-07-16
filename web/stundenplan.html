@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=16">
-  <link rel="stylesheet" href="stundenplan.css?v=39">
+  <link rel="stylesheet" href="stundenplan.css?v=40">
 </head>
 <body>
   <div class="phone-stage">
@@ -463,16 +463,16 @@
       // the edge never drags the text under the monster.
       var NAME_X = 83;
       var friends = [
-        { name: 'Emil', room: '0.012', monster: 'friend_monster_1.svg', courses: [
+        { name: 'Emil', room: '0.012', monster: 'friend_monster_1.svg', online: true, courses: [
           { title: 'Interface Design', time: '09:00-10:30', room: '1.019' },
           { title: 'Typografie',       time: '11:00-12:30', room: '2.004' },
           { title: 'Fotografie',       time: '14:00-15:30', room: '0.112' }
         ] },
-        { name: 'Yasira', room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57, courses: [
+        { name: 'Yasira', room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57, online: true, courses: [
           { title: 'Prototyping', time: '08:30-10:00', room: '1.104' },
           { title: 'Ergonomie',   time: '10:15-11:45', room: '1.019' }
         ] },
-        { name: 'Jonas', room: '2.007', monster: 'friend_monster_6.svg', courses: [
+        { name: 'Jonas', room: '2.007', monster: 'friend_monster_6.svg', online: true, courses: [
           { title: 'Modelbau',  time: '09:00-12:00', room: '2.007' },
           { title: 'Mathe',     time: '13:00-14:30', room: '2.013' },
           { title: 'Statistik', time: '15:00-16:30', room: '2.101' }
@@ -511,7 +511,7 @@
           '<span class="sp-friend-row__bubble">' +
             '<span class="sp-friend-row__head">' +
               '<span class="sp-friend-row__name">' + f.name + '</span>' +
-              '<span class="sp-friend-row__room">' + f.room + '</span>' +
+              '<span class="sp-friend-row__room' + (f.online ? ' sp-friend-row__room--online' : '') + '">' + f.room + '</span>' +
               '<span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>' +
             '</span>' +
             '<span class="sp-friend-row__expand"><span class="sp-friend-row__courses">' + coursesHtml + '</span></span>' +
