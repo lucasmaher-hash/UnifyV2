@@ -408,15 +408,23 @@ body{
 
 /* Shared bounce feedback for ANY bottom-nav button (both the standalone .nav
    on index/stundenplan and .map-sheet__nav-btn embedded in the map's pull-up
-   sheet) — grows to 1.3x and springs back over ~1s. Applied/restarted via JS
+   sheet) — grows to 1.2x and springs back over ~0.6s. Applied/restarted via JS
    (each page's own nav-bounce IIFE) rather than :active, so a rapid re-click
-   restarts it cleanly; navigation itself is immediate/undelayed. */
+   restarts it cleanly; navigation itself is immediate/undelayed.
+   The overshoot easing (that 1.56 briefly pushes PAST the target value — it's
+   what makes a spring feel springy) is set per-keyframe-segment, not once on
+   the whole animation. A single overshoot easing spread across three
+   keyframes (0%/40%/100%) warps both segments' timing at once, which reads as
+   a jerky double-bounce rather than one clean motion. Confining it to just the
+   settle segment (peak → 1) — with a plain ease-out for the initial pop — is
+   what actually reads as smooth. will-change hints the browser to composite
+   this on the GPU instead of repainting every frame. */
 @keyframes nav-bounce{
-  0%   { transform:scale(1); }
-  35%  { transform:scale(1.3); }
+  0%   { transform:scale(1);    animation-timing-function:ease-out; }
+  40%  { transform:scale(1.2);  animation-timing-function:cubic-bezier(.34,1.56,.64,1); }
   100% { transform:scale(1); }
 }
-.nav-bounce{ animation:nav-bounce 1s cubic-bezier(.34,1.56,.64,1) both; }
+.nav-bounce{ animation:nav-bounce .6s both; will-change:transform; }
 @media (prefers-reduced-motion: reduce){
   .nav-bounce{ animation:none; }
 }
