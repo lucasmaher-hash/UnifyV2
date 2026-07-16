@@ -257,100 +257,7 @@
 
       <div class="map-sheet__body" id="sheetBody">
         <div class="map-sheet__panel" id="sheetFriends">
-          <!-- Same markup/sizing as the stundenplan friend rows, minus the
-               chevron + expand wrapper — these are display-only (not openable).
-               --bubble-left / --name-pad mirror the stundenplan per-friend
-               tuning; the inline `top` is that monster's FACE_DY. -->
-          <div class="sp-friend-row" style="cursor:default;--bubble-left:47px;--name-pad:36px">
-            <img class="sp-friend-row__face" style="top:0" src="assets/friend_monster_1.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">Emil</span>
-                <span class="sp-friend-row__room">0.012</span>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;--bubble-left:57px;--name-pad:26px">
-            <img class="sp-friend-row__face" style="top:0" src="assets/friend_monster_3.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">Yasira</span>
-                <span class="sp-friend-row__room">1.104</span>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;--bubble-left:47px;--name-pad:36px">
-            <img class="sp-friend-row__face" style="top:0" src="assets/friend_monster_6.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">Jonas</span>
-                <span class="sp-friend-row__room">2.007</span>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;--bubble-left:32px;--name-pad:51px">
-            <img class="sp-friend-row__face" style="top:-6px" src="assets/friend_monster_8.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">Lena</span>
-                <span class="sp-friend-row__room">0.220</span>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;--bubble-left:47px;--name-pad:36px">
-            <img class="sp-friend-row__face" style="top:-2px" src="assets/friend_monster_2.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">Theo</span>
-                <span class="sp-friend-row__room">1.019</span>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;--bubble-left:47px;--name-pad:36px">
-            <img class="sp-friend-row__face" style="top:-7px" src="assets/friend_monster_9.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">Marlene</span>
-                <span class="sp-friend-row__room">2.113</span>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;--bubble-left:47px;--name-pad:36px">
-            <img class="sp-friend-row__face" style="top:-6px" src="assets/friend_monster_4.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">Noah</span>
-                <span class="sp-friend-row__room">0.305</span>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;--bubble-left:47px;--name-pad:36px">
-            <img class="sp-friend-row__face" style="top:1px" src="assets/friend_monster_7.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">Sofia</span>
-                <span class="sp-friend-row__room">1.220</span>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;--bubble-left:47px;--name-pad:36px">
-            <img class="sp-friend-row__face" style="top:0" src="assets/friend_monster_1.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">Ben</span>
-                <span class="sp-friend-row__room">2.014</span>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;--bubble-left:57px;--name-pad:26px">
-            <img class="sp-friend-row__face" style="top:0" src="assets/friend_monster_3.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">Mara</span>
-                <span class="sp-friend-row__room">0.118</span>
-              </span>
-            </span>
-          </div>
+          <div id="sheetFriendsList"></div>
         </div>
         <div class="map-sheet__panel" id="sheetCourses" hidden>
           <div class="map-course-row"><span class="map-course-row__name">ID Grundlagen</span><span class="map-course-row__room">0.012</span></div>
@@ -566,6 +473,20 @@
           bg.src = src;
           bg.alt = alt;
           initScale();
+        },
+        focusMarker: function (name) {
+          var marker = Array.from(document.querySelectorAll('.map-marker')).find(function (node) {
+            return node.getAttribute('data-friend') === name;
+          });
+          if (!marker) return;
+          var leftPct = parseFloat(marker.style.left || '0');
+          var topPct = parseFloat(marker.style.top || '0');
+          var targetX = (leftPct / 100) * NATURAL_W;
+          var targetY = (topPct / 100) * NATURAL_H;
+          x = viewport.clientWidth / 2 - targetX * scale;
+          y = viewport.clientHeight / 2 - targetY * scale;
+          constrain();
+          render();
         }
       };
     })();
@@ -578,15 +499,82 @@
         '2.OG': 'assets/floorplan_2og.png'
       };
       var segs = document.querySelectorAll('.map-floor-toggle__seg');
+      var friends = [
+        { name: 'Emil', room: '0.012', monster: 'friend_monster_1.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '47.62%', markerTop: '38.58%' },
+        { name: 'Yasira', room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57, namePad: 26, top: 0, markerLeft: '37.19%', markerTop: '66.43%' },
+        { name: 'Jonas', room: '2.007', monster: 'friend_monster_6.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '40.38%', markerTop: '65.69%' },
+        { name: 'Lena', room: '0.220', monster: 'friend_monster_8.svg', bubbleLeft: 32, namePad: 51, top: -6, markerLeft: '38.56%', markerTop: '60.24%' },
+        { name: 'Theo', room: '1.019', monster: 'friend_monster_2.svg', bubbleLeft: 47, namePad: 36, top: -2, markerLeft: '35.22%', markerTop: '50.75%' },
+        { name: 'Marlene', room: '2.113', monster: 'friend_monster_9.svg', bubbleLeft: 47, namePad: 36, top: -7, markerLeft: '47.62%', markerTop: '32.38%' },
+        { name: 'Noah', room: '0.305', monster: 'friend_monster_4.svg', bubbleLeft: 47, namePad: 36, top: -6, markerLeft: '50.24%', markerTop: '40.19%' },
+        { name: 'Sofia', room: '1.220', monster: 'friend_monster_7.svg', bubbleLeft: 47, namePad: 36, top: 1, markerLeft: '50.23%', markerTop: '34.04%' },
+        { name: 'Ben', room: '2.014', monster: 'friend_monster_1.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '7.66%', markerTop: '32.96%' },
+        { name: 'Mara', room: '0.118', monster: 'friend_monster_3.svg', bubbleLeft: 57, namePad: 26, top: 0, markerLeft: '10.48%', markerTop: '33.17%' },
+        { name: 'Nina', room: '1.205', monster: 'friend_monster_4.svg', bubbleLeft: 47, namePad: 36, top: -6, markerLeft: '13.29%', markerTop: '32.84%' }
+      ];
+      var listHost = document.getElementById('sheetFriendsList');
+      var markers = Array.from(document.querySelectorAll('.map-marker'));
+      var clusters = Array.from(document.querySelectorAll('.map-cluster'));
+
+      function renderFriendMapState() {
+        var isEg = (document.querySelector('.map-floor-toggle').getAttribute('data-active') || 'EG') === 'EG';
+        if (listHost) {
+          if (!isEg) {
+            listHost.innerHTML = '';
+          } else {
+            listHost.innerHTML = friends.map(function (friend) {
+              return '<button class="sp-friend-row" type="button" data-friend="' + friend.name + '" style="cursor:pointer;--bubble-left:' + friend.bubbleLeft + 'px;--name-pad:' + friend.namePad + 'px">' +
+                '<img class="sp-friend-row__face" style="top:' + friend.top + 'px" src="assets/' + friend.monster + '" alt="">' +
+                '<span class="sp-friend-row__bubble">' +
+                  '<span class="sp-friend-row__head">' +
+                    '<span class="sp-friend-row__name">' + friend.name + '</span>' +
+                    '<span class="sp-friend-row__room">' + friend.room + '</span>' +
+                  '</span>' +
+                '</span>' +
+              '</button>';
+            }).join('');
+          }
+
+          listHost.querySelectorAll('.sp-friend-row').forEach(function (row) {
+            row.addEventListener('click', function () {
+              var friendName = row.getAttribute('data-friend');
+              if (window.mapControls && window.mapControls.focusMarker) window.mapControls.focusMarker(friendName);
+            });
+          });
+        }
+
+        markers.forEach(function (marker, index) {
+          var friend = friends[index];
+          if (!isEg || !friend) {
+            marker.style.display = 'none';
+            return;
+          }
+          marker.style.display = '';
+          marker.setAttribute('data-friend', friend.name);
+          marker.style.left = friend.markerLeft;
+          marker.style.top = friend.markerTop;
+          marker.innerHTML = '<div class="map-marker__inner">' +
+            '<img class="map-marker__figur" src="assets/' + friend.monster + '" alt="' + friend.name + '"> ' +
+            '<div class="map-marker__name">' + friend.name + '</div>' +
+          '</div>';
+        });
+
+        clusters.forEach(function (cluster) {
+          cluster.style.display = isEg ? '' : 'none';
+        });
+      }
+
       segs.forEach(function (seg) {
         seg.addEventListener('click', function () {
           segs.forEach(function (s) { s.classList.toggle('is-active', s === seg); });
           var floor = seg.getAttribute('data-floor');
-          // move the eye/face group over the active segment (CSS handles the slide)
           document.querySelector('.map-floor-toggle').setAttribute('data-active', floor);
           window.mapControls.setFloor(FLOOR_IMAGES[floor], floor + ' floor plan');
+          renderFriendMapState();
         });
       });
+
+      renderFriendMapState();
     })();
 
     // ===================== Bottom sheet: Freunde / Kurse toggle =====================

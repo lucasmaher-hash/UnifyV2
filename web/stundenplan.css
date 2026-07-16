@@ -211,6 +211,10 @@
   border:0; background:none; cursor:pointer;
   display:flex; align-items:flex-start;
   box-sizing:border-box;
+  text-align:left;
+  font:inherit;
+  appearance:none;
+  -webkit-appearance:none;
 }
 /* Open: every row uses the same bubble width (Emil's default 47), dropping the
    per-friend closed-state trim so expanded frames all line up. */
