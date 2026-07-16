@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=10">
+  <link rel="stylesheet" href="styles.css?v=14">
   <link rel="stylesheet" href="stundenplan.css?v=39">
 </head>
 <body>
@@ -573,12 +573,11 @@
       function update() {
         var scrollTop = screen.scrollTop;
         var viewportHeight = screen.clientHeight;
-        // The last card can never reach true viewport-center via scrolling —
-        // there's no more content below it for the container to scroll past,
-        // so its center-distance can get stuck above the open threshold even
-        // at max scroll. Workaround: once scrolled essentially to the bottom,
-        // force the last card open regardless of the distance calculation.
+        // The last card can never scroll fully past the upper-third line (there's
+        // no more content below it to push it there) — workaround: once scrolled
+        // essentially to the bottom, force it open regardless of its position.
         var atBottom = scrollTop + viewportHeight >= screen.scrollHeight - 4;
+        var upperThird = viewportHeight / 3;
 
         activities.forEach(function (activity, i) {
           var isLast = i === activities.length - 1;
@@ -588,22 +587,43 @@
           }
 
           var rect = activity.getBoundingClientRect();
-          var activityTop = scrollTop + rect.top;
-          var activityCenter = activityTop + rect.height / 2;
-          var viewportCenter = scrollTop + viewportHeight / 2;
-
-          // Distance from center: negative when above, positive when below
-          var distance = Math.abs(viewportCenter - activityCenter);
-          var maxDistance = viewportHeight / 2;
-
-          // Open if near center, close if far
-          var shouldOpen = distance < maxDistance * 0.4;
+          // Opens once the card's OWN top edge reaches the upper third of the
+          // screen, and stays open the whole time it's scrolled further down/
+          // past that line — not center-based. Center-based closed each card
+          // as soon as it drifted past the viewport's middle, which for these
+          // tall cards happened well before their bottom text had scrolled
+          // into view, so the panel collapsed while still being read.
+          var shouldOpen = rect.top <= upperThird;
           activity.classList.toggle('sp-activity--open', shouldOpen);
         });
       }
 
       screen.addEventListener('scroll', update);
       update();
+    })();
+
+    // ===================== Bottom nav: bounce feedback on click =====================
+    // Growing 1.3x on click, per .nav-bounce in styles.css. For links that
+    // Navigation is left to the browser's normal, immediate <a> behavior — no
+    // preventDefault/delay. (An earlier version delayed navigation so the
+    // bounce could finish first, but that made clicking feel sluggish, and
+    // also exposed a separate mismatch: the CURRENT page's nav icon is a
+    // dark-filled asset, e.g. icon_calendar.svg, while the same item on ITS
+    // OWN page is a solid-pink asset, e.g. icon_calendar_filled.svg — so
+    // during that delay you'd see the dark icon bounce, then only ~1s later,
+    // once the new page finally loaded, would it "turn pink". Removing the
+    // delay collapses that into one immediate beat: click → instant
+    // navigation → destination page renders with its already-pink active
+    // icon, no perceptible gap between the bounce and the color change.)
+    (function () {
+      document.querySelectorAll('.nav__btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          // remove/reflow/re-add so a rapid re-click always restarts the animation
+          btn.classList.remove('nav-bounce');
+          void btn.offsetWidth;
+          btn.classList.add('nav-bounce');
+        });
+      });
     })();
   </script>
 </body>

@@ -7,9 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=12">
+  <link rel="stylesheet" href="styles.css?v=14">
   <link rel="stylesheet" href="stundenplan.css?v=39">
-  <link rel="stylesheet" href="map.css?v=22">
+  <link rel="stylesheet" href="map.css?v=24">
 </head>
 <body>
   <div class="phone-stage">
@@ -416,6 +416,13 @@
 
       var NATURAL_W = 2400, NATURAL_H = 1268; // all three floorplan_*.png share this size
 
+      // The floorplan's background is the same cream as the phone chrome
+      // around it, so panning/zooming past its edges is invisible — free rein
+      // to extend both how far out you can zoom and how far you can pan past
+      // the edges. 0.3 = 30%, shared by both so they feel like one consistent
+      // "extra room" rather than two independently-tuned numbers.
+      var EDGE_MARGIN = 0.3;
+
       var scale = 1, minScale = 1, maxScale = 1, x = 0, y = 0;
 
       function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
@@ -423,11 +430,14 @@
       function constrain() {
         var w = NATURAL_W * scale, h = NATURAL_H * scale;
         var vw = viewport.clientWidth, vh = viewport.clientHeight;
-        // keep the map covering the viewport — don't let an edge drift past center
-        var minX = Math.min(0, vw - w), maxX = Math.max(0, vw - w);
-        var minY = Math.min(0, vh - h), maxY = Math.max(0, vh - h);
-        x = clamp(x, Math.min(minX, maxX), Math.max(minX, maxX));
-        y = clamp(y, Math.min(minY, maxY), Math.max(minY, maxY));
+        // extra slack (in scaled px) on top of the normal "cover" range, so you
+        // can pan EDGE_MARGIN worth of the map's own size past any edge before
+        // hitting the limit — revealing background, which matches the map bg.
+        var marginX = w * EDGE_MARGIN, marginY = h * EDGE_MARGIN;
+        var minX = Math.min(0, vw - w) - marginX, maxX = Math.max(0, vw - w) + marginX;
+        var minY = Math.min(0, vh - h) - marginY, maxY = Math.max(0, vh - h) + marginY;
+        x = clamp(x, minX, maxX);
+        y = clamp(y, minY, maxY);
       }
 
       function render() {
@@ -456,9 +466,15 @@
 
       function initScale() {
         var vw = viewport.clientWidth, vh = viewport.clientHeight;
-        minScale = Math.max(vw / NATURAL_W, vh / NATURAL_H); // "cover" fit
-        maxScale = minScale * 4;
-        scale = minScale * 1.6;
+        var coverScale = Math.max(vw / NATURAL_W, vh / NATURAL_H); // fills viewport, no gaps
+        // Zoom out further than "cover" — down to where the map is ~30% smaller
+        // than the viewport on each axis, matching EDGE_MARGIN so min-zoom and
+        // max-pan reveal a consistent amount of background. maxScale/initial
+        // scale stay anchored to coverScale (not minScale) so this doesn't
+        // change the default view or how far in you can zoom.
+        minScale = coverScale / (1 + EDGE_MARGIN);
+        maxScale = coverScale * 4;
+        scale = coverScale * 1.6;
         // center on the middle of the map
         x = vw / 2 - (NATURAL_W * scale) / 2;
         y = vh / 2 - (NATURAL_H * scale) / 2;
@@ -678,6 +694,29 @@
       peek.addEventListener('pointermove', onPointerMove);
       peek.addEventListener('pointerup', onPointerUp);
       peek.addEventListener('pointercancel', onPointerUp);
+    })();
+
+    // ===================== Bottom nav: bounce feedback on click =====================
+    // Growing 1.3x on click, per .nav-bounce in styles.css. Navigation is left
+    // to the browser's normal, immediate <a> behavior — no preventDefault/delay.
+    // (An earlier version delayed navigation so the bounce could finish first,
+    // but that made clicking feel sluggish, and also exposed a separate mismatch:
+    // the CURRENT page's nav icon is a dark-filled asset, e.g. icon_calendar.svg,
+    // while the same item on ITS OWN page is a solid-pink asset, e.g.
+    // icon_calendar_filled.svg — so during that delay you'd see the dark icon
+    // bounce, then only ~1s later, once the new page finally loaded, would it
+    // "turn pink". Removing the delay collapses that into one immediate beat:
+    // click → instant navigation → destination page renders with its already-pink
+    // active icon, no perceptible gap between the bounce and the color change.)
+    (function () {
+      document.querySelectorAll('.map-sheet__nav-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          // remove/reflow/re-add so a rapid re-click always restarts the animation
+          btn.classList.remove('nav-bounce');
+          void btn.offsetWidth;
+          btn.classList.add('nav-bounce');
+        });
+      });
     })();
   </script>
 </body>

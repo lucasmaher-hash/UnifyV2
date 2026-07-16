@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=12">
+  <link rel="stylesheet" href="styles.css?v=14">
 </head>
 <body>
   <!-- ================= HOME / LANDING PAGE (402×874) ================= -->
@@ -65,7 +65,7 @@
                     <p class="friend__name">Moritz</p>
                   </div>
                 </div>
-                <div class="panel__face" style="right:0; bottom:-46px;">
+                <div class="panel__face" style="right:0; bottom:-37px;">
                   <span class="panel__face-pill panel__face-pill--pink"></span>
                   <span class="panel__face-btn"><img src="assets/icon_arrow.svg" alt=""></span>
                 </div>
@@ -294,6 +294,29 @@
       screenEl.addEventListener('scroll', update, { passive: true });
 
       update();
+    })();
+
+    // ===================== Bottom nav: bounce feedback on click =====================
+    // Growing 1.3x on click, per .nav-bounce in styles.css. Navigation is left
+    // to the browser's normal, immediate <a> behavior — no preventDefault/delay.
+    // (An earlier version delayed navigation so the bounce could finish first,
+    // but that made clicking feel sluggish, and also exposed a separate mismatch:
+    // the CURRENT page's nav icon is a dark-filled asset, e.g. icon_calendar.svg,
+    // while the same item on ITS OWN page is a solid-pink asset, e.g.
+    // icon_calendar_filled.svg — so during that delay you'd see the dark icon
+    // bounce, then only ~1s later, once the new page finally loaded, would it
+    // "turn pink". Removing the delay collapses that into one immediate beat:
+    // click → instant navigation → destination page renders with its already-pink
+    // active icon, no perceptible gap between the bounce and the color change.)
+    (function () {
+      document.querySelectorAll('.nav__btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          // remove/reflow/re-add so a rapid re-click always restarts the animation
+          btn.classList.remove('nav-bounce');
+          void btn.offsetWidth;
+          btn.classList.add('nav-bounce');
+        });
+      });
     })();
   </script>
 </body>

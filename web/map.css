@@ -52,6 +52,16 @@
   align-items:center;
   transform:scale(calc(1 / var(--map-zoom, 1)));
   transform-origin:top left;
+  /* Own compositing layer, isolated from .map-canvas's. Without this, the
+     browser bakes .map-canvas's live scale() into a SINGLE rasterized bitmap
+     that also contains this marker — so the counter-scale here doesn't undo
+     any blur, it just shrinks an already-blurred, upscaled patch of that
+     bitmap back down to the right SIZE (still soft/pixelated, more so at
+     higher canvas zoom). Promoting the marker to its own layer via
+     will-change makes the browser rasterize the monster SVG independently, at
+     its own (zoom-invariant) final on-screen size, so it stays crisp
+     regardless of how far the map itself is zoomed. */
+  will-change:transform;
 }
 .map-marker__figur{ display:block; width:41.6px; height:38.61px; flex-shrink:0; }
 .map-marker__name{
@@ -82,6 +92,7 @@
   width:56px; height:56px;
   transform:scale(calc(1 / var(--map-zoom, 1)));
   transform-origin:center center;
+  will-change:transform;   /* same layer-isolation fix as .map-marker__inner */
 }
 .map-cluster__circle{ position:absolute; inset:0; width:100%; height:100%; display:block; }
 .map-cluster__count{
@@ -231,7 +242,13 @@
 .map-sheet__toggle{
   position:relative;
   display:flex;
-  width:100%;
+  /* 362px (not 100%) — matches Figma exactly (361.7, same width already used by
+     the friend/course rows below it) and, critically, matches the ~20px inset
+     from the sheet's edges that Figma has. width:100% of the sheet's padded
+     area came out to 382px — 20px too wide — so the toggle's own rounded
+     corner landed too close to the sheet's edge and collided with the sheet's
+     own 44px corner curve instead of nesting inside it smoothly. */
+  width:362px;
   border:2px solid var(--cream);
   border-radius:37px;
   overflow:hidden;
