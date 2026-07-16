@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=16">
-  <link rel="stylesheet" href="stundenplan.css?v=40">
-  <link rel="stylesheet" href="map.css?v=24">
+  <link rel="stylesheet" href="stundenplan.css?v=41">
+  <link rel="stylesheet" href="map.css?v=25">
 </head>
 <body>
   <div class="phone-stage">
@@ -369,9 +369,9 @@
       <!-- Pinned search bar: sits OUTSIDE the scrolling body so it stays put
            above the nav while the rows scroll (and fade) above it. One bar for
            both tabs; the label is swapped in JS on tab switch. -->
-      <div class="sp-search map-sheet__search">
+      <div class="sp-search map-sheet__search" role="search">
         <img class="sp-search__icon" src="assets/icon_search.svg" alt="">
-        <p class="sp-search__label" id="sheetSearchLabel" style="opacity:.6;">search friends</p>
+        <input class="sp-search__input" type="text" aria-label="Search" placeholder="search friends" id="sheetSearchInput">
       </div>
 
       <!-- nav lives INSIDE the sheet in Figma (last child, pinned to the
@@ -593,15 +593,15 @@
     (function () {
       var buttons = document.querySelectorAll('[data-sheet-tab]');
       var panels = { friends: document.getElementById('sheetFriends'), courses: document.getElementById('sheetCourses') };
-      var searchLabel = document.getElementById('sheetSearchLabel');
+      var searchInput = document.getElementById('sheetSearchInput');
       var body = document.getElementById('sheetBody');
       buttons.forEach(function (btn) {
         btn.addEventListener('click', function () {
           var target = btn.getAttribute('data-sheet-tab');
           buttons.forEach(function (b) { b.classList.toggle('is-active', b === btn); });
           Object.keys(panels).forEach(function (key) { panels[key].hidden = key !== target; });
-          // pinned search bar serves both tabs — swap its label
-          if (searchLabel) searchLabel.textContent = target === 'courses' ? 'search courses' : 'search friends';
+          // pinned search bar serves both tabs — swap its placeholder
+          if (searchInput) searchInput.placeholder = target === 'courses' ? 'search courses' : 'search friends';
           // reset scroll so the new tab starts at the top
           if (body) body.scrollTop = 0;
         });

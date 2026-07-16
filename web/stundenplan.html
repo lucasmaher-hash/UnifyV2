@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=16">
-  <link rel="stylesheet" href="stundenplan.css?v=40">
+  <link rel="stylesheet" href="stundenplan.css?v=41">
 </head>
 <body>
   <div class="phone-stage">
@@ -51,7 +51,7 @@
             <img class="sp-search__icon" src="assets/icon_search.svg" alt="">
             <p class="sp-search__label">search friends</p>
           </div>
-          <div id="sp-friend-list"></div>
+          <div class="sp-friends__body" id="sp-friend-list"></div>
         </div>
       </div>
 
@@ -462,7 +462,17 @@
       // The name is pinned to this x regardless of the bubble edge, so moving
       // the edge never drags the text under the monster.
       var NAME_X = 83;
-      var friends = [
+      var monsterShapes = [
+        'friend_monster_1.svg',
+        'friend_monster_2.svg',
+        'friend_monster_3.svg',
+        'friend_monster_4.svg',
+        'friend_monster_6.svg',
+        'friend_monster_7.svg',
+        'friend_monster_8.svg',
+        'friend_monster_9.svg'
+      ];
+      var baseFriends = [
         { name: 'Emil', room: '0.012', monster: 'friend_monster_1.svg', online: true, courses: [
           { title: 'Interface Design', time: '09:00-10:30', room: '1.019' },
           { title: 'Typografie',       time: '11:00-12:30', room: '2.004' },
@@ -491,6 +501,17 @@
           { title: 'Portfolio',   time: '10:00-11:30', room: '2.113' }
         ] }
       ];
+      var friends = Array.from({ length: 12 }, function (_, i) {
+        var base = baseFriends[i % baseFriends.length];
+        var monster = monsterShapes[(i + Math.floor(i / 2)) % monsterShapes.length];
+        return Object.assign({}, base, {
+          name: base.name + (i >= baseFriends.length ? ' ' + (i + 1) : ''),
+          room: base.room,
+          monster: monster,
+          online: i % 3 !== 0,
+          bubbleLeft: i % 4 === 0 ? 32 : i % 3 === 1 ? 57 : 47
+        });
+      });
       var list = document.getElementById('sp-friend-list');
       if (!list) return;
       list.innerHTML = friends.map(function (f) {
@@ -529,16 +550,53 @@
     // Tab switching between Stundenplan / Socials — same page, no navigation,
     // matching the Figma prototype where these are two states of one frame.
     (function () {
-      var views = { stundenplan: document.getElementById('view-stundenplan'), socials: document.getElementById('view-socials') };
+      var views = {
+        stundenplan: document.getElementById('view-stundenplan'),
+        socials: document.getElementById('view-socials')
+      };
+      var screen = document.querySelector('.sp-screen');
+
+      function readInitialTarget() {
+        var params = new URLSearchParams(window.location.search);
+        var fromQuery = params.get('tab');
+        if (fromQuery === 'socials') return 'socials';
+        if (fromQuery === 'stundenplan') return 'stundenplan';
+        var fromHash = window.location.hash.replace('#', '');
+        if (fromHash === 'view-socials') return 'socials';
+        if (fromHash === 'view-stundenplan') return 'stundenplan';
+        return 'stundenplan';
+      }
+
+      function showTab(target) {
+        var normalized = target === 'view-socials' ? 'socials' : target === 'view-stundenplan' ? 'stundenplan' : target;
+        if (screen) {
+          screen.scrollTop = 0;
+          screen.scrollLeft = 0;
+        }
+        window.scrollTo(0, 0);
+        Object.keys(views).forEach(function (key) {
+          views[key].hidden = key !== normalized;
+        });
+        if (normalized === 'socials' && views.socials) {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              if (screen) {
+                screen.scrollTop = 0;
+                screen.scrollLeft = 0;
+              }
+              window.scrollTo(0, 0);
+            });
+          });
+        }
+      }
+
       document.querySelectorAll('[data-switch-tab]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          var target = btn.getAttribute('data-switch-tab');
-          Object.keys(views).forEach(function (key) {
-            views[key].hidden = key !== target;
-          });
-          document.querySelector('.sp-screen').scrollTop = 0;
+          showTab(btn.getAttribute('data-switch-tab'));
         });
       });
+
+      showTab(readInitialTarget());
     })();
 
     // Activity toggle: click to open/close

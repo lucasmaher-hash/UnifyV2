@@ -145,6 +145,7 @@ body{
 }
 .card{
   position:relative;
+  z-index:0;
   width:377px;
   flex:none;
   overflow:visible;
@@ -175,7 +176,7 @@ body{
 }
 .card__open{ opacity:0; transform:scaleY(.75) translateY(-6px); pointer-events:none; }
 .card.is-open .card__closed{ opacity:0; transform:scaleY(.75) translateY(-6px); pointer-events:none; }
-.card.is-open .card__open{ opacity:1; transform:scaleY(1) translateY(0); }
+.card.is-open .card__open{ opacity:1; transform:scaleY(1) translateY(0); pointer-events:auto; }
 
 /* ---------------------- Open panel (reconstructed) ------------------ */
 .panel{
@@ -350,12 +351,12 @@ body{
 .card__eyes img{ display:block; width:100%; height:100%; }
 
 /* first-on-top z-order (matches Figma itemReverseZIndex) */
-.card--connect{ height:72px; z-index:4; }
+.card--connect{ height:72px; z-index:3; }
 .card--connect .card__bubble{ width:377px; height:118px; }
 .card--connect .card__label{ left:15px; top:11px; }
 .card--connect .card__eyes{ left:317px; top:33px; }
 
-.card--small{ height:64px; z-index:3; }
+.card--small{ height:64px; z-index:2; }
 .card--small .card__bubble{ width:294px; height:63.805px; }
 .card--small .card__label{ left:13.293px; top:9.748px; }
 
@@ -373,8 +374,6 @@ body{
 .card--connect.is-open{ height:347px; }
 .card--socials.is-open{ height:485px; }
 .card--map.is-open{ height:401px; }
-/* an open card floats above its neighbours while its face pokes into the gap */
-.card.is-open{ z-index:10; }
 
 /* =========================== BOTTOM NAV ========================== */
 .nav{

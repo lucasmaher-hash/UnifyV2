@@ -43,14 +43,14 @@
 .map-marker{
   position:absolute;
   pointer-events:none;
-  width:40px;
-  height:50px;
+  width:48px;
+  height:60px;
 }
 .map-marker__inner{
   display:flex;
   flex-direction:column;
   align-items:center;
-  transform:scale(calc(1 / var(--map-zoom, 1)));
+  transform:scale(calc(1 / var(--map-zoom, 1))) scale(1.2);
   transform-origin:top left;
   /* Own compositing layer, isolated from .map-canvas's. Without this, the
      browser bakes .map-canvas's live scale() into a SINGLE rasterized bitmap
@@ -63,12 +63,12 @@
      regardless of how far the map itself is zoomed. */
   will-change:transform;
 }
-.map-marker__figur{ display:block; width:41.6px; height:38.61px; flex-shrink:0; }
+.map-marker__figur{ display:block; width:49.92px !important; height:46.332px !important; flex-shrink:0; }
 .map-marker__name{
-  margin:3px 0 0;
+  margin:4px 0 0;
   font-family:var(--font);
   font-weight:900;
-  font-size:11px;
+  font-size:13.2px !important;
   line-height:1;
   color:#000;
   text-align:center;
@@ -323,8 +323,8 @@
    35% less ≈ 30 visible, so gap:6.
    Course tiles are the bare 47px card with no dead space, so their gap IS the
    visible spacing — 30px to match the friends. */
-#sheetFriends{ gap:6px; }
-#sheetCourses{ gap:30px; }
+#sheetFriends{ gap:10px; }
+#sheetCourses{ gap:36px; }
 
 /* Equal 30px of breathing room above the first card and below the last one, in
    both tabs — matching the 30px between cards. The two panels need different

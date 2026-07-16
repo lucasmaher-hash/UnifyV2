@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=16">
+  <link rel="stylesheet" href="styles.css?v=17">
 </head>
 <body>
   <!-- ================= HOME / LANDING PAGE (402×874) ================= -->
@@ -294,6 +294,41 @@
       screenEl.addEventListener('scroll', update, { passive: true });
 
       update();
+    })();
+
+    // Wire the panel arrow buttons to the adjacent screens.
+    (function () {
+      var navTargets = {
+        connect: 'stundenplan.html',
+        socials: 'stundenplan.html?tab=socials',
+        map: 'map.html'
+      };
+
+      document.querySelectorAll('.card[data-expand]').forEach(function (card) {
+        var face = card.querySelector('.panel__face');
+        var btn = card.querySelector('.panel__face-btn');
+        if (!face || !btn) return;
+
+        function goToTarget(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          var target = card.classList.contains('card--connect')
+            ? navTargets.connect
+            : card.classList.contains('card--socials')
+              ? navTargets.socials
+              : card.classList.contains('card--map')
+                ? navTargets.map
+                : null;
+
+          if (target) {
+            window.location.assign(target);
+          }
+        }
+
+        face.addEventListener('pointerup', goToTarget);
+        face.addEventListener('click', goToTarget);
+      });
     })();
 
     // ===================== Bottom nav: bounce feedback =====================
