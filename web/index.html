@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=15">
+  <link rel="stylesheet" href="styles.css?v=16">
 </head>
 <body>
   <!-- ================= HOME / LANDING PAGE (402×874) ================= -->
@@ -149,7 +149,7 @@
       <button class="nav__btn nav__home" aria-label="Home" aria-current="page"><img src="assets/icon_home.svg" alt=""></button>
       <a class="nav__btn nav__cal" href="stundenplan.html" aria-label="Calendar"><img src="assets/icon_calendar.svg" alt=""></a>
       <a class="nav__btn nav__pin" href="map.html" aria-label="Map"><img src="assets/icon_pin.svg" alt=""></a>
-      <button class="nav__btn nav__star" aria-label="Activities"><img src="assets/icon_star.svg" alt=""></button>
+      <a class="nav__btn nav__star" href="settings.html" aria-label="Settings"><img src="assets/icon_star.svg" alt=""></a>
     </nav>
   </div>
   </div>
@@ -296,22 +296,23 @@
       update();
     })();
 
-    // ===================== Bottom nav: bounce feedback on click =====================
-    // Growing 1.3x on click, per .nav-bounce in styles.css. Navigation is left
-    // to the browser's normal, immediate <a> behavior — no preventDefault/delay.
-    // (An earlier version delayed navigation so the bounce could finish first,
-    // but that made clicking feel sluggish, and also exposed a separate mismatch:
-    // the CURRENT page's nav icon is a dark-filled asset, e.g. icon_calendar.svg,
-    // while the same item on ITS OWN page is a solid-pink asset, e.g.
-    // icon_calendar_filled.svg — so during that delay you'd see the dark icon
-    // bounce, then only ~1s later, once the new page finally loaded, would it
-    // "turn pink". Removing the delay collapses that into one immediate beat:
-    // click → instant navigation → destination page renders with its already-pink
-    // active icon, no perceptible gap between the bounce and the color change.)
+    // ===================== Bottom nav: bounce feedback =====================
+    // Played on LOAD for whichever icon is aria-current="page" — not on click
+    // of a link that navigates away. Clicking a link starts tearing the page
+    // down in the same tick the class would be added, so that class sometimes
+    // never got a single frame to paint before the page unloaded (the exact
+    // "sometimes doesn't bounce" bug). Playing it as an entrance animation on
+    // the destination page instead is guaranteed to render every time, since
+    // that page isn't about to be replaced by anything.
     (function () {
-      document.querySelectorAll('.nav__btn').forEach(function (btn) {
+      var current = document.querySelector('.nav__btn[aria-current="page"]');
+      if (current) current.classList.add('nav-bounce');
+
+      // Buttons with no href (this same non-navigating current-page button,
+      // or any future same-page action) still get a click-triggered restart —
+      // there's no navigation racing it, so the animation is reliable here too.
+      document.querySelectorAll('.nav__btn:not([href])').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          // remove/reflow/re-add so a rapid re-click always restarts the animation
           btn.classList.remove('nav-bounce');
           void btn.offsetWidth;
           btn.classList.add('nav-bounce');

@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 96.0337 48.8593" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Pupille">
+<mask id="mask0_settings_pupil" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="97" height="49">
+<rect id="Rectangle 92" x="-2.01643e-05" width="96.0337" height="48.8593" rx="14.5506" fill="white"/>
+</mask>
+<g mask="url(#mask0_settings_pupil)">
+<ellipse id="Ellipse 146" cx="48.0169" cy="23.6662" rx="31.1688" ry="28.2468" fill="#292925"/>
+</g>
+</g>
+</svg>

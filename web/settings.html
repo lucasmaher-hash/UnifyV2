@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unify — Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=16">
+  <link rel="stylesheet" href="settings.css?v=2">
+</head>
+<body>
+  <div class="phone-stage">
+  <div class="phone phone--cream" data-screen="settings">
+    <div class="settings-screen">
+
+      <!-- ================= HEADER: name / title / edit ================= -->
+      <div class="settings-header">
+        <h1 class="settings-header__name">lucas<br>maher</h1>
+        <p class="settings-header__title">industrie design</p>
+        <button class="settings-header__edit" type="button" aria-label="Edit profile">
+          <img src="assets/icon_edit_pencil.svg" alt="">
+        </button>
+      </div>
+
+      <!-- ================= PROFILE MENU (dark) ================= -->
+      <div class="settings-menu">
+
+        <!-- big peeking monster (Figur=1), poking above the panel -->
+        <div class="settings-menu__figur" aria-hidden="true">
+          <img class="settings-menu__figur-body" src="assets/settings_figur_body.svg" alt="">
+          <div class="settings-menu__figur-eyes">
+            <span class="settings-menu__figur-eye settings-menu__figur-eye--l"></span>
+            <span class="settings-menu__figur-eye settings-menu__figur-eye--r"></span>
+            <img class="settings-menu__figur-pupil settings-menu__figur-pupil--l" src="assets/settings_figur_pupil.svg" alt="">
+            <img class="settings-menu__figur-pupil settings-menu__figur-pupil--r" src="assets/settings_figur_pupil.svg" alt="">
+          </div>
+        </div>
+
+        <!-- account / friends / settings — not yet wired to settings pages
+             2/3/4 (they don't exist yet); will get hrefs once those are built. -->
+        <div class="settings-buttons">
+          <button class="settings-btn" type="button" data-settings-target="account">
+            <span class="settings-btn__pill">
+              <span class="settings-btn__label">account</span>
+              <span class="settings-btn__arrow"><img src="assets/icon_arrow_white.svg" alt=""></span>
+            </span>
+          </button>
+          <button class="settings-btn" type="button" data-settings-target="friends">
+            <span class="settings-btn__pill">
+              <span class="settings-btn__label">friends</span>
+              <span class="settings-btn__arrow"><img src="assets/icon_arrow_white.svg" alt=""></span>
+            </span>
+          </button>
+          <button class="settings-btn" type="button" data-settings-target="settings">
+            <span class="settings-btn__pill">
+              <span class="settings-btn__label">settings</span>
+              <span class="settings-btn__arrow"><img src="assets/icon_arrow_white.svg" alt=""></span>
+            </span>
+          </button>
+        </div>
+
+        <!-- nav lives INSIDE profile_menu in Figma (last child) — same
+             embedded pattern as .map-sheet__nav on the map page. -->
+        <nav class="settings-nav" aria-label="Primary">
+          <a class="settings-nav__btn" href="index.html" aria-label="Home"><img src="assets/icon_home_outline.svg" alt=""></a>
+          <a class="settings-nav__btn" href="stundenplan.html" aria-label="Calendar"><img src="assets/icon_calendar.svg" alt=""></a>
+          <a class="settings-nav__btn" href="map.html" aria-label="Map"><img src="assets/icon_pin.svg" alt=""></a>
+          <button class="settings-nav__btn" type="button" aria-label="Activities" aria-current="page"><img src="assets/icon_star_filled.svg" alt=""></button>
+        </nav>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+  <script>
+    // Scale the phone down so the whole 402×874 frame always fits the window.
+    (function () {
+      var MARGIN = 40;
+      function fit() {
+        var s = Math.min(1, (window.innerHeight - MARGIN) / 874, (window.innerWidth - MARGIN) / 402);
+        document.documentElement.style.setProperty('--scale', s);
+      }
+      fit();
+      window.addEventListener('resize', fit);
+    })();
+
+    // ===================== Bottom nav: bounce feedback =====================
+    // Played on LOAD for whichever icon is aria-current="page" — not on click
+    // of a link that navigates away (that races the page unload and sometimes
+    // never gets a frame to paint before it — see styles.css for the full
+    // reasoning). Playing it as an entrance animation on the destination page
+    // instead is guaranteed to render every time.
+    (function () {
+      var current = document.querySelector('.settings-nav__btn[aria-current="page"]');
+      if (current) current.classList.add('nav-bounce');
+
+      document.querySelectorAll('.settings-nav__btn:not([href])').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btn.classList.remove('nav-bounce');
+          void btn.offsetWidth;
+          btn.classList.add('nav-bounce');
+        });
+      });
+    })();
+
+    // account/friends/settings buttons: no destination yet (settings pages
+    // 2/3/4 aren't built) — just a very subtle tap acknowledgement (NOT the
+    // nav-bounce used for the bottom nav — that's too showy for a settings
+    // row) so the buttons don't feel dead while wiring the rest of this page.
+    (function () {
+      document.querySelectorAll('.settings-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btn.classList.remove('settings-btn-tap');
+          void btn.offsetWidth;
+          btn.classList.add('settings-btn-tap');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
