@@ -106,19 +106,53 @@
   height:78px;
   z-index:2;
 }
-.map-floor-toggle__eyes{ position:absolute; top:0; left:0; width:320px; height:30px; pointer-events:none; }
+/* z-index:2 lifts the face ABOVE the pill (fixes the eyes being clipped by the
+   dark pill painting over them). The whole group slides to sit over the active
+   segment — steps measured from the three Figma states (EG/1.OG/2.OG). */
+.map-floor-toggle__eyes{
+  position:absolute; top:0; left:0; width:320px; height:30px; pointer-events:none;
+  z-index:2;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+.map-floor-toggle[data-active="1.OG"] .map-floor-toggle__eyes{ transform:translateX(105px); }
+.map-floor-toggle[data-active="2.OG"] .map-floor-toggle__eyes{ transform:translateX(209px); }
+@media (prefers-reduced-motion: reduce){
+  .map-floor-toggle__eyes{ transition:none; }
+}
+/* 1.OG: face centered, no corner is near it — both fully rounded (Figma: 9999). */
+.map-floor-toggle[data-active="1.OG"] .map-floor-toggle__pill{ border-radius:30px; }
+/* 2.OG: face over the right corner — that corner flattens instead of the left. */
+.map-floor-toggle[data-active="2.OG"] .map-floor-toggle__pill{ border-radius:30px 18px 30px 30px; }
+@media (prefers-reduced-motion: reduce){
+  .map-floor-toggle__pill{ transition:none; }
+}
 .mft-eyes__white{ position:absolute; left:12px; top:0; width:92.074px; height:29.939px; display:block; }
 .mft-eyes__head{ position:absolute; left:23.18px; top:4.78px; width:67.086px; height:23.294px; display:block; }
 .mft-eyes__pupil{ position:absolute; top:15.96px; width:11.181px; height:10.249px; display:block; }
 .mft-eyes__pupil--l{ left:37.16px; }
 .mft-eyes__pupil--r{ left:66.97px; }
 
+/* 2.OG-only face (dedicated Figma shape, ~4.7px narrower) — hidden by default;
+   swapped in for the 2.OG state below. Position is the Figma-measured symbol
+   offset (222.5, 1.2) minus the 209px translateX already on the container, so
+   it lands in the same final spot once that transform is applied. */
+.mft-eyes__face-2og{ position:absolute; left:13.5px; top:1.2px; width:87.4px; height:28.7px; display:none; }
+.map-floor-toggle[data-active="2.OG"] .mft-eyes__white,
+.map-floor-toggle[data-active="2.OG"] .mft-eyes__head,
+.map-floor-toggle[data-active="2.OG"] .mft-eyes__pupil{ display:none; }
+.map-floor-toggle[data-active="2.OG"] .mft-eyes__face-2og{ display:block; }
+
 .map-floor-toggle__pill{
   position:absolute;
   top:23px; left:0;
   width:320px; height:55px;
   background:var(--dark);
+  /* corner nearest the face flattens (18px) to blend with it; the far corners
+     stay fully rounded (30px). Centered (1.OG) has no near corner, so all four
+     go fully round (9999 in Figma — 30px reads the same at this size). Default
+     here is EG's shape (top-left flat); the other two states override below. */
   border-radius:18px 30px 30px 30px;
+  transition:border-radius .35s cubic-bezier(.4,0,.2,1);
   display:flex;
   gap:4px;
   align-items:center;
@@ -160,7 +194,11 @@
    content — kept separate from .map-sheet so the peek handle (a sibling,
    positioned outside .map-sheet__inner's box) is never clipped. */
 .map-sheet__inner{
-  max-height:64%;
+  /* Definite px (not 64%): the % resolved against .map-sheet's auto height, so it
+     evaluated to "none" and never actually capped the sheet — fine when only a few
+     rows fit, but now the list must cap here and scroll inside. 559 = 0.64×874,
+     matching the drag script's EXPANDED_H. */
+  max-height:559px;
   overflow:hidden;
   transition:max-height .3s ease;
   display:flex;
@@ -181,7 +219,9 @@
   position:absolute;
   top:-59px; left:50%;
   transform:translateX(-50%);
-  width:125px; height:66px;
+  /* narrower than the art's natural 178:66 so the face squashes horizontally —
+     eyes pushed closer together (preserveAspectRatio="none" on the SVG). */
+  width:110px; height:66px;
   padding:0; border:0; background:none; cursor:grab;
   touch-action:none;
 }
@@ -189,6 +229,7 @@
 .map-sheet__peek img{ display:block; width:100%; height:100%; pointer-events:none; }
 
 .map-sheet__toggle{
+  position:relative;
   display:flex;
   width:100%;
   border:2px solid var(--cream);
@@ -197,20 +238,67 @@
   flex:none;
 }
 .map-sheet__toggle-btn{
+  position:relative; z-index:2;   /* label above the ribbed boundary */
   flex:1;
   padding:12px 8px;
   border:0; background:none;
   font-family:var(--font); font-weight:800; font-size:22px;
   color:var(--cream);
   cursor:pointer;
-  display:flex; align-items:center; justify-content:center; gap:6px;
+  display:flex; align-items:center; justify-content:center;
 }
-.map-sheet__toggle-btn.is-active{ background:var(--cream); color:#000; border-radius:37px; }
-.map-sheet__toggle-chevron{ display:none; width:14px; height:37.1px; }
-.map-sheet__toggle-btn.is-active .map-sheet__toggle-chevron{ display:block; }
-.map-sheet__toggle-chevron img{ display:block; width:100%; height:100%; }
+/* active side = cream fill, rounded only on its OUTER corner; the inner (centre)
+   edge stays square so the ribbed shape supplies the bumpy transition */
+.map-sheet__toggle-btn.is-active{ background:var(--cream); color:#000; }
+.map-sheet__toggle:has([data-sheet-tab="friends"].is-active) [data-sheet-tab="friends"]{ border-radius:35px 0 0 35px; }
+.map-sheet__toggle:has([data-sheet-tab="courses"].is-active) [data-sheet-tab="courses"]{ border-radius:0 35px 35px 0; }
 
-.map-sheet__body{ width:100%; overflow-y:auto; flex:0 1 auto; }
+/* Ribbed cream boundary. The exported shape has its solid/flat side on the right
+   and the round bumps on the left; the boundary between them sits ~41% across.
+   We place that boundary on the 50% line so the solid side overlaps deep into the
+   cream half (hidden behind the cream button via z-index) and only the bumps show,
+   poking into the dark half. No sliver, because the solid part runs well under the
+   cream rather than just touching its edge. */
+.map-sheet__toggle-rib{
+  position:absolute; top:0; z-index:1;
+  /* explicit height — an <img> is a replaced element, so top:0;bottom:0 does NOT
+     stretch it; with height:auto Chromium (e.g. VS Code's browser) falls back to
+     the SVG's intrinsic height, which is 0 here (the SVG is sized 100%), so the
+     rib disappears. height:100% pins it to the toggle's inner height everywhere. */
+  height:100%; width:22px; display:block; pointer-events:none;
+  left:calc(50% - 9px);       /* the shape's bump/solid boundary lands on 50% */
+  transform-origin:41% 50%;   /* the 50% line within the box, for the mirror */
+}
+/* Kurse active (cream on the right) = base orientation, bumps point left.
+   Freunde active (cream on the left) = mirror around the 50% line, bumps point right. */
+.map-sheet__toggle:has([data-sheet-tab="friends"].is-active) .map-sheet__toggle-rib{
+  transform:scaleX(-1);
+}
+
+.map-sheet__body{
+  width:100%;
+  /* basis:auto so the body starts at its content height and SHRINKS to fit the
+     inner's capped height (basis:0 would need a definite parent height to grow
+     into — the max-height cap alone gives none, collapsing it to 0). min-height:0
+     is essential — without it a flex child won't shrink below its content height,
+     so it would push the sheet taller instead of scrolling internally. */
+  flex:1 1 auto; min-height:0;
+  overflow-y:auto;
+  /* soft dissolve at the bottom edge so rows fade out just before the pinned
+     search bar instead of hard-cutting. The mask rides the scroll viewport, so
+     the fade always sits at the bottom regardless of scroll position. */
+  -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 48px), transparent);
+  mask-image:linear-gradient(to bottom, #000 calc(100% - 48px), transparent);
+  /* hide the scrollbar itself — scrolling still works, just no visible track/thumb */
+  scrollbar-width:none;       /* Firefox */
+  -ms-overflow-style:none;    /* old Edge/IE */
+}
+.map-sheet__body::-webkit-scrollbar{ display:none; }   /* Safari/Chrome */
+/* Pinned search bar (moved out of the scrolling panels). .sp-search supplies the
+   pill look; this just keeps it a fixed-size flex child above the nav, and hides
+   it (like the body) when the sheet is collapsed. */
+.map-sheet__search{ flex:none; }
+.map-sheet.is-collapsed .map-sheet__search{ display:none; }
 .map-sheet__panel{ display:flex; flex-direction:column; align-items:center; gap:22px; }
 /* A friend row is min-height:71 but its bubble is only 47 tall at margin-top:12,
    so every row carries 12px of dead space under its bubble. The gap the eye
@@ -228,9 +316,10 @@
    margin-top:12, plus 12px of dead space below it inside the 71px row):
      friends  top: 14 + 4 + 12 = 30   bottom: 12 + 6 + 12 = 30
      courses  top: 14 + 16     = 30   bottom: 30 (panel gap) */
-#sheetFriends{ padding-top:4px; }
-#sheetFriends .sp-search{ margin-top:12px; }
-#sheetCourses{ padding-top:16px; }
+/* padding-bottom ≈ the 48px fade height, so at max scroll the last row sits just
+   above the fade zone and stays fully readable (the fade falls on the padding). */
+#sheetFriends{ padding-top:4px; padding-bottom:48px; }
+#sheetCourses{ padding-top:16px; padding-bottom:48px; }
 /* Author CSS above otherwise beats the UA default [hidden]{display:none} —
    without this, a "hidden" panel would still render and take up space. */
 .map-sheet__panel[hidden]{ display:none; }
