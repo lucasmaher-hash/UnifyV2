@@ -51,7 +51,7 @@
             <img class="sp-search__icon" src="assets/icon_search.svg" alt="">
             <p class="sp-search__label">search friends</p>
           </div>
-          <div class="sp-friends__body" id="sp-friend-list"></div>
+          <div id="sp-friend-list"></div>
         </div>
       </div>
 
@@ -462,17 +462,7 @@
       // The name is pinned to this x regardless of the bubble edge, so moving
       // the edge never drags the text under the monster.
       var NAME_X = 83;
-      var monsterShapes = [
-        'friend_monster_1.svg',
-        'friend_monster_2.svg',
-        'friend_monster_3.svg',
-        'friend_monster_4.svg',
-        'friend_monster_6.svg',
-        'friend_monster_7.svg',
-        'friend_monster_8.svg',
-        'friend_monster_9.svg'
-      ];
-      var baseFriends = [
+      var friends = [
         { name: 'Emil', room: '0.012', monster: 'friend_monster_1.svg', online: true, courses: [
           { title: 'Interface Design', time: '09:00-10:30', room: '1.019' },
           { title: 'Typografie',       time: '11:00-12:30', room: '2.004' },
@@ -501,17 +491,6 @@
           { title: 'Portfolio',   time: '10:00-11:30', room: '2.113' }
         ] }
       ];
-      var friends = Array.from({ length: 12 }, function (_, i) {
-        var base = baseFriends[i % baseFriends.length];
-        var monster = monsterShapes[(i + Math.floor(i / 2)) % monsterShapes.length];
-        return Object.assign({}, base, {
-          name: base.name + (i >= baseFriends.length ? ' ' + (i + 1) : ''),
-          room: base.room,
-          monster: monster,
-          online: i % 3 !== 0,
-          bubbleLeft: i % 4 === 0 ? 32 : i % 3 === 1 ? 57 : 47
-        });
-      });
       var list = document.getElementById('sp-friend-list');
       if (!list) return;
       list.innerHTML = friends.map(function (f) {
@@ -625,17 +604,19 @@
     // Scroll-driven animation: activities expand/collapse based on scroll position
     (function () {
       var screen = document.querySelector('.sp-screen');
+      var phone = document.querySelector('.phone');
       var activities = Array.from(document.querySelectorAll('.sp-cards-socials .sp-activity'));
       if (!screen || activities.length === 0) return;
 
       function update() {
         var scrollTop = screen.scrollTop;
-        var viewportHeight = screen.clientHeight;
+        var viewportHeight = phone ? phone.getBoundingClientRect().height : screen.clientHeight;
         // The last card can never scroll fully past the upper-third line (there's
         // no more content below it to push it there) — workaround: once scrolled
         // essentially to the bottom, force it open regardless of its position.
         var atBottom = scrollTop + viewportHeight >= screen.scrollHeight - 4;
         var upperThird = viewportHeight / 3;
+        var triggerY = phone ? phone.getBoundingClientRect().top + upperThird : upperThird;
 
         activities.forEach(function (activity, i) {
           var isLast = i === activities.length - 1;
@@ -646,17 +627,16 @@
 
           var rect = activity.getBoundingClientRect();
           // Opens once the card's OWN top edge reaches the upper third of the
-          // screen, and stays open the whole time it's scrolled further down/
-          // past that line — not center-based. Center-based closed each card
-          // as soon as it drifted past the viewport's middle, which for these
-          // tall cards happened well before their bottom text had scrolled
-          // into view, so the panel collapsed while still being read.
-          var shouldOpen = rect.top <= upperThird;
+          // phone frame, and stays open the whole time it's scrolled further
+          // down/past that line. This keeps tall cards open long enough for
+          // their lower text to be read before closing.
+          var shouldOpen = rect.top <= triggerY;
           activity.classList.toggle('sp-activity--open', shouldOpen);
         });
       }
 
       screen.addEventListener('scroll', update);
+      window.addEventListener('resize', update);
       update();
     })();
 

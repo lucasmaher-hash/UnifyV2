@@ -7,11 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=16">
+  <link rel="stylesheet" href="styles.css?v=18">
   <!-- reuses .sp-friend-row (+face/bubble/head/name) from the stundenplan
        friend list — same component (friends_stundenplan_new) in Figma. -->
-  <link rel="stylesheet" href="stundenplan.css?v=39">
-  <link rel="stylesheet" href="settings.css?v=4">
+  <link rel="stylesheet" href="stundenplan.css?v=41">
+  <link rel="stylesheet" href="settings.css?v=6">
 </head>
 <body>
   <div class="phone-stage">
@@ -32,67 +32,12 @@
 
         <div class="settings-friends-list">
           <button class="settings-friends-search" type="button">
+            <img class="settings-friends-search__icon" src="assets/icon_search.svg" alt="">
             <span>name / matrikulationsnummer</span>
-            <span>+</span>
           </button>
 
-          <!-- lemmy: pending re-add (green plus) -->
-          <div class="sp-friend-row" style="cursor:default;">
-            <img class="sp-friend-row__face" style="top:0" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">lemmy</span>
-                <button class="settings-friend-action settings-friend-action--add" type="button" aria-label="Add friend back">
-                  <img src="assets/icon_plus_circle.svg" alt="">
-                </button>
-              </span>
-            </span>
-          </div>
-
-          <!-- mara / jonas / greta / emil: remove (red trash) -->
-          <div class="sp-friend-row" style="cursor:default;">
-            <img class="sp-friend-row__face" style="top:0" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">mara</span>
-                <button class="settings-friend-action settings-friend-action--remove" type="button" aria-label="Remove friend">
-                  <img src="assets/icon_trash.svg" alt="">
-                </button>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;">
-            <img class="sp-friend-row__face" style="top:0" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">jonas</span>
-                <button class="settings-friend-action settings-friend-action--remove" type="button" aria-label="Remove friend">
-                  <img src="assets/icon_trash.svg" alt="">
-                </button>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;">
-            <img class="sp-friend-row__face" style="top:0" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">greta</span>
-                <button class="settings-friend-action settings-friend-action--remove" type="button" aria-label="Remove friend">
-                  <img src="assets/icon_trash.svg" alt="">
-                </button>
-              </span>
-            </span>
-          </div>
-          <div class="sp-friend-row" style="cursor:default;">
-            <img class="sp-friend-row__face" style="top:0" src="assets/face_lemmy.svg" alt="">
-            <span class="sp-friend-row__bubble">
-              <span class="sp-friend-row__head">
-                <span class="sp-friend-row__name">emil</span>
-                <button class="settings-friend-action settings-friend-action--remove" type="button" aria-label="Remove friend">
-                  <img src="assets/icon_trash.svg" alt="">
-                </button>
-              </span>
-            </span>
+          <div class="settings-friends-scroll">
+            <div class="settings-friends-scroll__body" id="settings-friends-list"></div>
           </div>
         </div>
 
@@ -134,17 +79,59 @@
       });
     })();
 
-    // Add/remove friend actions: toggle the row's visual state only — no
-    // backing data yet. Remove fades the row out; add just gives tap feedback.
+    // Render the roster and wire up add/remove interactions.
     (function () {
+      var list = document.getElementById('settings-friends-list');
+      if (!list) return;
+
+      var FACE_DY = {
+        'friend_monster_1.svg': -1,
+        'friend_monster_2.svg': -2,
+        'friend_monster_3.svg': 0,
+        'friend_monster_4.svg': -6,
+        'friend_monster_6.svg': 0,
+        'friend_monster_7.svg': 1,
+        'friend_monster_8.svg': -6,
+        'friend_monster_9.svg': -7
+      };
+      var BUBBLE_LEFT = 47;
+      var NAME_X = 83;
+
+      var friends = [
+        { name: 'Emil', room: '0.012', monster: 'friend_monster_1.svg', online: true, action: 'remove' },
+        { name: 'Yasira', room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57, online: true, action: 'remove' },
+        { name: 'Jonas', room: '2.007', monster: 'friend_monster_6.svg', online: true, action: 'remove' },
+        { name: 'Lena', room: '0.220', monster: 'friend_monster_8.svg', bubbleLeft: 32, action: 'remove' },
+        { name: 'Theo', room: '1.019', monster: 'friend_monster_2.svg', action: 'remove' },
+        { name: 'Marlene', room: '2.113', monster: 'friend_monster_9.svg', action: 'remove' }
+      ];
+
+      list.innerHTML = friends.map(function (friend) {
+        var dy = FACE_DY[friend.monster] || 0;
+        var bl = friend.bubbleLeft || BUBBLE_LEFT;
+        return '<div class="sp-friend-row settings-friends-row" style="--bubble-left:' + bl + 'px;--name-pad:' + (NAME_X - bl) + 'px">' +
+          '<img class="sp-friend-row__face" style="top:' + dy + 'px" src="assets/' + friend.monster + '" alt="">' +
+          '<span class="sp-friend-row__bubble">' +
+            '<span class="sp-friend-row__head">' +
+              '<span class="sp-friend-row__name">' + friend.name + '</span>' +
+              '<button class="settings-friend-action settings-friend-action--' + friend.action + '" type="button" aria-label="' + (friend.action === 'add' ? 'Add friend back' : 'Remove friend') + '">' +
+                '<img src="assets/' + (friend.action === 'add' ? 'icon_plus_circle.svg' : 'icon_trash.svg') + '" alt="">' +
+              '</button>' +
+            '</span>' +
+          '</span>' +
+        '</div>';
+      }).join('');
+
       document.querySelectorAll('.settings-friend-action--remove').forEach(function (btn) {
-        btn.addEventListener('click', function () {
+        btn.addEventListener('click', function (event) {
+          event.stopPropagation();
           var row = btn.closest('.sp-friend-row');
           if (row) row.style.display = 'none';
         });
       });
       document.querySelectorAll('.settings-friend-action--add').forEach(function (btn) {
-        btn.addEventListener('click', function () {
+        btn.addEventListener('click', function (event) {
+          event.stopPropagation();
           btn.classList.remove('settings-btn-tap');
           void btn.offsetWidth;
           btn.classList.add('settings-btn-tap');
