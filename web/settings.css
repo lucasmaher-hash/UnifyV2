@@ -321,10 +321,14 @@
 
 /* Bouncy segmented toggle (toggle_switch component, Shape=Bouncy). Two
    flex:1 buttons split the 360px pill evenly; the active half gets a solid
-   pink fill reaching PAST the 50% line by half the edge graphic's width, and
-   the wavy edge graphic sits on top of that seam — same layering trick as
-   .map-sheet__toggle-rib on the map page: the solid fill guarantees no gap
-   ever shows through the wave's recesses, regardless of the exact path. */
+   pink fill that stops EXACTLY at the 50% line (not past it — a fill
+   reaching past the center used to sit directly under the entire wavy edge
+   graphic and show through its transparent recesses, masking the wave
+   completely and reading as a flat cut). The wavy edge graphic straddles
+   that seam on top: its solid side blends into the fill (same color, seam
+   invisible), and its bumps poke past 50% into the white half, which is
+   where the wave actually becomes visible — same trick as
+   .map-sheet__toggle-rib on the map page. */
 .settings-toggle{
   position:relative;
   width:360px; height:84px;
@@ -335,7 +339,7 @@
 }
 .settings-toggle__fill{
   position:absolute; top:0; bottom:0; z-index:0;
-  width:calc(50% + 16.5px);
+  width:50%;
   background:var(--pink);
 }
 .settings-toggle.is-left .settings-toggle__fill{ left:0; }

@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=16">
   <link rel="stylesheet" href="stundenplan.css?v=41">
-  <link rel="stylesheet" href="map.css?v=25">
+  <link rel="stylesheet" href="map.css?v=33">
 </head>
 <body>
   <div class="phone-stage">
@@ -218,21 +218,17 @@
           </div>
         </div>
       </div>
+      <!-- Dims only the map itself when the monster card is open — a sibling
+           of .map-canvas (not a transformed descendant), confined to the
+           viewport's own stacking level (z-index:0) so the floor toggle (2)
+           and bottom sheet (3) stay undimmed, painted on top of it. -->
+      <div class="map-monster-dim" id="mapMonsterDim"></div>
     </div>
 
     <!-- ===================== FLOOR SELECTOR (EG / 1.OG / 2.OG) ===================== -->
     <div class="map-floor-toggle" data-active="EG">
-      <div class="map-floor-toggle__eyes">
-        <img class="mft-eyes__white" src="assets/toggle_eyes_vector.svg" alt="">
-        <img class="mft-eyes__head" src="assets/toggle_eyes_group.svg" alt="">
-        <img class="mft-eyes__pupil mft-eyes__pupil--l" src="assets/toggle_eyes_pupil_l.svg" alt="">
-        <img class="mft-eyes__pupil mft-eyes__pupil--r" src="assets/toggle_eyes_pupil_r.svg" alt="">
-        <!-- 2.OG uses a dedicated, slightly narrower face (Figma node 1203:7638)
-             so it doesn't overhang the toggle's right edge — swapped in only for
-             that state; the four layers above are hidden then. -->
-        <img class="mft-eyes__face-2og" src="assets/toggle_eyes_2og.svg" alt="">
-      </div>
       <div class="map-floor-toggle__pill">
+        <div class="map-floor-toggle__highlight" id="floorToggleHighlight"></div>
         <button class="map-floor-toggle__seg is-active" data-floor="EG" type="button">EG</button>
         <button class="map-floor-toggle__seg" data-floor="1.OG" type="button">1.OG</button>
         <button class="map-floor-toggle__seg" data-floor="2.OG" type="button">2.OG</button>
@@ -244,7 +240,15 @@
          above its top edge without being clipped; .map-sheet__inner is the
          part that actually collapses/expands (drag or tap the handle). -->
     <div class="map-sheet is-collapsed" id="mapSheet">
-      <button class="map-sheet__peek" id="sheetPeekBtn" aria-label="Expand or collapse — drag or tap"><img src="assets/sheet_peek_figur.svg" alt=""></button>
+      <!-- Eyes built from assets/toggle_eyes_*.svg (formerly also used on the
+           floor toggle above, since removed there), scaled up 30% for the
+           sheet handle instead of the old distorted sheet_peek_figur.svg. -->
+      <button class="map-sheet__peek" id="sheetPeekBtn" aria-label="Expand or collapse — drag or tap">
+        <img class="msp-eyes__body" src="assets/toggle_eyes_vector.svg" alt="">
+        <img class="msp-eyes__head" src="assets/toggle_eyes_group.svg" alt="">
+        <img class="msp-eyes__pupil msp-eyes__pupil--l" src="assets/toggle_eyes_pupil_l.svg" alt="">
+        <img class="msp-eyes__pupil msp-eyes__pupil--r" src="assets/toggle_eyes_pupil_r.svg" alt="">
+      </button>
 
       <div class="map-sheet__inner" id="mapSheetInner">
       <div class="map-sheet__toggle">
@@ -293,6 +297,23 @@
       </nav>
       </div>
     </div>
+
+    <!-- ================= MONSTER CARD OVERLAY ================= -->
+    <!-- Opens when a marker on the map is tapped; adapted per-friend from the
+         pink pill card built in Figma (node 2229:8243, "Paul Card Horizontal").
+         Sits above everything (transparent — the actual dimming is
+         .map-monster-dim, scoped to just the map) purely so a tap anywhere
+         outside the card, including over the sheet/nav/floor toggle, closes it. -->
+    <div class="map-monster-overlay" id="mapMonsterOverlay" hidden>
+      <div class="map-monster-card">
+        <div class="map-monster-card__left">
+          <img class="map-monster-card__figur" id="monsterCardFigur" src="" alt="">
+          <p class="map-monster-card__name" id="monsterCardName"></p>
+        </div>
+        <div class="map-monster-card__divider"></div>
+        <p class="map-monster-card__info" id="monsterCardInfo"></p>
+      </div>
+    </div>
   </div>
   </div>
 
@@ -331,6 +352,11 @@
       var EDGE_MARGIN = 0.3;
 
       var scale = 1, minScale = 1, maxScale = 1, x = 0, y = 0;
+      // The zoom level the map opens at (set in initScale). Reference point
+      // for panToMarkerAnimated below: it zooms IN to this level if the user
+      // is more zoomed out than it, but never zooms back OUT past whatever
+      // level the user is already at.
+      var defaultScale = 1;
 
       function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
@@ -382,6 +408,7 @@
         minScale = coverScale / (1 + EDGE_MARGIN);
         maxScale = coverScale * 4;
         scale = coverScale * 1.6;
+        defaultScale = scale;
         // center on the middle of the map
         x = vw / 2 - (NATURAL_W * scale) / 2;
         y = vh / 2 - (NATURAL_H * scale) / 2;
@@ -487,6 +514,88 @@
           y = viewport.clientHeight / 2 - targetY * scale;
           constrain();
           render();
+        },
+        // Pans (map moves, not the marker) so the given friend's marker ends
+        // up horizontally centered and vertically in the top third of the
+        // viewport, zooming IN to defaultScale if the user is currently more
+        // zoomed out than that (never zooms back out if they're already
+        // zoomed in further), then calls back — used to settle the map on a
+        // monster before its card opens, instead of popping the card up
+        // immediately.
+        panToMarkerAnimated: function (name, callback, duration) {
+          duration = duration || 500;
+          var marker = Array.from(document.querySelectorAll('.map-marker')).find(function (node) {
+            return node.getAttribute('data-friend') === name;
+          });
+          if (!marker) { if (callback) callback(); return; }
+          var leftPct = parseFloat(marker.style.left || '0');
+          var topPct = parseFloat(marker.style.top || '0');
+          var targetMapX = (leftPct / 100) * NATURAL_W;
+          var targetMapY = (topPct / 100) * NATURAL_H;
+          var vw = viewport.clientWidth, vh = viewport.clientHeight;
+          // Center of the top third band (not the 1/3 boundary line itself).
+          var targetScreenX = vw / 2, targetScreenY = vh / 6;
+
+          var targetScale = Math.max(scale, defaultScale);
+          var targetX = targetScreenX - targetMapX * targetScale;
+          var targetY = targetScreenY - targetMapY * targetScale;
+
+          // Clamp against the same bounds constrain() uses (computed for the
+          // TARGET scale), so the animation never aims for a pan position
+          // that would immediately get snapped back after landing.
+          var w = NATURAL_W * targetScale, h = NATURAL_H * targetScale;
+          var marginX = w * EDGE_MARGIN, marginY = h * EDGE_MARGIN;
+          var minX = Math.min(0, vw - w) - marginX, maxX = Math.max(0, vw - w) + marginX;
+          var minY = Math.min(0, vh - h) - marginY, maxY = Math.max(0, vh - h) + marginY;
+          targetX = clamp(targetX, minX, maxX);
+          targetY = clamp(targetY, minY, maxY);
+
+          var startX = x, startY = y, startScale = scale, startTime = null;
+          function step(ts) {
+            if (!startTime) startTime = ts;
+            var t = Math.min(1, (ts - startTime) / duration);
+            var eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+            scale = startScale + (targetScale - startScale) * eased;
+            x = startX + (targetX - startX) * eased;
+            y = startY + (targetY - startY) * eased;
+            render();
+            if (t < 1) requestAnimationFrame(step);
+            else if (callback) callback();
+          }
+          requestAnimationFrame(step);
+        },
+        // Tapping a cluster badge (too zoomed out to show individual
+        // monsters) zooms in on that group — centered, no card opens. Target
+        // scale is defaultScale, comfortably past the ~20% zoomPercent
+        // threshold where clusters dissolve back into individual markers.
+        zoomToClusterAnimated: function (leftPct, topPct, duration) {
+          duration = duration || 500;
+          var targetMapX = (leftPct / 100) * NATURAL_W;
+          var targetMapY = (topPct / 100) * NATURAL_H;
+          var vw = viewport.clientWidth, vh = viewport.clientHeight;
+          var targetScale = Math.max(scale, defaultScale);
+          var targetX = vw / 2 - targetMapX * targetScale;
+          var targetY = vh / 2 - targetMapY * targetScale;
+
+          var w = NATURAL_W * targetScale, h = NATURAL_H * targetScale;
+          var marginX = w * EDGE_MARGIN, marginY = h * EDGE_MARGIN;
+          var minX = Math.min(0, vw - w) - marginX, maxX = Math.max(0, vw - w) + marginX;
+          var minY = Math.min(0, vh - h) - marginY, maxY = Math.max(0, vh - h) + marginY;
+          targetX = clamp(targetX, minX, maxX);
+          targetY = clamp(targetY, minY, maxY);
+
+          var startX = x, startY = y, startScale = scale, startTime = null;
+          function step(ts) {
+            if (!startTime) startTime = ts;
+            var t = Math.min(1, (ts - startTime) / duration);
+            var eased = 1 - Math.pow(1 - t, 3);
+            scale = startScale + (targetScale - startScale) * eased;
+            x = startX + (targetX - startX) * eased;
+            y = startY + (targetY - startY) * eased;
+            render();
+            if (t < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
         }
       };
     })();
@@ -500,17 +609,17 @@
       };
       var segs = document.querySelectorAll('.map-floor-toggle__seg');
       var friends = [
-        { name: 'Emil', room: '0.012', monster: 'friend_monster_1.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '47.62%', markerTop: '38.58%' },
-        { name: 'Yasira', room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57, namePad: 26, top: 0, markerLeft: '37.19%', markerTop: '66.43%' },
-        { name: 'Jonas', room: '2.007', monster: 'friend_monster_6.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '40.38%', markerTop: '65.69%' },
-        { name: 'Lena', room: '0.220', monster: 'friend_monster_8.svg', bubbleLeft: 32, namePad: 51, top: -6, markerLeft: '38.56%', markerTop: '60.24%' },
-        { name: 'Theo', room: '1.019', monster: 'friend_monster_2.svg', bubbleLeft: 47, namePad: 36, top: -2, markerLeft: '35.22%', markerTop: '50.75%' },
-        { name: 'Marlene', room: '2.113', monster: 'friend_monster_9.svg', bubbleLeft: 47, namePad: 36, top: -7, markerLeft: '47.62%', markerTop: '32.38%' },
-        { name: 'Noah', room: '0.305', monster: 'friend_monster_4.svg', bubbleLeft: 47, namePad: 36, top: -6, markerLeft: '50.24%', markerTop: '40.19%' },
-        { name: 'Sofia', room: '1.220', monster: 'friend_monster_7.svg', bubbleLeft: 47, namePad: 36, top: 1, markerLeft: '50.23%', markerTop: '34.04%' },
-        { name: 'Ben', room: '2.014', monster: 'friend_monster_1.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '7.66%', markerTop: '32.96%' },
-        { name: 'Mara', room: '0.118', monster: 'friend_monster_3.svg', bubbleLeft: 57, namePad: 26, top: 0, markerLeft: '10.48%', markerTop: '33.17%' },
-        { name: 'Nina', room: '1.205', monster: 'friend_monster_4.svg', bubbleLeft: 47, namePad: 36, top: -6, markerLeft: '13.29%', markerTop: '32.84%' }
+        { name: 'Emil', room: '0.012', monster: 'friend_monster_1.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '47.62%', markerTop: '38.58%', course: 'Interface Design', time: '09:00 - 10:30' },
+        { name: 'Yasira', room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57, namePad: 26, top: 0, markerLeft: '37.19%', markerTop: '66.43%', course: 'Prototyping', time: '08:30 - 10:00' },
+        { name: 'Jonas', room: '2.007', monster: 'friend_monster_6.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '40.38%', markerTop: '65.69%', course: 'Modelbau', time: '09:00 - 12:00' },
+        { name: 'Lena', room: '0.220', monster: 'friend_monster_8.svg', bubbleLeft: 32, namePad: 51, top: -6, markerLeft: '38.56%', markerTop: '60.24%', course: 'Illustration', time: '09:30 - 11:00' },
+        { name: 'Theo', room: '1.019', monster: 'friend_monster_2.svg', bubbleLeft: 47, namePad: 36, top: -2, markerLeft: '35.22%', markerTop: '50.75%', course: 'Motion Design', time: '10:00 - 11:30' },
+        { name: 'Marlene', room: '2.113', monster: 'friend_monster_9.svg', bubbleLeft: 47, namePad: 36, top: -7, markerLeft: '47.62%', markerTop: '32.38%', course: 'UX Research', time: '08:00 - 09:30' },
+        { name: 'Noah', room: '0.305', monster: 'friend_monster_4.svg', bubbleLeft: 47, namePad: 36, top: -6, markerLeft: '50.24%', markerTop: '40.19%', course: 'Ergonomie', time: '10:15 - 11:45' },
+        { name: 'Sofia', room: '1.220', monster: 'friend_monster_7.svg', bubbleLeft: 47, namePad: 36, top: 1, markerLeft: '50.23%', markerTop: '34.04%', course: 'Fotografie', time: '14:00 - 15:30' },
+        { name: 'Ben', room: '2.014', monster: 'friend_monster_1.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '7.66%', markerTop: '32.96%', course: 'Statistik', time: '15:00 - 16:30' },
+        { name: 'Mara', room: '0.118', monster: 'friend_monster_3.svg', bubbleLeft: 57, namePad: 26, top: 0, markerLeft: '10.48%', markerTop: '33.17%', course: 'Design Systems', time: '11:30 - 13:00' },
+        { name: 'Nina', room: '1.205', monster: 'friend_monster_4.svg', bubbleLeft: 47, namePad: 36, top: -6, markerLeft: '13.29%', markerTop: '32.84%', course: 'Keramik', time: '14:30 - 16:00' }
       ];
       var listHost = document.getElementById('sheetFriendsList');
       var markers = Array.from(document.querySelectorAll('.map-marker'));
@@ -538,7 +647,15 @@
           listHost.querySelectorAll('.sp-friend-row').forEach(function (row) {
             row.addEventListener('click', function () {
               var friendName = row.getAttribute('data-friend');
-              if (window.mapControls && window.mapControls.focusMarker) window.mapControls.focusMarker(friendName);
+              // Collapse the pull-up sheet out of the way while the map pans
+              // smoothly to that friend's monster (same eased animation as
+              // tapping the marker directly — just without opening its card).
+              if (window.mapSheetControls && window.mapSheetControls.collapse) window.mapSheetControls.collapse();
+              if (window.mapControls && window.mapControls.panToMarkerAnimated) {
+                window.mapControls.panToMarkerAnimated(friendName, null, 500);
+              } else if (window.mapControls && window.mapControls.focusMarker) {
+                window.mapControls.focusMarker(friendName);
+              }
             });
           });
         }
@@ -564,9 +681,21 @@
         });
       }
 
+      var floorHighlight = document.getElementById('floorToggleHighlight');
+      function positionFloorHighlight(seg) {
+        if (!floorHighlight || !seg) return;
+        floorHighlight.style.width = seg.offsetWidth + 'px';
+        floorHighlight.style.transform = 'translateX(' + seg.offsetLeft + 'px)';
+      }
+      // Set the initial position immediately, with no slide-in on page load.
+      floorHighlight.style.transition = 'none';
+      positionFloorHighlight(document.querySelector('.map-floor-toggle__seg.is-active'));
+      requestAnimationFrame(function () { floorHighlight.style.transition = ''; });
+
       segs.forEach(function (seg) {
         seg.addEventListener('click', function () {
           segs.forEach(function (s) { s.classList.toggle('is-active', s === seg); });
+          positionFloorHighlight(seg);
           var floor = seg.getAttribute('data-floor');
           document.querySelector('.map-floor-toggle').setAttribute('data-active', floor);
           window.mapControls.setFloor(FLOOR_IMAGES[floor], floor + ' floor plan');
@@ -575,6 +704,71 @@
       });
 
       renderFriendMapState();
+
+      // ===================== Monster card overlay =====================
+      // Tapping a marker opens a centered pink pill card (matches Figma
+      // "Paul Card", node 2221:8245) adapted with that friend's own
+      // monster icon, name, and current course/time/room.
+      var overlay = document.getElementById('mapMonsterOverlay');
+      var overlayFigur = document.getElementById('monsterCardFigur');
+      var overlayName = document.getElementById('monsterCardName');
+      var overlayInfo = document.getElementById('monsterCardInfo');
+      var overlayCard = overlay.querySelector('.map-monster-card');
+      var mapDim = document.getElementById('mapMonsterDim');
+
+      function openMonsterCard(friend) {
+        // The plain friend_monster_N.svg defaults its body fill to pink (for
+        // use on dark/cream backgrounds elsewhere); on this pink card that
+        // makes the body invisible, so use the dark-body variant here.
+        overlayFigur.src = 'assets/' + friend.monster.replace('.svg', '_dark.svg');
+        overlayFigur.alt = friend.name;
+        overlayName.textContent = friend.name;
+        overlayInfo.innerHTML = friend.course + '<br>' + friend.time + '<br>' + friend.room;
+        overlay.hidden = false;
+        // rAF so the browser paints the hidden->visible state change first,
+        // letting the is-open transition actually animate instead of
+        // snapping straight to its end state.
+        requestAnimationFrame(function () {
+          overlay.classList.add('is-open');
+          mapDim.classList.add('is-open');
+        });
+      }
+      function closeMonsterCard() {
+        overlay.classList.remove('is-open');
+        mapDim.classList.remove('is-open');
+        window.setTimeout(function () { overlay.hidden = true; }, 250);
+      }
+
+      // Delegated so it keeps working after renderFriendMapState() rebuilds
+      // marker innerHTML on every floor switch. Settles the map on the
+      // tapped monster first (pan only — map moves, not the card), then
+      // opens the card; pan (500ms) + card-open (250ms) stays under 1s total.
+      document.getElementById('mapViewport').addEventListener('click', function (e) {
+        // Too zoomed out to show individual monsters: tapping the grouped
+        // badge just zooms in on that group — no card opens.
+        var cluster = e.target.closest('.map-cluster');
+        if (cluster) {
+          var leftPct = parseFloat(cluster.style.left || '0');
+          var topPct = parseFloat(cluster.style.top || '0');
+          if (window.mapControls && window.mapControls.zoomToClusterAnimated) {
+            window.mapControls.zoomToClusterAnimated(leftPct, topPct, 500);
+          }
+          return;
+        }
+        var marker = e.target.closest('.map-marker');
+        if (!marker) return;
+        var friend = friends.find(function (f) { return f.name === marker.getAttribute('data-friend'); });
+        if (!friend) return;
+        if (window.mapControls && window.mapControls.panToMarkerAnimated) {
+          window.mapControls.panToMarkerAnimated(friend.name, function () { openMonsterCard(friend); }, 500);
+        } else {
+          openMonsterCard(friend);
+        }
+      });
+
+      overlay.addEventListener('click', function (e) {
+        if (!overlayCard.contains(e.target)) closeMonsterCard();
+      });
     })();
 
     // ===================== Bottom sheet: Freunde / Kurse toggle =====================
@@ -682,6 +876,12 @@
       peek.addEventListener('pointermove', onPointerMove);
       peek.addEventListener('pointerup', onPointerUp);
       peek.addEventListener('pointercancel', onPointerUp);
+
+      // Exposed so tapping a friend row in the sheet's own scrollable list
+      // can collapse it (same smooth settle() used for drag/tap-to-close).
+      window.mapSheetControls = {
+        collapse: function () { settle(true); }
+      };
     })();
 
     // ===================== Bottom nav: bounce feedback =====================

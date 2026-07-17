@@ -11,7 +11,7 @@
   <!-- reuses .sp-friend-row (+face/bubble/head/name) from the stundenplan
        friend list — same component (friends_stundenplan_new) in Figma. -->
   <link rel="stylesheet" href="stundenplan.css?v=41">
-  <link rel="stylesheet" href="settings.css?v=6">
+  <link rel="stylesheet" href="settings.css?v=7">
 </head>
 <body>
   <div class="phone-stage">
@@ -31,14 +31,14 @@
         <img class="settings-panel__figur" src="assets/nav_figur_peek.svg" alt="" aria-hidden="true">
 
         <div class="settings-friends-list">
+          <div class="settings-friends-scroll">
+            <div class="settings-friends-scroll__body" id="settings-friends-list"></div>
+          </div>
+
           <button class="settings-friends-search" type="button">
             <img class="settings-friends-search__icon" src="assets/icon_search.svg" alt="">
             <span>name / matrikulationsnummer</span>
           </button>
-
-          <div class="settings-friends-scroll">
-            <div class="settings-friends-scroll__body" id="settings-friends-list"></div>
-          </div>
         </div>
 
         <nav class="settings-nav" aria-label="Primary">

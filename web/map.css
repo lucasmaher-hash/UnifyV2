@@ -50,6 +50,8 @@
   display:flex;
   flex-direction:column;
   align-items:center;
+  pointer-events:auto;
+  cursor:pointer;
   transform:scale(calc(1 / var(--map-zoom, 1))) scale(1.2);
   transform-origin:top left;
   /* Own compositing layer, isolated from .map-canvas's. Without this, the
@@ -86,14 +88,21 @@
 .map-marker{ opacity:1; transition:opacity .5s ease; }
 .map-cluster{ opacity:0; transition:opacity .5s ease; position:absolute; pointer-events:none; transform:translate(-50%, -50%); }
 .map-canvas.is-zoomed-out .map-marker{ opacity:0; }
+.map-canvas.is-zoomed-out .map-marker__inner{ pointer-events:none; }
 .map-canvas.is-zoomed-out .map-cluster{ opacity:1; }
 .map-cluster__inner{
   position:relative;
   width:56px; height:56px;
+  pointer-events:none;
+  cursor:pointer;
   transform:scale(calc(1 / var(--map-zoom, 1)));
   transform-origin:center center;
   will-change:transform;   /* same layer-isolation fix as .map-marker__inner */
 }
+/* Clusters sit later in the DOM (painted on top of markers) even while
+   invisible at higher zoom — only accept clicks while actually shown, so an
+   invisible cluster badge never swallows a tap meant for a marker beneath it. */
+.map-canvas.is-zoomed-out .map-cluster__inner{ pointer-events:auto; }
 .map-cluster__circle{ position:absolute; inset:0; width:100%; height:100%; display:block; }
 .map-cluster__count{
   position:absolute; inset:0;
@@ -114,56 +123,15 @@
   top:43.5px;
   left:41px;
   width:320px;
-  height:78px;
+  height:55px;
   z-index:2;
 }
-/* z-index:2 lifts the face ABOVE the pill (fixes the eyes being clipped by the
-   dark pill painting over them). The whole group slides to sit over the active
-   segment — steps measured from the three Figma states (EG/1.OG/2.OG). */
-.map-floor-toggle__eyes{
-  position:absolute; top:0; left:0; width:320px; height:30px; pointer-events:none;
-  z-index:2;
-  transition:transform .35s cubic-bezier(.4,0,.2,1);
-}
-.map-floor-toggle[data-active="1.OG"] .map-floor-toggle__eyes{ transform:translateX(105px); }
-.map-floor-toggle[data-active="2.OG"] .map-floor-toggle__eyes{ transform:translateX(209px); }
-@media (prefers-reduced-motion: reduce){
-  .map-floor-toggle__eyes{ transition:none; }
-}
-/* 1.OG: face centered, no corner is near it — both fully rounded (Figma: 9999). */
-.map-floor-toggle[data-active="1.OG"] .map-floor-toggle__pill{ border-radius:30px; }
-/* 2.OG: face over the right corner — that corner flattens instead of the left. */
-.map-floor-toggle[data-active="2.OG"] .map-floor-toggle__pill{ border-radius:30px 18px 30px 30px; }
-@media (prefers-reduced-motion: reduce){
-  .map-floor-toggle__pill{ transition:none; }
-}
-.mft-eyes__white{ position:absolute; left:12px; top:0; width:92.074px; height:29.939px; display:block; }
-.mft-eyes__head{ position:absolute; left:23.18px; top:4.78px; width:67.086px; height:23.294px; display:block; }
-.mft-eyes__pupil{ position:absolute; top:15.96px; width:11.181px; height:10.249px; display:block; }
-.mft-eyes__pupil--l{ left:37.16px; }
-.mft-eyes__pupil--r{ left:66.97px; }
-
-/* 2.OG-only face (dedicated Figma shape, ~4.7px narrower) — hidden by default;
-   swapped in for the 2.OG state below. Position is the Figma-measured symbol
-   offset (222.5, 1.2) minus the 209px translateX already on the container, so
-   it lands in the same final spot once that transform is applied. */
-.mft-eyes__face-2og{ position:absolute; left:13.5px; top:1.2px; width:87.4px; height:28.7px; display:none; }
-.map-floor-toggle[data-active="2.OG"] .mft-eyes__white,
-.map-floor-toggle[data-active="2.OG"] .mft-eyes__head,
-.map-floor-toggle[data-active="2.OG"] .mft-eyes__pupil{ display:none; }
-.map-floor-toggle[data-active="2.OG"] .mft-eyes__face-2og{ display:block; }
-
 .map-floor-toggle__pill{
   position:absolute;
-  top:23px; left:0;
+  top:0; left:0;
   width:320px; height:55px;
   background:var(--dark);
-  /* corner nearest the face flattens (18px) to blend with it; the far corners
-     stay fully rounded (30px). Centered (1.OG) has no near corner, so all four
-     go fully round (9999 in Figma — 30px reads the same at this size). Default
-     here is EG's shape (top-left flat); the other two states override below. */
-  border-radius:18px 30px 30px 30px;
-  transition:border-radius .35s cubic-bezier(.4,0,.2,1);
+  border-radius:30px;
   display:flex;
   gap:4px;
   align-items:center;
@@ -171,7 +139,22 @@
   padding:8px;
   box-sizing:border-box;
 }
+/* Shared pink pill that slides between segments (translateX, set by JS from
+   the active segment's measured offset/width) instead of each button
+   toggling its own background — that jumped instantly with no animation. */
+.map-floor-toggle__highlight{
+  position:absolute;
+  top:8px; bottom:8px; left:0;
+  width:0;
+  background:var(--pink);
+  border-radius:9999px;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+@media (prefers-reduced-motion: reduce){
+  .map-floor-toggle__highlight{ transition:none; }
+}
 .map-floor-toggle__seg{
+  position:relative;
   flex:1; height:100%;
   border:0; background:none;
   border-radius:9999px;
@@ -180,7 +163,7 @@
   cursor:pointer;
   display:flex; align-items:center; justify-content:center;
 }
-.map-floor-toggle__seg.is-active{ background:var(--pink); color:#000; }
+.map-floor-toggle__seg.is-active{ color:#000; }
 
 /* ============================ BOTTOM SHEET ============================ */
 /* The nav bar lives INSIDE this sheet as its own flex child (see
@@ -226,18 +209,25 @@
    on max-height clipping (which would show a sliver of the top row). */
 .map-sheet.is-collapsed .map-sheet__body{ display:none; }
 
+/* Same face as the floor toggle (assets/toggle_eyes_*.svg — dark blob body +
+   white eyes + 2 pupils), natural proportions (92.074 x 29.939) scaled up
+   30% (119.7 x 38.92). top:-30px keeps the same ~23% overlap ratio the eyes
+   have sinking into the floor-toggle pill (7px of 29.939 there), so ~9px of
+   the taller scaled-up face here sinks below the sheet's own top edge. */
 .map-sheet__peek{
   position:absolute;
-  top:-59px; left:50%;
+  top:-30px; left:50%;
   transform:translateX(-50%);
-  /* narrower than the art's natural 178:66 so the face squashes horizontally —
-     eyes pushed closer together (preserveAspectRatio="none" on the SVG). */
-  width:110px; height:66px;
+  width:119.7px; height:38.92px;
   padding:0; border:0; background:none; cursor:grab;
   touch-action:none;
 }
 .map-sheet__peek:active{ cursor:grabbing; }
-.map-sheet__peek img{ display:block; width:100%; height:100%; pointer-events:none; }
+.msp-eyes__body{ position:absolute; left:0; top:0; width:119.7px; height:38.92px; display:block; pointer-events:none; }
+.msp-eyes__head{ position:absolute; left:14.53px; top:6.21px; width:87.21px; height:30.28px; display:block; pointer-events:none; }
+.msp-eyes__pupil{ position:absolute; top:20.75px; width:14.54px; height:13.32px; display:block; pointer-events:none; }
+.msp-eyes__pupil--l{ left:32.71px; }
+.msp-eyes__pupil--r{ left:71.46px; }
 
 .map-sheet__toggle{
   position:relative;
@@ -383,3 +373,51 @@
 .map-sheet__nav-btn:nth-child(2) img{ width:43px; height:46px; }
 .map-sheet__nav-btn:nth-child(3) img{ width:37px; height:44px; }
 .map-sheet__nav-btn:nth-child(4) img{ width:44px; height:49px; }
+
+/* ===================== MONSTER CARD OVERLAY ===================== */
+/* Opens centered over the map when a friend marker is tapped. Card matches
+   Figma "Paul Card Horizontal" (node 2229:8243): pink pill, monster figure
+   stacked above the name on the left, a vertical divider, then
+   course/time/room stacked on the right. Name/figure/info swap per the
+   clicked friend. */
+/* Dims only the map — see .map-monster-dim, a child of #mapViewport so it's
+   confined to that stacking level (z-index:0), below the floor toggle (2)
+   and bottom sheet (3), which stay undimmed. */
+.map-monster-dim{
+  position:absolute; inset:0;
+  background:rgba(41,41,37,0.55);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+.map-monster-dim.is-open{ opacity:1; }
+/* Transparent — sits above everything (including the sheet/nav/floor toggle)
+   purely so a tap anywhere outside the card closes it. The actual dimming
+   is handled by .map-monster-dim above. */
+.map-monster-overlay{
+  position:absolute; inset:0;
+  z-index:60;
+  display:flex; align-items:center; justify-content:center;
+}
+.map-monster-overlay[hidden]{ display:none; }
+.map-monster-card{
+  position:relative;
+  min-width:322px; max-width:400px;
+  border-radius:31px;
+  background:var(--pink);
+  display:flex; flex-direction:row; align-items:stretch;
+  gap:19px;
+  padding:16px 20px 16px 13px;
+  box-sizing:border-box;
+  transform:scale(.85); opacity:0;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s ease;
+}
+.map-monster-overlay.is-open .map-monster-card{ transform:scale(1); opacity:1; }
+.map-monster-card__left{ display:flex; flex-direction:column; align-items:flex-start; justify-content:space-between; flex-shrink:0; }
+.map-monster-card__figur{ width:61px; height:46px; object-fit:contain; display:block; }
+.map-monster-card__name{ margin:14px 0 0; font-family:var(--font); font-weight:800; font-size:28px; color:var(--dark); white-space:nowrap; }
+.map-monster-card__divider{ width:4px; align-self:stretch; background:var(--dark); border-radius:2px; flex-shrink:0; }
+.map-monster-card__info{ margin:0; font-family:var(--font); font-weight:700; font-size:24px; color:var(--dark); text-align:left; line-height:1.35; align-self:center; }
+@media (prefers-reduced-motion: reduce){
+  .map-monster-dim, .map-monster-card{ transition:none; }
+}
