@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Unify — Stundenplan</title>
+  <title>Unify — Timetable</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=16">
-  <link rel="stylesheet" href="stundenplan.css?v=41">
+  <link rel="stylesheet" href="stundenplan.css?v=42">
 </head>
 <body>
   <div class="phone-stage">
@@ -42,7 +42,7 @@
           <div class="sp-tab-overlay">
             <img class="sp-tab-overlay__face" src="assets/tab_face_stundenplan.svg" alt="">
             <img class="sp-tab-overlay__pill" src="assets/tab_mouth_stundenplan.svg" alt="">
-            <p class="sp-tab-overlay__label">Stundenplan</p>
+            <p class="sp-tab-overlay__label">Timetable</p>
           </div>
         </div>
 
@@ -61,7 +61,7 @@
           <div class="sp-header-group">
             <div class="sp-card sp-card--socials">
               <div class="sp-header">
-                <button class="sp-header__inactive sp-header__inactive--left" data-switch-tab="stundenplan">Stundenplan</button>
+                <button class="sp-header__inactive sp-header__inactive--left" data-switch-tab="stundenplan">Timetable</button>
                 <div class="sp-header__active sp-header__active--right"></div>
               </div>
               <div class="sp-panel sp-panel--pink sp-panel--rounded-all">
@@ -86,19 +86,19 @@
             </div>
           </div>
 
-          <!-- activity (Open, Pink) — Umtrunk Uniparty -->
+          <!-- activity (Open, Pink) — Mixer Uniparty -->
           <div class="sp-activity sp-activity--pink sp-activity--open" style="--closed-h:507px;">
             <div class="sp-activity__content">
               <div class="sp-activity__poster"><img src="assets/poster_umtrunk_uniparty.jpg" alt=""></div>
               <div class="sp-activity__header">
                 <div class="sp-activity__titleblock">
-                  <p class="sp-activity__title">Umtrunk Uniparty</p>
+                  <p class="sp-activity__title">Mixer Uniparty</p>
                   <p class="sp-activity__time">20:00-23:00</p>
                 </div>
                 <p class="sp-activity__date">07.06</p>
               </div>
               <div class="sp-activity__divider"></div>
-              <p class="sp-activity__desc">Der Semesterausklang mit Musik, Drinks und guter Stimmung. Bringt eure Freunde mit!</p>
+              <p class="sp-activity__desc">The end-of-semester celebration with music, drinks, and good vibes. Bring your friends!</p>
             </div>
             <div class="sp-activity__face">
               <span class="sp-activity__lip"></span>
@@ -109,19 +109,19 @@
             </div>
           </div>
 
-          <!-- activity (Closed, Cream) — Filmabend -->
+          <!-- activity (Closed, Cream) — Movie Night -->
           <div class="sp-activity sp-activity--cream" style="--closed-h:563px;">
             <div class="sp-activity__content">
               <div class="sp-activity__poster"><img src="assets/poster_movie_night.jpg" alt=""></div>
               <div class="sp-activity__header">
                 <div class="sp-activity__titleblock">
-                  <p class="sp-activity__title">Filmabend</p>
+                  <p class="sp-activity__title">Movie Night</p>
                   <p class="sp-activity__time">19:00-21:30</p>
                 </div>
                 <p class="sp-activity__date">10.06</p>
               </div>
               <div class="sp-activity__divider"></div>
-              <p class="sp-activity__desc">Gemütlicher Kinoabend mit Popcorn und Decken. Der Film wird spontan gewählt.</p>
+              <p class="sp-activity__desc">Cozy movie night with popcorn and blankets. The film is picked spontaneously.</p>
             </div>
             <div class="sp-activity__face">
               <span class="sp-activity__lip"></span>
@@ -132,19 +132,19 @@
             </div>
           </div>
 
-          <!-- activity (Closed, Pink) — Buchclub -->
+          <!-- activity (Closed, Pink) — Book Club -->
           <div class="sp-activity sp-activity--pink" style="--closed-h:420px;">
             <div class="sp-activity__content">
               <div class="sp-activity__poster"><img src="assets/poster_book_club.jpg" alt=""></div>
               <div class="sp-activity__header">
                 <div class="sp-activity__titleblock">
-                  <p class="sp-activity__title">Buchclub</p>
+                  <p class="sp-activity__title">Book Club</p>
                   <p class="sp-activity__time">17:00-18:30</p>
                 </div>
                 <p class="sp-activity__date">12.06</p>
               </div>
               <div class="sp-activity__divider"></div>
-              <p class="sp-activity__desc">Lesen, diskutieren und Buchtipps austauschen bei Tee und Keksen. Neue Gesichter willkommen.</p>
+              <p class="sp-activity__desc">Read, discuss, and swap book recommendations over tea and cookies. New faces welcome.</p>
             </div>
             <div class="sp-activity__face">
               <span class="sp-activity__lip"></span>
@@ -167,7 +167,7 @@
                 <p class="sp-activity__date">14.06</p>
               </div>
               <div class="sp-activity__divider"></div>
-              <p class="sp-activity__desc">Kurzvorträge zu spannenden Themen von Studierenden für Studierende, mit Fragerunde.</p>
+              <p class="sp-activity__desc">Short talks on exciting topics by students for students, with a Q&A.</p>
             </div>
             <div class="sp-activity__face">
               <span class="sp-activity__lip"></span>
@@ -211,7 +211,7 @@
       montag: {
         pink: [
           { title: 'Interface Design', room: '(1.019)', time: '09:00-10:30' },
-          { title: 'Mathe', room: '(2.013)', time: '09:00-10:30' }
+          { title: 'Math', room: '(2.013)', time: '09:00-10:30' }
         ],
         cream: [
           { title: 'Ping Pong Duel', room: '(1.001)', time: '09:00-10:30' }
@@ -220,7 +220,7 @@
       dienstag: {
         pink: [
           { title: 'Prototyping', room: '(1.019)', time: '09:00-10:30' },
-          { title: 'ID Grundlagen', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Sophia', 'Michi'] }
+          { title: 'ID Fundamentals', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Sophia', 'Michi'] }
         ],
         cream: [
           { title: 'Movie day', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Michi'] }
@@ -228,17 +228,17 @@
       },
       mittwoch: {
         pink: [
-          { title: 'Modelbau Analog', room: '(1.019)', time: '09:00-10:30' },
-          { title: 'Modelbau Digital', room: '(1.019)', time: '09:00-10:30' }
+          { title: 'Model Making Analog', room: '(1.019)', time: '09:00-10:30' },
+          { title: 'Model Making Digital', room: '(1.019)', time: '09:00-10:30' }
         ],
         cream: []
       },
       donnerstag: {
         pink: [
-          { title: 'Ergonomie', room: '(1.019)', time: '09:00-10:30' }
+          { title: 'Ergonomics', room: '(1.019)', time: '09:00-10:30' }
         ],
         cream: [
-          { title: 'Bücherclub', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Michi'] }
+          { title: 'Book Club', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Michi'] }
         ]
       },
       freitag: {
@@ -247,7 +247,7 @@
           { title: 'Interface Design', room: '(1.019)', time: '09:00-10:30' }
         ],
         cream: [
-          { title: 'Umtrunk', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Sophia', 'Naomi', 'Michi', 'Konst', 'Zoe', 'Nam'] }
+          { title: 'Mixer', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Sophia', 'Naomi', 'Michi', 'Konst', 'Zoe', 'Nam'] }
         ]
       }
     };
@@ -264,8 +264,8 @@
     // ...and swaps a couple of course titles so weeks aren't identical.
     var TITLE_SWAPS = {
       1: { 'Interface Design': 'Design Systems', 'Prototyping': 'Motion Design' },
-      2: { 'Mathe': 'Statistik', 'Modelbau Analog': 'Keramik', 'Ergonomie': 'UX Research' },
-      3: { 'Interface Design': 'Portfolio', 'Bücherclub': 'Schreibwerkstatt', 'Umtrunk': 'Sommerfest' }
+      2: { 'Math': 'Statistics', 'Model Making Analog': 'Ceramics', 'Ergonomics': 'UX Research' },
+      3: { 'Interface Design': 'Portfolio', 'Book Club': 'Writing Workshop', 'Mixer': 'Summer Festival' }
     };
 
     var currentWeek = 0;   // 0-based index into WEEKS
@@ -391,7 +391,7 @@
       window.addEventListener('resize', fit);
     })();
 
-    // Day + week switching for Stundenplan
+    // Day + week switching for Timetable
     (function () {
       var pink = document.getElementById('sp-pink-courses');
       var dayButtons = pink.querySelectorAll('.sp-day');
@@ -465,17 +465,17 @@
       var friends = [
         { name: 'Emil', room: '0.012', monster: 'friend_monster_1.svg', online: true, courses: [
           { title: 'Interface Design', time: '09:00-10:30', room: '1.019' },
-          { title: 'Typografie',       time: '11:00-12:30', room: '2.004' },
-          { title: 'Fotografie',       time: '14:00-15:30', room: '0.112' }
+          { title: 'Typography',       time: '11:00-12:30', room: '2.004' },
+          { title: 'Photography',       time: '14:00-15:30', room: '0.112' }
         ] },
         { name: 'Yasira', room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57, online: true, courses: [
           { title: 'Prototyping', time: '08:30-10:00', room: '1.104' },
-          { title: 'Ergonomie',   time: '10:15-11:45', room: '1.019' }
+          { title: 'Ergonomics',   time: '10:15-11:45', room: '1.019' }
         ] },
         { name: 'Jonas', room: '2.007', monster: 'friend_monster_6.svg', online: true, courses: [
-          { title: 'Modelbau',  time: '09:00-12:00', room: '2.007' },
-          { title: 'Mathe',     time: '13:00-14:30', room: '2.013' },
-          { title: 'Statistik', time: '15:00-16:30', room: '2.101' }
+          { title: 'Model Making',  time: '09:00-12:00', room: '2.007' },
+          { title: 'Math',     time: '13:00-14:30', room: '2.013' },
+          { title: 'Statistics', time: '15:00-16:30', room: '2.101' }
         ] },
         { name: 'Lena', room: '0.220', monster: 'friend_monster_8.svg', bubbleLeft: 32, courses: [
           { title: 'Illustration',   time: '09:30-11:00', room: '0.220' },
@@ -483,8 +483,8 @@
         ] },
         { name: 'Theo', room: '1.019', monster: 'friend_monster_2.svg', courses: [
           { title: 'Motion Design',  time: '10:00-11:30', room: '1.019' },
-          { title: 'ID Grundlagen',  time: '12:00-13:30', room: '1.019' },
-          { title: 'Keramik',        time: '14:30-16:00', room: '0.004' }
+          { title: 'ID Fundamentals',  time: '12:00-13:30', room: '1.019' },
+          { title: 'Ceramics',        time: '14:30-16:00', room: '0.004' }
         ] },
         { name: 'Marlene', room: '2.113', monster: 'friend_monster_9.svg', courses: [
           { title: 'UX Research', time: '08:00-09:30', room: '2.113' },
@@ -526,7 +526,7 @@
       });
     })();
 
-    // Tab switching between Stundenplan / Socials — same page, no navigation,
+    // Tab switching between Timetable / Socials — same page, no navigation,
     // matching the Figma prototype where these are two states of one frame.
     (function () {
       var views = {

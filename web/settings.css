@@ -351,7 +351,13 @@
   pointer-events:none;
   display:block;
 }
-.settings-toggle.is-right .settings-toggle__edge{ transform:scaleX(-1); }
+/* Natural art: solid mass on its own right, ribbed bumps on its own left.
+   is-right (fill on the right) wants exactly that orientation — bumps poke
+   left into the white half, solid blends into the fill on the right — so it
+   stays unmirrored. is-left (fill on the left) needs the opposite, so it
+   gets mirrored: solid now blends into the fill on the left, bumps poke
+   right into the white half. */
+.settings-toggle.is-left .settings-toggle__edge{ transform:scaleX(-1); }
 .settings-toggle__btn{
   position:relative; z-index:2;
   flex:1;
@@ -479,13 +485,19 @@
   position:absolute;
   left:0; top:15px;
   width:371px; height:72px;
-  border-radius:34px;
+  /* height/2 — a true stadium shape, fully rounded (semicircle) at both
+     ends, not just a corner-radius approximation. */
+  border-radius:36px;
   background:var(--pink);
   box-sizing:border-box;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 16px 0 21px;
+  /* Right padding matches the arrow's own top/bottom margin (7.2px, from
+     centering a 57.6px circle in this 72px-tall pill), so the gap around
+     the arrow reads as one consistent ring instead of flush on one side
+     and open on the other. */
+  padding:0 7.2px 0 21px;
 }
 .settings-btn__label{
   margin:0;
@@ -496,14 +508,21 @@
   color:var(--dark);
   white-space:nowrap;
 }
+/* Same circular arrow button as the homepage's connect-now panel
+   (.panel__face-btn in styles.css) — was 72x51.1 with border-radius:999px,
+   which only rounds a non-square box into an oval, not a true circle.
+   Shrunk 10% (64→57.6px) and sitting flush against the pill's right edge
+   (no right padding on .settings-btn__pill) so its curve — same 28.8px
+   radius as the pill's own border-radius — continues the pill's rounded
+   end seamlessly instead of floating inset inside it. */
 .settings-btn__arrow{
   flex:none;
-  width:72px; height:51.1px;
+  width:57.6px; height:57.6px;
   border-radius:999px;
   background:var(--dark);
   display:flex; align-items:center; justify-content:center;
 }
-.settings-btn__arrow img{ display:block; width:29.2px; height:16.7px; }
+.settings-btn__arrow img{ display:block; width:25.2px; height:14.4px; }
 
 /* Very subtle tap feedback — deliberately NOT the shared .nav-bounce (1.2x,
    springy) used for the bottom nav; a settings row reads better with a

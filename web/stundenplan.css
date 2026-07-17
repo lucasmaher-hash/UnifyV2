@@ -162,14 +162,19 @@
 /* Mouth (the dark pill holding the label), exported from Figma's Ellipse 169.
    Position/size are the Figma bounds relative to the card's top-left. */
 .sp-tab-overlay__pill{ position:absolute; left:8.4px; top:10.8px; width:167.6px; height:48.2px; display:block; }
+/* Positioned/sized to match .sp-tab-overlay__pill exactly (not a hand-tuned
+   left/top for one specific string's width) and centered via flex, so any
+   label text — regardless of length — lands centered in the pill instead of
+   only looking right for whatever word it was originally tuned for. */
 .sp-tab-overlay__label{
-  position:absolute; left:18px; top:19px; margin:0;
+  position:absolute; left:8.4px; top:10.8px; width:167.6px; height:48.2px; margin:0;
+  display:flex; align-items:center; justify-content:center;
   font-family:var(--font); font-weight:800; font-size:24px; color:var(--cream); white-space:nowrap;
 }
 
 /* socials tab: overlay mirrored to the right side */
 .sp-tab-overlay__pill--socials{ left:242.5px; top:13.7px; width:121px; height:45.3px; }
-.sp-tab-overlay__label--socials{ left:267.5px; top:16px; }
+.sp-tab-overlay__label--socials{ left:242.5px; top:13.7px; width:121px; height:45.3px; }
 
 /* ============================ SEARCH BAR ============================ */
 .sp-search{
