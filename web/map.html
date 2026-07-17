@@ -18,8 +18,8 @@
     <!-- ===================== ZOOMABLE / PANNABLE MAP ===================== -->
     <div class="map-viewport" id="mapViewport">
       <div class="map-canvas" id="mapCanvas">
-        <img class="map-canvas__bg" id="mapBg" src="assets/floorplan_eg.png" alt="EG floor plan" draggable="false">
-        <!-- 11 figures placed on EG floor -->
+        <img class="map-canvas__bg" id="mapBg" src="assets/floorplan_eg.png" alt="Ground floor plan" draggable="false">
+        <!-- 11 figures placed on the ground floor -->
         <div class="map-marker" style="left:47.62%;top:38.58%;">
           <div class="map-marker__inner">
             <svg class="map-marker__figur" viewBox="0 0 60.8553 39.6267" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="figur">
@@ -225,13 +225,15 @@
       <div class="map-monster-dim" id="mapMonsterDim"></div>
     </div>
 
-    <!-- ===================== FLOOR SELECTOR (EG / 1.OG / 2.OG) ===================== -->
-    <div class="map-floor-toggle" data-active="EG">
+    <!-- ===================== FLOOR SELECTOR (GF / 1.F / 2.F) ===================== -->
+    <!-- English shorthand for German floor names: EG (Erdgeschoss) -> GF
+         (Ground Floor), 1.OG/2.OG (1./2. Obergeschoss) -> 1F/2F. -->
+    <div class="map-floor-toggle" data-active="GF">
       <div class="map-floor-toggle__pill">
         <div class="map-floor-toggle__highlight" id="floorToggleHighlight"></div>
-        <button class="map-floor-toggle__seg is-active" data-floor="EG" type="button">EG</button>
-        <button class="map-floor-toggle__seg" data-floor="1.OG" type="button">1.OG</button>
-        <button class="map-floor-toggle__seg" data-floor="2.OG" type="button">2.OG</button>
+        <button class="map-floor-toggle__seg is-active" data-floor="GF" type="button">GF</button>
+        <button class="map-floor-toggle__seg" data-floor="1.F" type="button">1.F</button>
+        <button class="map-floor-toggle__seg" data-floor="2.F" type="button">2.F</button>
       </div>
     </div>
 
@@ -252,8 +254,8 @@
 
       <div class="map-sheet__inner" id="mapSheetInner">
       <div class="map-sheet__toggle">
-        <button class="map-sheet__toggle-btn is-active" data-sheet-tab="friends" type="button">Freunde</button>
-        <button class="map-sheet__toggle-btn" data-sheet-tab="courses" type="button">Kurse</button>
+        <button class="map-sheet__toggle-btn is-active" data-sheet-tab="friends" type="button">Friends</button>
+        <button class="map-sheet__toggle-btn" data-sheet-tab="courses" type="button">Courses</button>
         <!-- ribbed cream boundary between the two halves; CSS flips it to the
              active (cream) side so the bumps always poke into the dark side -->
         <img class="map-sheet__toggle-rib" src="assets/sheet_toggle_ribbed.svg" alt="" aria-hidden="true">
@@ -267,13 +269,13 @@
           <div class="map-course-row"><span class="map-course-row__name">ID Grundlagen</span><span class="map-course-row__room">0.012</span></div>
           <div class="map-course-row"><span class="map-course-row__name">Prototyping</span><span class="map-course-row__room">1.019</span></div>
           <div class="map-course-row"><span class="map-course-row__name">Interface Design</span><span class="map-course-row__room">1.019</span></div>
-          <div class="map-course-row"><span class="map-course-row__name">Modelbau</span><span class="map-course-row__room">2.007</span></div>
-          <div class="map-course-row"><span class="map-course-row__name">Mathe</span><span class="map-course-row__room">2.013</span></div>
-          <div class="map-course-row"><span class="map-course-row__name">Ergonomie</span><span class="map-course-row__room">1.019</span></div>
-          <div class="map-course-row"><span class="map-course-row__name">Fotografie</span><span class="map-course-row__room">0.112</span></div>
-          <div class="map-course-row"><span class="map-course-row__name">Typografie</span><span class="map-course-row__room">2.004</span></div>
-          <div class="map-course-row"><span class="map-course-row__name">Statistik</span><span class="map-course-row__room">2.101</span></div>
-          <div class="map-course-row"><span class="map-course-row__name">Keramik</span><span class="map-course-row__room">0.004</span></div>
+          <div class="map-course-row"><span class="map-course-row__name">Model Making</span><span class="map-course-row__room">2.007</span></div>
+          <div class="map-course-row"><span class="map-course-row__name">Math</span><span class="map-course-row__room">2.013</span></div>
+          <div class="map-course-row"><span class="map-course-row__name">Ergonomics</span><span class="map-course-row__room">1.019</span></div>
+          <div class="map-course-row"><span class="map-course-row__name">Photography</span><span class="map-course-row__room">0.112</span></div>
+          <div class="map-course-row"><span class="map-course-row__name">Typography</span><span class="map-course-row__room">2.004</span></div>
+          <div class="map-course-row"><span class="map-course-row__name">Statistics</span><span class="map-course-row__room">2.101</span></div>
+          <div class="map-course-row"><span class="map-course-row__name">Ceramics</span><span class="map-course-row__room">0.004</span></div>
         </div>
       </div>
 
@@ -600,33 +602,33 @@
       };
     })();
 
-    // ===================== Floor selector (EG / 1.OG / 2.OG) =====================
+    // ===================== Floor selector (GF / 1.F / 2.F) =====================
     (function () {
       var FLOOR_IMAGES = {
-        'EG': 'assets/floorplan_eg.png',
-        '1.OG': 'assets/floorplan_1og.png',
-        '2.OG': 'assets/floorplan_2og.png'
+        'GF': 'assets/floorplan_eg.png',
+        '1.F': 'assets/floorplan_1og.png',
+        '2.F': 'assets/floorplan_2og.png'
       };
       var segs = document.querySelectorAll('.map-floor-toggle__seg');
       var friends = [
         { name: 'Emil', room: '0.012', monster: 'friend_monster_1.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '47.62%', markerTop: '38.58%', course: 'Interface Design', time: '09:00 - 10:30' },
         { name: 'Yasira', room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57, namePad: 26, top: 0, markerLeft: '37.19%', markerTop: '66.43%', course: 'Prototyping', time: '08:30 - 10:00' },
-        { name: 'Jonas', room: '2.007', monster: 'friend_monster_6.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '40.38%', markerTop: '65.69%', course: 'Modelbau', time: '09:00 - 12:00' },
+        { name: 'Jonas', room: '2.007', monster: 'friend_monster_6.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '40.38%', markerTop: '65.69%', course: 'Model Making', time: '09:00 - 12:00' },
         { name: 'Lena', room: '0.220', monster: 'friend_monster_8.svg', bubbleLeft: 32, namePad: 51, top: -6, markerLeft: '38.56%', markerTop: '60.24%', course: 'Illustration', time: '09:30 - 11:00' },
         { name: 'Theo', room: '1.019', monster: 'friend_monster_2.svg', bubbleLeft: 47, namePad: 36, top: -2, markerLeft: '35.22%', markerTop: '50.75%', course: 'Motion Design', time: '10:00 - 11:30' },
         { name: 'Marlene', room: '2.113', monster: 'friend_monster_9.svg', bubbleLeft: 47, namePad: 36, top: -7, markerLeft: '47.62%', markerTop: '32.38%', course: 'UX Research', time: '08:00 - 09:30' },
-        { name: 'Noah', room: '0.305', monster: 'friend_monster_4.svg', bubbleLeft: 47, namePad: 36, top: -6, markerLeft: '50.24%', markerTop: '40.19%', course: 'Ergonomie', time: '10:15 - 11:45' },
-        { name: 'Sofia', room: '1.220', monster: 'friend_monster_7.svg', bubbleLeft: 47, namePad: 36, top: 1, markerLeft: '50.23%', markerTop: '34.04%', course: 'Fotografie', time: '14:00 - 15:30' },
-        { name: 'Ben', room: '2.014', monster: 'friend_monster_1.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '7.66%', markerTop: '32.96%', course: 'Statistik', time: '15:00 - 16:30' },
+        { name: 'Noah', room: '0.305', monster: 'friend_monster_4.svg', bubbleLeft: 47, namePad: 36, top: -6, markerLeft: '50.24%', markerTop: '40.19%', course: 'Ergonomics', time: '10:15 - 11:45' },
+        { name: 'Sofia', room: '1.220', monster: 'friend_monster_7.svg', bubbleLeft: 47, namePad: 36, top: 1, markerLeft: '50.23%', markerTop: '34.04%', course: 'Photography', time: '14:00 - 15:30' },
+        { name: 'Ben', room: '2.014', monster: 'friend_monster_1.svg', bubbleLeft: 47, namePad: 36, top: 0, markerLeft: '7.66%', markerTop: '32.96%', course: 'Statistics', time: '15:00 - 16:30' },
         { name: 'Mara', room: '0.118', monster: 'friend_monster_3.svg', bubbleLeft: 57, namePad: 26, top: 0, markerLeft: '10.48%', markerTop: '33.17%', course: 'Design Systems', time: '11:30 - 13:00' },
-        { name: 'Nina', room: '1.205', monster: 'friend_monster_4.svg', bubbleLeft: 47, namePad: 36, top: -6, markerLeft: '13.29%', markerTop: '32.84%', course: 'Keramik', time: '14:30 - 16:00' }
+        { name: 'Nina', room: '1.205', monster: 'friend_monster_4.svg', bubbleLeft: 47, namePad: 36, top: -6, markerLeft: '13.29%', markerTop: '32.84%', course: 'Ceramics', time: '14:30 - 16:00' }
       ];
       var listHost = document.getElementById('sheetFriendsList');
       var markers = Array.from(document.querySelectorAll('.map-marker'));
       var clusters = Array.from(document.querySelectorAll('.map-cluster'));
 
       function renderFriendMapState() {
-        var isEg = (document.querySelector('.map-floor-toggle').getAttribute('data-active') || 'EG') === 'EG';
+        var isEg = (document.querySelector('.map-floor-toggle').getAttribute('data-active') || 'GF') === 'GF';
         if (listHost) {
           if (!isEg) {
             listHost.innerHTML = '';
