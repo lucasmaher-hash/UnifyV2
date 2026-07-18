@@ -146,8 +146,15 @@
    not the old fixed 336px) — figure/name are ~35% bigger than before, so the
    column also grew (58→66px) and the gap shrank (6→3px) to keep 5 fitting. */
 .sp-course__people{ display:flex; flex-wrap:wrap; gap:8px 3px; width:100%; padding:2px 0 40px; align-items:flex-start; flex-shrink:0; justify-content:flex-start; }
-.sp-course__person{ display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:81px; width:66px; padding:0 1px; box-sizing:border-box; flex:none; }
-.sp-course__person-figure{ width:64px; height:43px; display:block; object-fit:contain; }
+.sp-course__person{ display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:81px; width:66px; padding:0 1px; box-sizing:border-box; flex:none; cursor:pointer; }
+/* Positions the "incoming" splash image exactly on top of the outgoing one
+   (see stundenplan.html's crossfade()) so the tap effect reads as a single
+   shape dissolving into the other, not a fade-to-nothing-then-fade-in. */
+.sp-course__person-figwrap{ position:relative; width:51.2px; height:34.4px; display:block; flex:none; }
+.sp-course__person-figure{ position:absolute; top:0; left:0; width:51.2px; height:34.4px; display:block; object-fit:contain; transition:opacity .3s ease; } /* 20% smaller than 64x43 — .sp-course__person's own width (66px) stays fixed, so row spacing/spread is unaffected */
+@media (prefers-reduced-motion: reduce){
+  .sp-course__person-figure{ transition:none; }
+}
 .sp-course__person-name{ margin:2px 0 0 0; font-family:var(--font); font-weight:400; font-size:20px; color:var(--dark); white-space:normal; text-align:center; line-height:1.05; }
 
 /* ===================== TAB OVERLAY (eyes + pill + label) ===================== */

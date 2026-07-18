@@ -378,7 +378,7 @@
    Course tiles are the bare 47px card with no dead space, so their gap IS the
    visible spacing — 30px to match the friends. */
 #sheetFriends{ gap:10px; }
-#sheetCourses{ gap:36px; }
+#sheetCourses{ gap:31.4px; } /* tuned to match the friends list's actual measured visible gap (32.13px between bubbles) now that course rows are plain tiles with no dead space */
 
 /* Equal 30px of breathing room above the first card and below the last one, in
    both tabs — matching the 30px between cards. The two panels need different
@@ -401,7 +401,7 @@
    width left-to-right and is rounded on all four corners. Padding matches the
    friend bubble's own border padding (12px). */
 .map-course-row{
-  width:362px; min-height:47px;
+  width:362px; min-height:49.5px; /* matches .sp-friend-row__bubble's actual rendered height (its 27.6px name text pushes it past its own 47px floor) */
   background:var(--cream);
   border-radius:22px;
   display:flex;
@@ -411,6 +411,8 @@
   padding:6px 12px;
   box-sizing:border-box;
   flex:none;
+  /* button reset — every row is a clickable <button> now */
+  border:0; appearance:none; -webkit-appearance:none; font:inherit; cursor:pointer;
 }
 .map-course-row__name{ font-family:var(--font); font-weight:800; font-size:24px; color:var(--dark); }
 .map-course-row__room{ font-family:var(--font); font-weight:800; font-size:24px; color:rgba(41,41,37,0.47); }
@@ -488,7 +490,11 @@
 
 /* Course card — same open/close mechanism as the monster card above (shares
    .map-monster-dim), styled from the Figma "courses card" family: pink
-   rounded card, bold header text, a divider line, then a row of 5 avatars. */
+   rounded card, bold header text, a divider line, then a row of avatars.
+   Attendee count/roster is randomized per room (baked into each room rect's
+   data-people at build time) — cards with more than 5 people wrap to a
+   second row, growing the card taller to fit (no fixed height is set, so
+   it just hugs whatever content is rendered in). */
 .map-course-overlay{
   position:absolute; inset:0;
   z-index:60;
@@ -509,9 +515,9 @@
 .map-course-overlay.is-open .map-course-card{ transform:scale(1); opacity:1; }
 .map-course-card__info{ margin:0 0 16px; font-family:var(--font); font-weight:700; font-size:24px; color:var(--dark); line-height:1.3; }
 .map-course-card__divider{ height:4px; background:#000; border-radius:2px; margin-bottom:16px; }
-.map-course-card__people{ display:flex; flex-direction:row; gap:10px; }
+.map-course-card__people{ display:flex; flex-direction:row; flex-wrap:wrap; gap:10px 10px; max-width:265px; }
 .map-course-card__person{ display:flex; flex-direction:column; align-items:center; width:45px; flex-shrink:0; }
-.map-course-card__avatar{ width:32px; height:auto; display:block; }
+.map-course-card__avatar{ width:32px; max-height:32px; height:auto; display:block; }
 .map-course-card__person-name{ margin-top:6px; font-family:var(--font); font-weight:400; font-size:16px; color:var(--dark); white-space:nowrap; }
 @media (prefers-reduced-motion: reduce){
   .map-course-card{ transition:none; }

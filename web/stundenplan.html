@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=21">
-  <link rel="stylesheet" href="stundenplan.css?v=42">
+  <link rel="stylesheet" href="stundenplan.css?v=46">
 </head>
 <body>
   <div class="phone-stage">
@@ -206,48 +206,53 @@
       'Nam': 'assets/figur_7.svg?v=2'
     };
 
-    // Course data for all 5 weekdays
+    // Course data for all 5 weekdays. Each course carries a `duration`
+    // (minutes) instead of a fixed time string — scheduleFor() below lays
+    // every course of the day out back-to-back starting from the week's
+    // base start time (pink first, then cream), so times are always
+    // chronologically ordered automatically, with no manual bookkeeping if
+    // a duration or a course gets added/removed. Room numbers are distinct
+    // per course rather than repeating the same one all day.
     var courseData = {
       montag: {
         pink: [
-          { title: 'Interface Design', room: '(1.019)', time: '09:00-10:30' },
-          { title: 'Math', room: '(2.013)', time: '09:00-10:30' }
+          { title: 'Interface Design', room: '(1.019)', duration: 90 },
+          { title: 'Math', room: '(2.013)', duration: 90 }
         ],
         cream: [
-          { title: 'Ping Pong Duel', room: '(1.001)', time: '09:00-10:30' }
+          { title: 'Ping Pong Duel', room: '(outdoor)', duration: 60, people: ['Anna', 'Konst', 'Zoe', 'Nam'] }
         ]
       },
       dienstag: {
         pink: [
-          { title: 'Prototyping', room: '(1.019)', time: '09:00-10:30' },
-          { title: 'ID Fundamentals', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Sophia', 'Michi'] }
+          { title: 'Prototyping', room: '(1.104)', duration: 90 },
+          { title: 'ID Fundamentals', room: '(1.019)', duration: 90, people: ['Greg', 'Anna', 'James', 'Sophia', 'Michi'] }
         ],
         cream: [
-          { title: 'Movie day', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Michi'] }
+          { title: 'Movie Night', room: '(0.012)', duration: 120, people: ['Greg', 'Michi'] }
         ]
       },
       mittwoch: {
         pink: [
-          { title: 'Model Making Analog', room: '(1.019)', time: '09:00-10:30' },
-          { title: 'Model Making Digital', room: '(1.019)', time: '09:00-10:30' }
+          { title: 'Clay Modeling', room: '(1.019)', duration: 90 },
+          { title: 'CAD Modeling', room: '(1.026)', duration: 90 }
         ],
         cream: []
       },
       donnerstag: {
         pink: [
-          { title: 'Ergonomics', room: '(1.019)', time: '09:00-10:30' }
+          { title: 'Ergonomics', room: '(1.031)', duration: 90 }
         ],
         cream: [
-          { title: 'Book Club', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Michi'] }
+          { title: 'Book Club', room: '(0.220)', duration: 90, people: ['Greg', 'Anna', 'James', 'Michi'] }
         ]
       },
       freitag: {
         pink: [
-          { title: 'Interface Design', room: '(1.019)', time: '09:00-10:30' },
-          { title: 'Interface Design', room: '(1.019)', time: '09:00-10:30' }
+          { title: 'Interface Design', room: '(1.019)', duration: 90 }
         ],
         cream: [
-          { title: 'Mixer', room: '(1.019)', time: '09:00-10:30', people: ['Greg', 'Anna', 'James', 'Sophia', 'Naomi', 'Michi', 'Konst', 'Zoe', 'Nam'] }
+          { title: 'Summer Rave', room: '(2.101)', duration: 120, people: ['Greg', 'Anna', 'James', 'Sophia', 'Naomi', 'Michi', 'Konst', 'Zoe', 'Nam'] }
         ]
       }
     };
@@ -264,8 +269,8 @@
     // ...and swaps a couple of course titles so weeks aren't identical.
     var TITLE_SWAPS = {
       1: { 'Interface Design': 'Design Systems', 'Prototyping': 'Motion Design' },
-      2: { 'Math': 'Statistics', 'Model Making Analog': 'Ceramics', 'Ergonomics': 'UX Research' },
-      3: { 'Interface Design': 'Portfolio', 'Book Club': 'Writing Workshop', 'Mixer': 'Summer Festival' }
+      2: { 'Math': 'Statistics', 'Clay Modeling': 'Ceramics', 'Ergonomics': 'UX Research' },
+      3: { 'Interface Design': 'Portfolio', 'Book Club': 'Writing Workshop', 'Summer Rave': 'Summer Festival' }
     };
 
     var currentWeek = 0;   // 0-based index into WEEKS
@@ -275,18 +280,31 @@
     var DAYS = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag'];
 
     // Derive a given week's schedule for a day from the base (week-1) data.
+    // Every course carries a `duration` (minutes) instead of a fixed time —
+    // lay them out back-to-back (pink first, then cream), starting from
+    // this week's base start time, so times stay chronologically ordered
+    // automatically no matter how courses are added/removed/reordered.
     function scheduleFor(weekIndex, day) {
       var base = courseData[day];
       var swaps = TITLE_SWAPS[weekIndex] || {};
-      function mapCourse(c) {
+
+      var startPart = TIME_BY_WEEK[weekIndex].split('-')[0].split(':').map(Number);
+      var cursor = startPart[0] * 60 + startPart[1];
+      function fmt(mins) {
+        var h = Math.floor(mins / 60), m = mins % 60;
+        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+      }
+      function mapSequential(c) {
+        var start = cursor;
+        cursor += c.duration;
         return {
           title: swaps[c.title] || c.title,
           room: c.room,
-          time: TIME_BY_WEEK[weekIndex],
+          time: fmt(start) + '-' + fmt(cursor),
           people: c.people
         };
       }
-      return { pink: base.pink.map(mapCourse), cream: base.cream.map(mapCourse) };
+      return { pink: base.pink.map(mapSequential), cream: base.cream.map(mapSequential) };
     }
 
     // Update the "7.3 till 13.3" label. Both arrows stay active at all times —
@@ -324,7 +342,7 @@
           courseHtml += '<div class="sp-course__people">';
           course.people.forEach(function (person) {
             var figureUrl = figureMap[person] || 'assets/figur_1.svg';
-            courseHtml += '<div class="sp-course__person"><img class="sp-course__person-figure" src="' + figureUrl + '" alt="' + person + '"><p class="sp-course__person-name">' + person + '</p></div>';
+            courseHtml += '<div class="sp-course__person"><span class="sp-course__person-figwrap"><img class="sp-course__person-figure" src="' + figureUrl + '" alt="' + person + '"></span><p class="sp-course__person-name">' + person + '</p></div>';
           });
           courseHtml += '</div>';
         }
@@ -578,19 +596,7 @@
       showTab(readInitialTarget());
     })();
 
-    // Activity toggle: click to open/close
-    (function () {
-      var activities = document.querySelectorAll('.sp-cards-socials .sp-activity');
-      activities.forEach(function (activity) {
-        activity.addEventListener('click', function (e) {
-          e.preventDefault();
-          activity.classList.toggle('sp-activity--open');
-        });
-      });
-    })();
-
-    // Plus button: click to "join" (morphs into a checkmark) — stops the
-    // click from bubbling up to the card's own open/close toggle above.
+    // Plus button: click to "join" (morphs into a checkmark).
     (function () {
       document.querySelectorAll('.sp-activity__plus-btn').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
@@ -601,42 +607,86 @@
       });
     })();
 
-    // Scroll-driven animation: activities expand/collapse based on scroll position
+    // Scroll-driven expand/collapse: purely a function of scroll position
+    // (no click-to-toggle — reset from an earlier version that mixed both
+    // and let them fight each other). Exactly one activity is open at a
+    // time; the open one closes (handing off to the next) once ITS OWN
+    // bottom edge scrolls up to the vertical middle of the phone screen.
+    //
+    // Implemented the same way as index.html's card handoff: geometry is
+    // measured once (every card's closed-state top position, plus what its
+    // height would be if it were the open one), then each transition point
+    // is solved for analytically —
+    //   closedTop_k + openHeight_k - middleY = the scrollTop at which card
+    //   k's bottom-while-open would exactly reach the middle
+    // — rather than re-simulating on every scroll tick. That makes the
+    // whole thing a pure function of scrollTop, so scrolling back up
+    // reopens each earlier card at exactly the same point it closed.
     (function () {
       var screen = document.querySelector('.sp-screen');
       var phone = document.querySelector('.phone');
       var activities = Array.from(document.querySelectorAll('.sp-cards-socials .sp-activity'));
-      if (!screen || activities.length === 0) return;
+      var contents = activities.map(function (a) { return a.querySelector('.sp-activity__content'); });
+      if (!screen || !phone || !activities.length) return;
+
+      // ---- one-time geometry measurement (transitions disabled so class
+      // toggles apply instantly and synchronously, with no visible flicker
+      // since nothing is painted between these reads) ----
+      // .phone is rendered through transform:scale(var(--scale)) (see
+      // styles.css) so it fits whatever window it's in — getBoundingClientRect
+      // therefore returns VISUALLY SCALED pixels, while scrollTop/scrollHeight
+      // stay logical/unscaled. Comparing the two directly (as this whole
+      // scheme does) silently breaks on any window small enough for scale to
+      // drop below 1. Fix: pin --scale to 1 for the duration of this
+      // synchronous measurement block (nothing paints in between, so there's
+      // no visible flash), then restore whatever it actually was.
+      var savedScale = document.documentElement.style.getPropertyValue('--scale');
+      document.documentElement.style.setProperty('--scale', '1');
+      contents.forEach(function (c) { c.style.transition = 'none'; });
+      activities.forEach(function (a) { a.classList.remove('sp-activity--open'); });
+      void screen.offsetHeight;
+
+      var savedScrollTop = screen.scrollTop;
+      screen.scrollTop = 0;
+      void screen.offsetHeight;
+      var screenRect = screen.getBoundingClientRect();
+      var closedTops = activities.map(function (a) {
+        return a.getBoundingClientRect().top - screenRect.top;
+      });
+      var openHeights = activities.map(function (a) {
+        a.classList.add('sp-activity--open');
+        void a.offsetHeight;
+        var h = a.getBoundingClientRect().height;
+        a.classList.remove('sp-activity--open');
+        void a.offsetHeight;
+        return h;
+      });
+      var middleY = phone.getBoundingClientRect().height / 2;
+      contents.forEach(function (c) { c.style.transition = ''; });
+      screen.scrollTop = savedScrollTop;
+      document.documentElement.style.setProperty('--scale', savedScale);
+
+      // thresholds[k] = scrollTop at which card k closes and card k+1 opens
+      var thresholds = [];
+      for (var k = 0; k < activities.length - 1; k++) {
+        thresholds.push(closedTops[k] + openHeights[k] - middleY);
+      }
+
+      var openIndex = 0;
 
       function update() {
-        var scrollTop = screen.scrollTop;
-        var viewportHeight = phone ? phone.getBoundingClientRect().height : screen.clientHeight;
-        // The last card can never scroll fully past the upper-third line (there's
-        // no more content below it to push it there) — workaround: once scrolled
-        // essentially to the bottom, force it open regardless of its position.
-        var atBottom = scrollTop + viewportHeight >= screen.scrollHeight - 4;
-        var upperThird = viewportHeight / 3;
-        var triggerY = phone ? phone.getBoundingClientRect().top + upperThird : upperThird;
-
-        activities.forEach(function (activity, i) {
-          var isLast = i === activities.length - 1;
-          if (atBottom && isLast) {
-            activity.classList.add('sp-activity--open');
-            return;
-          }
-
-          var rect = activity.getBoundingClientRect();
-          // Opens once the card's OWN top edge reaches the upper third of the
-          // phone frame, and stays open the whole time it's scrolled further
-          // down/past that line. This keeps tall cards open long enough for
-          // their lower text to be read before closing.
-          var shouldOpen = rect.top <= triggerY;
-          activity.classList.toggle('sp-activity--open', shouldOpen);
+        var st = screen.scrollTop;
+        var idx = activities.length - 1;
+        for (var i = 0; i < thresholds.length; i++) {
+          if (st < thresholds[i]) { idx = i; break; }
+        }
+        if (idx !== openIndex) openIndex = idx;
+        activities.forEach(function (a, i) {
+          a.classList.toggle('sp-activity--open', i === openIndex);
         });
       }
 
-      screen.addEventListener('scroll', update);
-      window.addEventListener('resize', update);
+      screen.addEventListener('scroll', update, { passive: true });
       update();
     })();
 
@@ -661,6 +711,67 @@
           btn.classList.remove('nav-bounce');
           void btn.offsetWidth;
           btn.classList.add('nav-bounce');
+        });
+      });
+    })();
+
+    // ===================== Timetable friend icons: splash on tap =====================
+    // Tapping a friend's monster in a course's people row turns it into one
+    // of the two generic "splat" shapes (exported from Figma's figur
+    // component set, "Figur=Splashed 1"/"Splashed 2") for 3 seconds, then
+    // reverts. Delegated on document (not attached per-image) since
+    // renderCourses() rebuilds these rows on every day/week switch.
+    (function () {
+      var SPLASHES = ['assets/figur_splash_1.svg', 'assets/figur_splash_2.svg'];
+      var FADE_MS = 300; // matches .sp-course__person-figure's CSS transition
+
+      // True overlapping dissolve, not fade-to-nothing-then-fade-in: a clone
+      // of the image is stacked exactly on top (via .sp-course__person-figwrap,
+      // position:relative) showing the NEW src at opacity 0, then both the
+      // clone (0->1) and the original (1->0) animate at once over the same
+      // duration, so the old shape visibly dissolves into the new one. Once
+      // done, the clone is discarded and the original <img> takes the new
+      // src at full opacity — back to a single element, ready for the next tap.
+      function crossfade(img, newSrc, callback) {
+        var wrap = img.parentElement;
+        var incoming = img.cloneNode();
+        incoming.src = newSrc;
+        incoming.style.opacity = '0';
+        wrap.appendChild(incoming);
+        void incoming.offsetWidth; // force layout before animating, or the initial opacity:0 won't transition
+        incoming.style.transition = 'opacity ' + FADE_MS + 'ms ease';
+        incoming.style.opacity = '1';
+        img.style.opacity = '0';
+        setTimeout(function () {
+          // At this instant the overlay (still opaque) is showing exactly
+          // what img is about to become — so img must SNAP to opacity:1,
+          // not re-animate from 0. Without disabling the transition here,
+          // removing the overlay reveals img still sitting at opacity:0,
+          // which then fades in AGAIN from scratch: a visible flash to
+          // blank right at the handoff.
+          img.style.transition = 'none';
+          img.src = newSrc;
+          img.style.opacity = '1';
+          void img.offsetWidth; // commit the instant jump before re-enabling the transition
+          img.style.transition = '';
+          wrap.removeChild(incoming);
+          if (callback) callback();
+        }, FADE_MS);
+      }
+
+      document.addEventListener('click', function (e) {
+        var person = e.target.closest('.sp-course__person');
+        if (!person) return;
+        var img = person.querySelector('.sp-course__person-figure');
+        if (!img || img.dataset.splashing) return;
+        var original = img.getAttribute('src');
+        img.dataset.splashing = '1';
+        crossfade(img, SPLASHES[Math.floor(Math.random() * SPLASHES.length)], function () {
+          setTimeout(function () {
+            crossfade(img, original, function () {
+              delete img.dataset.splashing;
+            });
+          }, 3000);
         });
       });
     })();

@@ -238,9 +238,10 @@
       // upper threshold and always extends to the true bottom), so its
       // dwell time scales along with T1 automatically. The spacer has been
       // reduced twice since an earlier, larger pass (505px -> 223px -> 178px)
-      // to shrink the empty scroll gap that appears after map opens; T1 has
-      // stayed at 640 since the second pass.
-      var T1 = 640; // connect stays open below this
+      // to shrink the empty scroll gap that appears after map opens; T1 was
+      // 640, bumped +40 (connect's top tracks scrollTop ~1:1, so this moves
+      // the hand-off point ~40px higher on screen, per request).
+      var T1 = 680; // connect stays open below this
       // No fixed upper threshold for socials — it stays open for as much of
       // the remaining scroll as physically exists (as generous as possible);
       // the true-bottom check below is what finally hands off to the last
