@@ -34,22 +34,65 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 
+/* ---------- iPhone 17 device frame (licensed mockup, assets/iphone17_frame.png) ----------
+   Native image is 876×1808 with a TRUE transparent cutout (alpha:0) at
+   x:36–838, y:31–1775 (802×1744) — its aspect ratio is a near-exact 2×
+   match for our 402×874 screen (0.17px off at this scale), so the existing
+   design fits the cutout with no distortion. Displaying the frame at
+   0.501247× its native size makes the cutout land at exactly 402×874,
+   letting --screen-w/--screen-h stay the source of truth for content size.
+   .phone sits inside the stage at the cutout's scaled offset (18.04,
+   15.54) instead of filling it, and painting order is what actually forms
+   the frame: the bezel image (z-index:5) is opaque everywhere except that
+   cutout, so it covers the phone's edges everywhere but shows the screen
+   through cleanly in the middle. */
+:root{
+  --frame-w: 439.0923px;
+  --frame-h: 906.2544px;
+  --frame-offset-x: 18.0449px;
+  --frame-offset-y: 15.5387px;
+}
+
 /* Reserves the *scaled* footprint so the page never overflows */
 .phone-stage{
+  position:relative;
   flex:none;
-  width:calc(var(--screen-w) * var(--scale));
-  height:calc(var(--screen-h) * var(--scale));
+  width:calc(var(--frame-w) * var(--scale));
+  height:calc(var(--frame-h) * var(--scale));
+}
+.phone-stage::before{
+  content:"";
+  position:absolute; left:0; top:0;
+  width:var(--frame-w); height:var(--frame-h);
+  background:url('assets/iphone17_frame.png') no-repeat top left / var(--frame-w) var(--frame-h);
+  transform:scale(var(--scale));
+  transform-origin:top left;
+  z-index:5;
+  pointer-events:none;
 }
 
 /* ---------- Phone shell (Figma frame "landing page", 402×874) ---------- */
 .phone{
-  position:relative;
+  position:absolute;
+  left:0; top:0;
   width:var(--screen-w);
   height:var(--screen-h);
   background:var(--pink);
   overflow:hidden;
-  box-shadow:0 24px 70px rgba(0,0,0,.30);
-  transform:scale(var(--scale));
+  /* Matches the frame image's own cutout corner curve — without this the
+     phone's square corners poke past the bezel's rounded inner edge and
+     show as small triangular slivers outside the curve. */
+  border-radius:60px;
+  /* translate happens in native (unscaled) units first, then the whole
+     translated box is scaled together with the frame — NOT the reverse
+     order, which would scale the offset independently of the frame and
+     misalign the screen inside the cutout at any --scale other than 1.
+     The final scale(1.02) is a small extra zoom (about the phone's own
+     center — folded into the translate offset below, since transform-origin
+     stays top-left for the frame math above) that closes a hairline gap
+     between the screen content and the bezel's cutout edge that was left by
+     the cutout measurement being very slightly conservative. */
+  transform:scale(var(--scale)) translate(14.0249px, 6.7987px) scale(1.02);
   transform-origin:top left;
 }
 
