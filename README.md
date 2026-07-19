@@ -72,7 +72,7 @@ The HTML files use relative paths such as:
 If you move files around, the site may break unless the paths are updated.
 
 ### 2. Do not remove or rename the assets folder
-The pages depend on the files in [web/assets](web/assets). That folder contains the SVGs, images, icons, posters, and figur assets used by the interface.
+The pages depend on the files in [web/assets](web/assets). That folder contains the SVGs, images, icons, posters, and figur assets used by the interface. Poster images used on the home page "socials" panel are a mix of pre-cropped circular PNGs (`poster_1.png`) and plain rectangular JPGs that get masked into circles purely with CSS (`border-radius:50%; object-fit:cover`) — no image editing needed to add a new one, just add an `<img class="poster">` and size it to match the others.
 
 ### 3. This is a static prototype
 There is:
@@ -89,8 +89,10 @@ The pages load Nunito from Google Fonts. A network connection is needed for the 
 ### 5. Interactions are powered by embedded JavaScript
 The interactive behavior is mostly implemented directly inside the HTML files:
 - home page typing animation and card expansion
+- home page "connect now" friends and "socials" posters drift/pan gently and pulse in size on an infinite CSS animation loop (see `.friend`/`.poster` + `@keyframes drift-*` in styles.css)
 - timetable week switching and tab switching
 - map zoom/pan and floor selection
+- map friend markers are generated from a JS `friends` data array (one entry per floor) and auto-cluster into grouped badges when zoomed out
 - settings toggle behavior
 
 If a page looks broken, check whether the linked CSS file and assets folder are still present in the same relative location.

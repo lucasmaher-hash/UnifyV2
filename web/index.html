@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=21">
+  <link rel="stylesheet" href="styles.css?v=38">
 </head>
 <body>
   <!-- ================= HOME / LANDING PAGE (402×874) ================= -->
@@ -41,26 +41,26 @@
                   <div class="panel__divider"></div>
                 </div>
                 <div class="panel__time-row">
-                  <p>11:30</p><p>until</p><p>12:00</p>
+                  <p>11:30 until 12:00</p>
                 </div>
                 <div class="friends">
-                  <div class="friend" style="left:14px; top:-1px; width:66.6px; height:62.2px;">
+                  <div class="friend" data-break="11:00 - 12:30" style="left:14px; top:19px; width:66.6px; height:62.2px;">
                     <img class="friend__figure" src="assets/friend_paul.svg" alt="" style="width:46.8px;height:29.3px;">
                     <p class="friend__name">Paul</p>
                   </div>
-                  <div class="friend" style="left:128.75px; top:-1px; width:94px; height:87.7px;">
+                  <div class="friend" data-break="11:15 - 12:45" style="left:128.75px; top:19px; width:94px; height:87.7px;">
                     <img class="friend__figure" src="assets/friend_nam.svg" alt="" style="width:66.6px;height:49.6px;">
                     <p class="friend__name friend__name--lg">Nam</p>
                   </div>
-                  <div class="friend" style="left:51px; top:92px; width:66.6px; height:62.2px;">
+                  <div class="friend" data-break="11:30 - 13:00" style="left:51px; top:112px; width:66.6px; height:62.2px;">
                     <img class="friend__figure" src="assets/friend_greg.svg" alt="" style="width:47.2px;height:30.7px;">
                     <p class="friend__name">Greg</p>
                   </div>
-                  <div class="friend" style="left:193px; top:95px; width:89px; height:83px;">
+                  <div class="friend" data-break="11:00 - 12:15" style="left:193px; top:115px; width:89px; height:83px;">
                     <img class="friend__figure" src="assets/friend_yas.svg" alt="" style="width:55.2px;height:50.8px;">
                     <p class="friend__name friend__name--md">Yas</p>
                   </div>
-                  <div class="friend" style="left:259px; top:37px; width:66.6px; height:62.2px;">
+                  <div class="friend" data-break="11:45 - 13:00" style="left:259px; top:57px; width:66.6px; height:62.2px;">
                     <img class="friend__figure" src="assets/friend_moritz.svg" alt="" style="width:43.5px;height:32.6px;">
                     <p class="friend__name">Moritz</p>
                   </div>
@@ -86,9 +86,10 @@
                 </div>
                 <p class="panel__sub">activities past 16:00</p>
                 <div class="posters">
-                  <img class="poster" src="assets/poster_1.png" alt="" style="left:22.5px; top:15.3px; width:150.5px; height:150.5px;">
-                  <img class="poster" src="assets/poster_2.png" alt="" style="left:184.7px; top:108.1px; width:150.5px; height:150.5px;">
-                  <img class="poster" src="assets/poster_3.png" alt="" style="left:63.1px; top:197.3px; width:121.6px; height:121.6px;">
+                  <img class="poster" src="assets/poster_1.png" alt="" style="left:15px; top:10px; width:121.6px; height:121.6px;">
+                  <img class="poster" src="assets/poster_umtrunk_uniparty.jpg" alt="" style="left:200px; top:35px; width:121.6px; height:121.6px;">
+                  <img class="poster" src="assets/poster_book_club.jpg" alt="" style="left:35px; top:165px; width:121.6px; height:121.6px;">
+                  <img class="poster" src="assets/poster_ted_talk.jpg" alt="" style="left:210px; top:190px; width:121.6px; height:121.6px;">
                 </div>
                 <div class="panel__face" style="right:0; bottom:-46px;">
                   <span class="panel__face-pill panel__face-pill--cream"></span>
@@ -108,8 +109,16 @@
                   <p class="panel__title">map</p>
                   <div class="panel__divider"></div>
                 </div>
-                <p class="panel__sub">currently 3 friends nearby</p>
-                <div class="floorplan"><img src="assets/map_floorplan.svg" alt="floor plan"></div>
+                <p class="panel__sub">currently <span style="color:var(--cream); display:inline-block; animation:floorplan-dot-pulse 2.4s ease-in-out infinite;">3</span> friends nearby</p>
+                <div class="floorplan">
+                  <div class="floorplan__inner">
+                    <img src="assets/map_floorplan_home.png" alt="floor plan">
+                    <span class="floorplan__dot" style="left:51.59%; top:30.88%;"></span>
+                    <span class="floorplan__dot" style="left:48.02%; top:37.88%;"></span>
+                    <span class="floorplan__dot" style="left:51.52%; top:44.28%;"></span>
+                    <span class="floorplan__dot" style="left:49.92%; top:65.53%;"></span>
+                  </div>
+                </div>
                 <div class="panel__face" style="right:0; bottom:-37px;">
                   <span class="panel__face-pill panel__face-pill--pink"></span>
                   <span class="panel__face-btn"><img src="assets/icon_arrow.svg" alt=""></span>
@@ -151,6 +160,23 @@
       <a class="nav__btn nav__pin" href="map.html" aria-label="Map"><img src="assets/icon_pin.svg" alt=""></a>
       <a class="nav__btn nav__star" href="settings.html" aria-label="Settings"><img src="assets/icon_star.svg" alt=""></a>
     </nav>
+
+    <!-- ================= MONSTER CARD OVERLAY ================= -->
+    <!-- Opens when a friend in the "connect now" panel is tapped — same pink
+         pill card design/mechanism as map.html's monster card (Figma node
+         2229:8243), showing "break" + that friend's break time instead of a
+         course. -->
+    <div class="home-monster-dim" id="homeMonsterDim"></div>
+    <div class="home-monster-overlay" id="homeMonsterOverlay" hidden>
+      <div class="home-monster-card">
+        <div class="home-monster-card__left">
+          <img class="home-monster-card__figur" id="homeMonsterCardFigur" src="" alt="">
+          <p class="home-monster-card__name" id="homeMonsterCardName"></p>
+        </div>
+        <div class="home-monster-card__divider"></div>
+        <p class="home-monster-card__info" id="homeMonsterCardInfo"></p>
+      </div>
+    </div>
   </div>
   </div>
 
@@ -165,7 +191,7 @@
         { el: document.getElementById('tw-line1'), text: 'hello' },
         { el: document.getElementById('tw-line2'), text: 'moritz!' },
         { el: document.getElementById('tw-sub1'),  text: '2 friends are available,' },
-        { el: document.getElementById('tw-sub2'),  text: '3 activities later' }
+        { el: document.getElementById('tw-sub2'),  text: '4 activities later' }
       ];
       if (segments.some(function (s) { return !s.el; })) return;
 
@@ -355,6 +381,45 @@
         });
       });
     })();
+
+    // ===================== Connect now: monster card overlay =====================
+    // Tapping a friend in the "connect now" panel opens the same pink pill
+    // card design used on the map (map.html's .map-monster-card), showing
+    // "break" + that friend's break time instead of a course.
+    (function () {
+      var overlay = document.getElementById('homeMonsterOverlay');
+      var dim = document.getElementById('homeMonsterDim');
+      var card = overlay.querySelector('.home-monster-card');
+      var figur = document.getElementById('homeMonsterCardFigur');
+      var name = document.getElementById('homeMonsterCardName');
+      var info = document.getElementById('homeMonsterCardInfo');
+
+      function open(friendEl) {
+        var img = friendEl.querySelector('.friend__figure');
+        figur.src = img.src;
+        figur.alt = img.alt;
+        name.textContent = friendEl.querySelector('.friend__name').textContent;
+        info.innerHTML = 'break<br>' + friendEl.getAttribute('data-break');
+        overlay.hidden = false;
+        requestAnimationFrame(function () {
+          overlay.classList.add('is-open');
+          dim.classList.add('is-open');
+        });
+      }
+      function close() {
+        overlay.classList.remove('is-open');
+        dim.classList.remove('is-open');
+        window.setTimeout(function () { overlay.hidden = true; }, 250);
+      }
+
+      document.querySelectorAll('.friends .friend').forEach(function (friendEl) {
+        friendEl.addEventListener('click', function () { open(friendEl); });
+      });
+      overlay.addEventListener('click', function (e) {
+        if (!card.contains(e.target)) close();
+      });
+    })();
   </script>
+  <script src="cursor.js?v=1"></script>
 </body>
 </html>

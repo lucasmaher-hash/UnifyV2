@@ -23,9 +23,29 @@
 *{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; }
 
+/* ---------- Custom cursor (see cursor.js) ----------
+   Hide the native cursor only once cursor.js has added the follower (it sets
+   .has-custom-cursor on <html>), so a script failure never leaves the user
+   with no cursor at all. */
+html.has-custom-cursor, html.has-custom-cursor *{ cursor:none !important; }
+.app-cursor{
+  position:fixed; left:0; top:0;
+  width:44px; height:44px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.2);          /* black @ 20% */
+  border:2px solid #fff;               /* white ring */
+  box-sizing:border-box;
+  pointer-events:none;                 /* never intercepts clicks/hover */
+  z-index:2147483647;                  /* above the phone frame + everything */
+  opacity:0;                           /* revealed on first pointer move */
+  transition:opacity .15s ease, background-color .12s ease;
+  will-change:transform;
+}
+.app-cursor.is-down{ background:rgba(0,0,0,0.4); }   /* 40% while pressed */
+
 body{
   font-family:var(--font);
-  background:#e8e8ec;
+  background:#D8D7DC;
   min-height:100vh;
   display:flex;
   align-items:center;
@@ -248,7 +268,7 @@ body{
 .panel__time-row{
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:flex-start;
   width:100%;
 }
 .panel__time-row p{ margin:0; font-weight:800; font-size:19px; color:var(--dark); white-space:nowrap; }
@@ -277,11 +297,11 @@ body{
    pairing) so both stay noticeably more restrained — worst case each
    contributes ~3.8px, summing to ~7.4px, still under that 8px gap. */
 .friend{ transform-origin:center; }
-.friend:nth-of-type(1){ animation: drift-paul   12s ease-in-out infinite; animation-delay:-1.5s; }  /* Paul */
-.friend:nth-of-type(2){ animation: drift-nam    15s ease-in-out infinite; animation-delay:-6s;   }  /* Nam */
-.friend:nth-of-type(3){ animation: drift-greg   11s ease-in-out infinite; animation-delay:-3s;   }  /* Greg */
-.friend:nth-of-type(4){ animation: drift-yas    14s ease-in-out infinite; animation-delay:-9s;   }  /* Yas */
-.friend:nth-of-type(5){ animation: drift-moritz 13s ease-in-out infinite; animation-delay:-4.5s; }  /* Moritz */
+.friend:nth-of-type(1){ animation: drift-paul   8s   ease-in-out infinite; animation-delay:-1.5s; }  /* Paul */
+.friend:nth-of-type(2){ animation: drift-nam    9s   ease-in-out infinite; animation-delay:-6s;   }  /* Nam */
+.friend:nth-of-type(3){ animation: drift-greg   7.5s ease-in-out infinite; animation-delay:-3s;   }  /* Greg */
+.friend:nth-of-type(4){ animation: drift-yas    8.5s ease-in-out infinite; animation-delay:-9s;   }  /* Yas */
+.friend:nth-of-type(5){ animation: drift-moritz 8s   ease-in-out infinite; animation-delay:-4.5s; }  /* Moritz */
 
 /* socials: 3 circular activity posters */
 .posters{ position:relative; width:346px; height:331.6px; }
@@ -293,58 +313,110 @@ body{
    2). Posters 2 and 3 are the tight pair (~19px apart) and stay more modest
    — worst reach ~9.6px and ~8px, summing to ~17.6px, ~1.6px under that
    19px gap. */
-.poster:nth-of-type(1){ animation: drift-poster-a 16s ease-in-out infinite; animation-delay:-2s; }
-.poster:nth-of-type(2){ animation: drift-poster-b 19s ease-in-out infinite; animation-delay:-8s; }
-.poster:nth-of-type(3){ animation: drift-poster-c 17s ease-in-out infinite; animation-delay:-11s; }
+.poster:nth-of-type(1){ animation: drift-poster-a 11s   ease-in-out infinite; animation-delay:-2s;  }
+.poster:nth-of-type(2){ animation: drift-poster-b 13s   ease-in-out infinite; animation-delay:-8s;  }
+.poster:nth-of-type(3){ animation: drift-poster-c 12s   ease-in-out infinite; animation-delay:-11s; }
+.poster:nth-of-type(4){ animation: drift-poster-d 12.5s ease-in-out infinite; animation-delay:-5s;  }
 
-/* Translate distances bumped up (scale pulses left untouched, per request)
-   — Paul/Greg/Moritz have 30px+ clearance so they got a full 1.4x boost;
-   Nam/Yas only have ~8px between them (already near their collision margin)
-   so they got a smaller, still-safe 1.1x nudge instead. */
+/* Translate distances bumped up again (faster + further for all five —
+   Nam/Yas specifically were nearly motionless before, now clearly moving
+   too, just kept in opposite phase to each other so they drift apart
+   instead of into one another given their tight ~8px clearance). */
 @keyframes drift-paul{
   0%,100%{ transform:translate(0,0) scale(1); }
-  33%{ transform:translate(12.6px,-9.8px) scale(1.07); }
-  66%{ transform:translate(-8.4px,8.4px) scale(0.94); }
+  33%{ transform:translate(17px,-13px) scale(1.09); }
+  66%{ transform:translate(-11px,11px) scale(0.92); }
 }
 @keyframes drift-nam{
   0%,100%{ transform:translate(0,0) scale(1); }
-  33%{ transform:translate(-1.87px,1.21px) scale(1.03); }
-  66%{ transform:translate(1.21px,-1.87px) scale(0.97); }
+  33%{ transform:translate(-6px,4px) scale(1.05); }
+  66%{ transform:translate(4px,-6px) scale(0.95); }
 }
 @keyframes drift-greg{
   0%,100%{ transform:translate(0,0) scale(1); }
-  33%{ transform:translate(9.8px,7.7px) scale(1.06); }
-  66%{ transform:translate(-7px,-5.6px) scale(0.95); }
+  33%{ transform:translate(13px,10px) scale(1.08); }
+  66%{ transform:translate(-9px,-7px) scale(0.93); }
 }
 @keyframes drift-yas{
   0%,100%{ transform:translate(0,0) scale(1); }
-  33%{ transform:translate(1.87px,-1.21px) scale(0.97); }
-  66%{ transform:translate(-1.21px,1.87px) scale(1.03); }
+  33%{ transform:translate(6px,-4px) scale(0.95); }
+  66%{ transform:translate(-4px,6px) scale(1.05); }
 }
 @keyframes drift-moritz{
   0%,100%{ transform:translate(0,0) scale(1); }
-  33%{ transform:translate(-9.8px,-7.7px) scale(1.06); }
-  66%{ transform:translate(7px,5.6px) scale(0.95); }
+  33%{ transform:translate(-13px,-10px) scale(1.08); }
+  66%{ transform:translate(9px,7px) scale(0.93); }
 }
+/* Nine-stop closed loops tracing an actual orbit around the circle's resting
+   spot (instead of a handful of straight-line waypoints, which read as
+   "ping left, ping right" rather than a hover). Each stop's radius wobbles a
+   little instead of sitting on a perfect circle, so the loop feels organic
+   rather than mechanical; a/b/c/d each orbit at a different radius, rotation
+   direction and phase so the four circles never move in sync. Scale stays a
+   light, secondary "breathing" touch (~±3-4%) under the orbit motion. */
 @keyframes drift-poster-a{
-  0%,100%{ transform:translate(0,0) scale(1); }
-  33%{ transform:translate(13.75px,-11.9px) scale(1.09); }
-  66%{ transform:translate(-8.1px,10px) scale(0.92); }
+  0%,100%{ transform:translate(0,0)         scale(1);     }
+  12%     { transform:translate(10px,-6px) scale(1.015); }
+  25%     { transform:translate(14px,2px)  scale(0.985); }
+  37%     { transform:translate(10px,11px) scale(1.02);  }
+  50%     { transform:translate(-1px,15px) scale(0.98);  }
+  62%     { transform:translate(-12px,9px) scale(1.01);  }
+  75%     { transform:translate(-14px,-3px)scale(0.99);  }
+  87%     { transform:translate(-6px,-11px)scale(1.015); }
 }
 @keyframes drift-poster-b{
-  0%,100%{ transform:translate(0,0) scale(1); }
-  33%{ transform:translate(-4.6px,4.4px) scale(0.95); }
-  66%{ transform:translate(2.9px,-2.4px) scale(1.05); }
+  0%,100%{ transform:translate(0,0)         scale(1);    }
+  12%     { transform:translate(-7px,-6px)  scale(0.97); }
+  25%     { transform:translate(-11px,2px) scale(1.04); }
+  37%     { transform:translate(-8px,9px)   scale(0.96); }
+  50%     { transform:translate(1px,12px)   scale(1.03); }
+  62%     { transform:translate(9px,7px)    scale(0.98); }
+  75%     { transform:translate(11px,-3px)  scale(1.02); }
+  87%     { transform:translate(5px,-9px)   scale(0.97); }
 }
 @keyframes drift-poster-c{
-  0%,100%{ transform:translate(0,0) scale(1); }
-  33%{ transform:translate(4px,3.7px) scale(1.05); }
-  66%{ transform:translate(-2.9px,-2.4px) scale(0.95); }
+  0%,100%{ transform:translate(0,0)        scale(1);    }
+  12%     { transform:translate(6px,-7px)  scale(1.04); }
+  25%     { transform:translate(10px,1px)  scale(0.96); }
+  37%     { transform:translate(6px,9px)   scale(1.03); }
+  50%     { transform:translate(-3px,11px) scale(0.97); }
+  62%     { transform:translate(-9px,5px)  scale(1.02); }
+  75%     { transform:translate(-9px,-4px) scale(0.98); }
+  87%     { transform:translate(-2px,-9px) scale(1.03); }
+}
+@keyframes drift-poster-d{
+  0%,100%{ transform:translate(0,0)         scale(1);    }
+  12%     { transform:translate(-6px,7px)   scale(0.96); }
+  25%     { transform:translate(-2px,11px)  scale(1.04); }
+  37%     { transform:translate(7px,9px)    scale(0.97); }
+  50%     { transform:translate(11px,0px)   scale(1.02); }
+  62%     { transform:translate(7px,-8px)   scale(0.98); }
+  75%     { transform:translate(-2px,-11px) scale(1.03); }
+  87%     { transform:translate(-8px,-5px)  scale(0.96); }
 }
 
 /* map: floor-plan illustration */
-.floorplan{ display:flex; justify-content:center; width:100%; }
-.floorplan img{ display:block; width:339px; height:auto; }
+.floorplan{ display:flex; justify-content:center; width:100%; overflow:hidden; }
+.floorplan__inner{ position:relative; display:inline-block; }
+.floorplan img{ display:block; width:389.85px; height:auto; }
+/* The 4 plain cream dots are painted out of the PNG itself (replaced with
+   flat pink) — these overlay circles are the only thing drawing them now,
+   so fading their opacity actually fades the dot instead of just fading a
+   duplicate sitting on top of a still-solid one underneath. No per-dot
+   animation-delay, so all 4 fade in/out together. The ringed "you are
+   here" pin is untouched (still baked into the PNG, no overlay on it). */
+.floorplan__dot{
+  position:absolute;
+  width:15px; height:15px;
+  border-radius:50%;
+  background:#F9F2EB;
+  transform:translate(-50%,-50%);
+  animation:floorplan-dot-pulse 2.4s ease-in-out infinite;
+}
+@keyframes floorplan-dot-pulse{
+  0%,100%{ opacity:1; }
+  50%{ opacity:0.15; }
+}
 
 /* shared face (lip + round arrow button), pokes bottom-right.
    Same lip + button sizing as the socials activity card: an 80×80 lip whose
@@ -435,8 +507,13 @@ body{
   /* Without an explicit z-index this defaults to auto, which loses to any
      descendant elsewhere on the page with a positive z-index (e.g. the
      friend-row face's z-index:1) regardless of DOM order — that let the
-     stundenplan friend list's monster faces paint over the nav bar. */
-  z-index:5;
+     stundenplan friend list's monster faces paint over the nav bar. Also
+     above .home-monster-dim (z-index:39, index.html's connect-now card
+     overlay) — the nav's own opaque background then simply occludes the dim
+     layer beneath it, so opening a monster card darkens everything BEHIND
+     the nav but leaves the nav itself unaffected, exactly as if the dim
+     layer had a cutout there. */
+  z-index:41;
 }
 .nav__btn{
   flex:none;
@@ -447,6 +524,50 @@ body{
   cursor:pointer;
 }
 .nav__btn img{ display:block; }
+
+/* ---------- Connect-now monster card overlay ----------
+   Same pink pill card design/open-close mechanism as map.html's
+   .map-monster-card (Figma node 2229:8243) — monster figure stacked above
+   the name on the left, a vertical divider, then info stacked on the right.
+   Kept as its own home-scoped copy (not shared with map.css, which isn't
+   loaded on this page) since the two are independent per-page overlays. */
+.home-monster-dim{
+  position:absolute; inset:0;
+  background:rgba(41,41,37,0.55);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+  z-index:39;
+}
+.home-monster-dim.is-open{ opacity:1; pointer-events:auto; }
+.home-monster-overlay{
+  position:absolute; inset:0;
+  z-index:40;
+  display:flex; align-items:center; justify-content:center;
+}
+.home-monster-overlay[hidden]{ display:none; }
+.home-monster-card{
+  position:relative;
+  min-width:322px; max-width:400px;
+  border-radius:31px;
+  background:var(--pink);
+  display:flex; flex-direction:row; align-items:stretch;
+  gap:19px;
+  padding:16px 20px 16px 13px;
+  box-sizing:border-box;
+  transform:scale(.85); opacity:0;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s ease;
+}
+.home-monster-overlay.is-open .home-monster-card{ transform:scale(1); opacity:1; }
+.home-monster-card__left{ display:flex; flex-direction:column; align-items:flex-start; justify-content:space-between; flex-shrink:0; }
+.home-monster-card__figur{ width:61px; height:46px; object-fit:contain; display:block; }
+.home-monster-card__name{ margin:14px 0 0; font-family:var(--font); font-weight:800; font-size:28px; color:var(--dark); white-space:nowrap; }
+.home-monster-card__divider{ width:4px; align-self:stretch; background:var(--dark); border-radius:2px; flex-shrink:0; }
+.home-monster-card__info{ margin:0; font-family:var(--font); font-weight:700; font-size:24px; color:var(--dark); text-align:left; line-height:1.35; align-self:center; }
+@media (prefers-reduced-motion: reduce){
+  .home-monster-dim, .home-monster-card{ transition:none; }
+}
+.friends .friend{ cursor:pointer; }
 
 /* Shared "pop in" feedback for ANY bottom-nav button (both the standalone .nav
    on index/stundenplan and .map-sheet__nav-btn embedded in the map's pull-up

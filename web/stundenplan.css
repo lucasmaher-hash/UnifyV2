@@ -56,11 +56,17 @@
   border-radius:0 22px 0 0;
   /* -1px overlaps the pink header above so the fractional --scale transform
      can't leave a hairline of the dark background showing between the two
-     (previously hidden by the taller old mouth). padding-top gains the same
-     1px back so the content doesn't shift.
-     Figma: outer pt-10 + inner pt-10 = 20 top, no bottom. */
+     (previously hidden by the taller old mouth). margin-top alone handles
+     that overlap now — see the note below on why padding-top isn't used to
+     compensate for it any more.
+     No padding-top of its own: the week row (.sp-week, both tabs) and days
+     row (.sp-days, Timetable tab) each already carry their own 10px
+     top/bottom padding, which is all that's needed above the first row and
+     below the last one. An extra 21px here on top of the week row's own
+     10px used to push "7.3 till 13.3" noticeably closer to the bottom than
+     the top (31px vs 10px) — removed so both edges match. */
   margin-top:-1px;
-  padding:21px 16px 0;
+  padding:0 16px 0;
   display:flex;
   flex-direction:column;
   gap:4px;
@@ -249,16 +255,20 @@
   transition:border-radius .35s ease;
 }
 /* Open (Figma 2094:8572): bottom-left also rounds (tl stays square under the
-   monster); content sits centred with EQUAL left/right padding; py-10 drops the
-   name + chevron to the same vertical position as the reference. */
+   monster). Horizontal padding is 0 here (not 18) so an optional pink socials
+   footer can bleed to the card's side + bottom edges; the 18px inset every
+   other element used to get from this padding is moved onto the head and the
+   course rows instead. Bottom padding stays 10 normally, but drops to 0 when a
+   socials footer is present so the pink reaches the rounded bottom edge. */
 .sp-friend-row.is-open .sp-friend-row__bubble{
   border-radius:0 22px 22px 22px;
-  padding:10px 18px;
+  padding:10px 0;
 }
-/* The 18px padding would put the name at x=65, under the monster (which ends at
-   x≈81). Nudge just the header back so the name stays put at x=83 while the
-   courses keep the narrower, evenly-padded width. */
-.sp-friend-row.is-open .sp-friend-row__head{ padding-left:18px; }
+.sp-friend-row.is-open.has-social .sp-friend-row__bubble{ padding-bottom:0; }
+/* 36px keeps the name at x=83 (clear of the monster, which ends at x≈81) now
+   that the bubble no longer contributes its own 18px; 18px right insets the
+   chevron from the card edge. */
+.sp-friend-row.is-open .sp-friend-row__head{ padding:0 18px 0 36px; }
 
 .sp-friend-row__head{ display:flex; align-items:center; gap:8px; width:100%; }
 .sp-friend-row__name{ font-family:var(--font); font-weight:800; font-size:27.6px; color:var(--dark); flex:1; text-align:left; }
@@ -282,16 +292,37 @@
 .sp-friend-row.is-open .sp-friend-row__courses{ padding-top:10px; }
 
 /* one course inside an opened friend row: divider / name+time / room */
-/* bottom padding = 2px base + 30px extra space under the room text */
-.sp-friend-course{ display:flex; flex-direction:column; padding:2px 0 32px; text-align:left; }
+/* bottom padding = 2px base + 30px extra space under the room text; 18px
+   horizontal provides the inset the open bubble no longer carries itself
+   (so it applies equally to cream course rows and the pink socials rows). */
+.sp-friend-course{ display:flex; flex-direction:column; padding:2px 18px 32px; text-align:left; }
 .sp-friend-course__divider{ height:3px; background:var(--dark); width:100%; display:block; flex-shrink:0; }
 .sp-friend-course__row{ display:flex; align-items:flex-start; justify-content:space-between; gap:2px; padding-top:6px; }
 .sp-friend-course__name{ font-family:var(--font); font-weight:800; font-size:19px; color:var(--dark); }
 .sp-friend-course__time{ font-family:var(--font); font-weight:500; font-size:19px; color:var(--dark); white-space:nowrap; }
 .sp-friend-course__room{ font-family:var(--font); font-weight:500; font-size:19px; color:var(--dark); }
 
+/* Pink socials footer on a friend's timetable — the colour-inverse of your
+   personal timetable (there: pink courses + cream socials; here: cream
+   courses + pink socials). Full-bleed to the bubble edges (the open bubble
+   drops its own horizontal padding for exactly this) and rounded to match
+   the card's bottom corners. */
+.sp-friend-social{
+  background:var(--pink);
+  border-radius:0 0 22px 22px;
+  display:flex; flex-direction:column;
+  /* 10px of pink above the first event's divider so the line isn't cramped
+     right against the cream/pink boundary. */
+  padding-top:10px;
+  padding-bottom:2px;
+}
+
 /* ========================= SOCIALS TAB CARDS ========================= */
-.sp-cards-socials{ display:flex; flex-direction:column; align-items:center; gap:10px; width:100%; padding-bottom:130px; box-sizing:border-box; isolation:isolate; }
+.sp-cards-socials{ display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; padding-bottom:130px; box-sizing:border-box; isolation:isolate; }
+/* Activities are rendered into this wrapper (see renderSocialsActivities()
+   in stundenplan.html) — same column layout + gap the cards used to get
+   directly from .sp-cards-socials when they were static children of it. */
+.sp-activities-list{ display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; }
 .sp-header-group{ display:flex; flex-direction:column; align-items:center; gap:18px; width:377px; z-index:4; position:relative; }
 
 .sp-activity{
@@ -395,12 +426,15 @@
   display:flex; align-items:center; justify-content:center;
   border:0; padding:0; cursor:pointer;
   opacity:1;
-  /* dissolves in/out as the card opens/closes */
-  transition:opacity .45s ease;
+  /* dissolves in/out as the card opens/closes; background swaps to the same
+     green used for the re-add action on the settings Friends page
+     (icon_plus_circle.svg, #007415) once joined. */
+  transition:opacity .45s ease, background-color .2s ease;
 }
 @media (prefers-reduced-motion: reduce){
   .sp-activity__plus-btn{ transition:none; }
 }
+.sp-activity__plus-btn.is-joined{ background:#007415; }
 .sp-activity__plus-btn img{
   position:absolute; width:24px; height:24px; display:block;
   transition:opacity .2s ease, transform .2s ease;

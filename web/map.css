@@ -530,3 +530,37 @@
   pointer-events:auto;
   cursor:pointer;
 }
+/* Room-number label centered on each pink square — same fixed apparent size
+   and weight as .map-marker__name (the friend-name labels on the friends
+   map), and the same "stay a constant on-screen size regardless of map
+   zoom" requirement.
+   First attempt drove font-size through a live --map-zoom calc(), same
+   trick as the wall stroke-width above — but unlike stroke-width, that
+   made text visibly blurry when zoomed in: at high zoom the calc'd
+   font-size shrinks (in SVG user-units) to keep the ON-SCREEN size
+   constant, so the glyphs get rasterized small, then the ancestor
+   .map-canvas's live transform:scale() blows that low-res raster back up
+   — the exact bitmap-upscale blur .map-canvas's will-change:transform
+   exists to avoid for the wall strokes. The actual working fix is the
+   SAME one markers already use: keep font-size FIXED (large, so glyphs
+   always rasterize at full detail) and counter the zoom with a transform
+   instead, promoted to its own compositing layer via will-change so it's
+   rasterized independently of — not baked into — .map-canvas's bitmap. */
+.map-course-room-label{
+  font-family:var(--font);
+  font-weight:900;
+  font-size:200px; /* large + fixed on purpose — see comment above; visual size is set by the transform below, not this */
+  fill:#000;
+  text-anchor:middle;
+  dominant-baseline:central;
+  pointer-events:none;
+  transform-box:fill-box;
+  transform-origin:center;
+  /* 0.1958 = 39.16 / 200 — 39.16 being the on-screen target user-units
+     worked out for the old calc() version (itself: .map-marker__name's
+     13.2px * its wrapper's 1.2x transform * the viewBox-to-CSS-width ratio
+     4563/2400, then +30% per a later request). Reproduced here as a
+     constant ratio instead of a live font-size. */
+  transform:scale(calc(0.1958 / var(--map-zoom, 1)));
+  will-change:transform;
+}

@@ -7,8 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=21">
-  <link rel="stylesheet" href="stundenplan.css?v=46">
+  <link rel="stylesheet" href="styles.css?v=38">
+  <link rel="stylesheet" href="stundenplan.css?v=52">
 </head>
 <body>
   <div class="phone-stage">
@@ -86,97 +86,10 @@
             </div>
           </div>
 
-          <!-- activity (Open, Pink) — Mixer Uniparty -->
-          <div class="sp-activity sp-activity--pink sp-activity--open" style="--closed-h:507px;">
-            <div class="sp-activity__content">
-              <div class="sp-activity__poster"><img src="assets/poster_umtrunk_uniparty.jpg" alt=""></div>
-              <div class="sp-activity__header">
-                <div class="sp-activity__titleblock">
-                  <p class="sp-activity__title">Mixer Uniparty</p>
-                  <p class="sp-activity__time">20:00-23:00</p>
-                </div>
-                <p class="sp-activity__date">07.06</p>
-              </div>
-              <div class="sp-activity__divider"></div>
-              <p class="sp-activity__desc">The end-of-semester celebration with music, drinks, and good vibes. Bring your friends!</p>
-            </div>
-            <div class="sp-activity__face">
-              <span class="sp-activity__lip"></span>
-              <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
-                <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
-                <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
-              </button>
-            </div>
-          </div>
-
-          <!-- activity (Closed, Cream) — Movie Night -->
-          <div class="sp-activity sp-activity--cream" style="--closed-h:563px;">
-            <div class="sp-activity__content">
-              <div class="sp-activity__poster"><img src="assets/poster_movie_night.jpg" alt=""></div>
-              <div class="sp-activity__header">
-                <div class="sp-activity__titleblock">
-                  <p class="sp-activity__title">Movie Night</p>
-                  <p class="sp-activity__time">19:00-21:30</p>
-                </div>
-                <p class="sp-activity__date">10.06</p>
-              </div>
-              <div class="sp-activity__divider"></div>
-              <p class="sp-activity__desc">Cozy movie night with popcorn and blankets. The film is picked spontaneously.</p>
-            </div>
-            <div class="sp-activity__face">
-              <span class="sp-activity__lip"></span>
-              <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
-                <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
-                <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
-              </button>
-            </div>
-          </div>
-
-          <!-- activity (Closed, Pink) — Book Club -->
-          <div class="sp-activity sp-activity--pink" style="--closed-h:420px;">
-            <div class="sp-activity__content">
-              <div class="sp-activity__poster"><img src="assets/poster_book_club.jpg" alt=""></div>
-              <div class="sp-activity__header">
-                <div class="sp-activity__titleblock">
-                  <p class="sp-activity__title">Book Club</p>
-                  <p class="sp-activity__time">17:00-18:30</p>
-                </div>
-                <p class="sp-activity__date">12.06</p>
-              </div>
-              <div class="sp-activity__divider"></div>
-              <p class="sp-activity__desc">Read, discuss, and swap book recommendations over tea and cookies. New faces welcome.</p>
-            </div>
-            <div class="sp-activity__face">
-              <span class="sp-activity__lip"></span>
-              <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
-                <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
-                <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
-              </button>
-            </div>
-          </div>
-
-          <!-- activity (Closed, Cream) — Ted Talk -->
-          <div class="sp-activity sp-activity--cream" style="--closed-h:564px;">
-            <div class="sp-activity__content">
-              <div class="sp-activity__poster"><img src="assets/poster_ted_talk.jpg" alt=""></div>
-              <div class="sp-activity__header">
-                <div class="sp-activity__titleblock">
-                  <p class="sp-activity__title">Ted Talk</p>
-                  <p class="sp-activity__time">16:00-17:00</p>
-                </div>
-                <p class="sp-activity__date">14.06</p>
-              </div>
-              <div class="sp-activity__divider"></div>
-              <p class="sp-activity__desc">Short talks on exciting topics by students for students, with a Q&A.</p>
-            </div>
-            <div class="sp-activity__face">
-              <span class="sp-activity__lip"></span>
-              <button class="sp-activity__plus-btn" type="button" aria-label="Join activity">
-                <img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">
-                <img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">
-              </button>
-            </div>
-          </div>
+          <!-- Activities are rendered per-week by renderSocialsActivities()
+               (see script below) from SOCIALS_BY_WEEK, driven by the same
+               shared currentWeek/stepWeek() as the Timetable tab. -->
+          <div class="sp-activities-list" id="spActivitiesList"></div>
         </div>
       </div>
 
@@ -216,7 +129,7 @@
     var courseData = {
       montag: {
         pink: [
-          { title: 'Interface Design', room: '(1.019)', duration: 90 },
+          { title: 'Interface Design', room: '(1.019)', duration: 90, people: ['Sophia', 'James'] },
           { title: 'Math', room: '(2.013)', duration: 90 }
         ],
         cream: [
@@ -273,6 +186,127 @@
       3: { 'Interface Design': 'Portfolio', 'Book Club': 'Writing Workshop', 'Summer Rave': 'Summer Festival' }
     };
 
+    // ---- Socials tab: activities, one list per WEEKS index — mirrors the
+    // Timetable side's per-week data so switching weeks (either tab's
+    // arrows, wired to the same stepWeek() below) changes what's shown here
+    // too, instead of the Socials list being frozen to a single fixed set.
+    // Every activity now carries a `day` (one of DAYS below) so joining it
+    // (the plus button) can drop it straight into that day's beige/cream
+    // section on the Timetable tab — see joinedSocials + the join handler
+    // further below. `date` is kept in sync with `day` (both derived from
+    // the same Monday-start each week) since a couple of activities used to
+    // land on a weekend date with no matching timetable day at all.
+    var SOCIALS_BY_WEEK = [
+      // Week 0: 7.3 – 13.3 (7.3 = Monday)
+      [
+        { title: 'Uniparty', time: '20:00-23:00', date: '07.03', day: 'montag', room: 'The Globe', poster: 'assets/poster_umtrunk_uniparty.jpg', color: 'pink', desc: 'The end-of-semester celebration with music, drinks, and good vibes. Bring your friends!', people: ['Greg', 'Anna', 'James', 'Sophia', 'Naomi', 'Michi'] },
+        { title: 'Movie Night', time: '19:00-21:30', date: '08.03', day: 'dienstag', room: '0.012', poster: 'assets/poster_movie_night.jpg', color: 'cream', desc: 'Cozy movie night with popcorn and blankets. The film is picked spontaneously.' },
+        { title: 'Ted Talk', time: '16:00-17:00', date: '09.03', day: 'mittwoch', room: 'Café', poster: 'assets/poster_ted_talk.jpg', color: 'cream', desc: 'Short talks on exciting topics by students for students, with a Q&A.' },
+        { title: 'Book Club', time: '17:00-18:30', date: '10.03', day: 'donnerstag', room: '0.220', poster: 'assets/poster_book_club.jpg', color: 'pink', desc: 'Read, discuss, and swap book recommendations over tea and cookies. New faces welcome.' }
+      ],
+      // Week 1: 14.3 – 20.3 (14.3 = Monday)
+      [
+        { title: 'Knitting Competition', time: '14:00-16:00', date: '14.03', day: 'montag', room: 'Studio', poster: 'assets/poster_knitting.jpg', color: 'pink', desc: 'Grab your needles and yarn for a friendly knit-off — prizes for fastest and most creative piece.' },
+        { title: 'Soccer Match', time: '18:00-19:30', date: '16.03', day: 'mittwoch', room: 'outdoor', poster: 'assets/poster_soccer.jpg', color: 'cream', desc: 'Campus five-a-side, all skill levels welcome. Cleats optional, enthusiasm mandatory.', people: ['Anna', 'Konst', 'Zoe', 'Nam'] },
+        { title: 'Dungeons & Dragons', time: '19:00-22:00', date: '18.03', day: 'freitag', room: 'Mensa', poster: 'assets/poster_dnd.jpg', color: 'pink', desc: 'One-shot campaign for new and returning adventurers — character sheets provided if you don’t have one.' }
+      ],
+      // Week 2: 21.3 – 27.3 (21.3 = Monday)
+      [
+        { title: 'Game Jam', time: '10:00-18:00', date: '22.03', day: 'dienstag', room: 'Lab', poster: 'assets/poster_gamejam.jpg', color: 'cream', desc: '48 hours, one theme — build a game from scratch with a team. Snacks and energy drinks provided.', people: ['Greg', 'Sophia', 'Konst'] },
+        { title: 'Blender / CAD Workshop', time: '15:00-17:00', date: '25.03', day: 'freitag', room: '1.026', poster: 'assets/poster_blender.jpg', color: 'pink', desc: 'Hands-on 3D modeling session — bring a laptop with Blender installed, beginners welcome.' }
+      ],
+      // Week 3: 28.3 – 3.4 (28.3 = Monday)
+      [
+        { title: 'Risk Tournament', time: '18:00-21:00', date: '29.03', day: 'dienstag', room: 'Mensa', poster: 'assets/poster_risk.jpg', color: 'cream', desc: 'World domination, one board at a time. Bracket-style tournament, snacks provided.', people: ['Zoe', 'Nam', 'Michi', 'James'] },
+        { title: 'Tequila Party', time: '21:00-01:00', date: '01.04', day: 'freitag', room: 'The Globe', poster: 'assets/poster_tequila.jpg', color: 'pink', desc: 'Saturday night mixer with music and (responsibly-served) tequila. 18+, bring ID.' }
+      ]
+    ];
+
+    // Activities the user has "joined" from the Socials tab, layered onto
+    // the Timetable tab's beige/cream section without touching courseData
+    // itself (which is the shared week-to-week template) — keyed by
+    // "weekIndex_day" so a join only shows up on the one date it was
+    // actually joined for, not on that weekday in every week.
+    var joinedSocials = {};
+    function joinedKey(weekIndex, day) { return weekIndex + '_' + day; }
+
+    function renderSocialsActivities(weekIndex) {
+      var list = document.getElementById('spActivitiesList');
+      if (!list) return;
+      // Always earliest-first regardless of how SOCIALS_BY_WEEK happens to
+      // list them — sorted here (not just hand-ordered in the data) so it
+      // stays correct even across a month boundary (date is "DD.MM").
+      var acts = (SOCIALS_BY_WEEK[weekIndex] || []).slice().sort(function (a, b) {
+        var ap = a.date.split('.'), bp = b.date.split('.');
+        return (ap[1] - bp[1]) || (ap[0] - bp[0]);
+      });
+      list.innerHTML = acts.map(function (a, i) {
+        // Same monster-row markup/classes as a timetable course's attendee
+        // list (.sp-course__people etc., styled in stundenplan.css) — reused
+        // as-is so size, spacing, and layout match exactly. Only some
+        // activities carry a `people` list, so this section is optional.
+        var peopleHtml = (a.people && a.people.length) ?
+          '<div class="sp-course__people">' + a.people.map(function (person) {
+            var figureUrl = figureMap[person] || 'assets/figur_1.svg';
+            return '<div class="sp-course__person"><span class="sp-course__person-figwrap"><img class="sp-course__person-figure" src="' + figureUrl + '" alt="' + person + '"></span><p class="sp-course__person-name">' + person + '</p></div>';
+          }).join('') + '</div>' : '';
+        // Reflects joinedSocials so the button stays green/checked across
+        // re-renders (switching weeks away and back, re-opening the tab).
+        var joined = (joinedSocials[joinedKey(weekIndex, a.day)] || []).some(function (j) { return j.title === a.title; });
+        return '<div class="sp-activity sp-activity--' + a.color + (i === 0 ? ' sp-activity--open' : '') + '">' +
+            '<div class="sp-activity__content">' +
+              '<div class="sp-activity__poster"><img src="' + a.poster + '" alt=""></div>' +
+              '<div class="sp-activity__header">' +
+                '<div class="sp-activity__titleblock">' +
+                  '<p class="sp-activity__title">' + a.title + '</p>' +
+                  '<p class="sp-activity__time">' + a.time + '</p>' +
+                '</div>' +
+                '<p class="sp-activity__date">' + a.date + '</p>' +
+              '</div>' +
+              '<div class="sp-activity__divider"></div>' +
+              '<p class="sp-activity__desc">' + a.desc + '</p>' +
+              peopleHtml +
+            '</div>' +
+            '<div class="sp-activity__face">' +
+              '<span class="sp-activity__lip"></span>' +
+              '<button class="sp-activity__plus-btn' + (joined ? ' is-joined' : '') + '" type="button" data-index="' + i + '" aria-label="Join activity">' +
+                '<img class="sp-activity__plus-icon" src="assets/icon_plus_sp.svg" alt="">' +
+                '<img class="sp-activity__check-icon" src="assets/icon_check_sp.svg" alt="">' +
+              '</button>' +
+            '</div>' +
+          '</div>';
+      }).join('');
+
+      // Plus buttons are rebuilt on every render, so (re)bind the join
+      // toggle here rather than relying on a one-time top-level listener.
+      // Joining/un-joining also adds/removes this activity from that day's
+      // beige section on the Timetable tab (joinedSocials) and re-renders
+      // it — even while the Timetable tab isn't the visible one, same as
+      // how week changes already keep both tabs in sync underneath.
+      list.querySelectorAll('.sp-activity__plus-btn').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var a = acts[Number(btn.getAttribute('data-index'))];
+          var key = joinedKey(weekIndex, a.day);
+          var nowJoined = btn.classList.toggle('is-joined');
+          if (!joinedSocials[key]) joinedSocials[key] = [];
+          // A couple of activities (Movie Night, Book Club) share a name
+          // with a course already baked into that same day's beige section
+          // in courseData — joining is a no-op for the injected copy there
+          // (nothing to actually add, it's already on the timetable), it
+          // just still shows as checked. Everything else adds normally.
+          var alreadyOnDay = (courseData[a.day].cream || []).some(function (c) { return c.title === a.title; });
+          if (nowJoined) {
+            if (!alreadyOnDay) joinedSocials[key].push({ title: a.title, time: a.time, room: a.room, people: a.people });
+          } else {
+            joinedSocials[key] = joinedSocials[key].filter(function (j) { return j.title !== a.title; });
+          }
+          if (weekIndex === currentWeek && a.day === currentDay) renderCourses(currentDay);
+        });
+      });
+    }
+
     var currentWeek = 0;   // 0-based index into WEEKS
     var currentDay = 'montag';
     // Left-to-right order of the day circles — drives both the slide direction
@@ -308,12 +342,16 @@
     }
 
     // Update the "7.3 till 13.3" label. Both arrows stay active at all times —
-    // the weeks wrap around rather than clamping at the ends.
+    // the weeks wrap around rather than clamping at the ends. The Socials
+    // tab has its own copy of this same header (decorative-looking but
+    // wired to the same week state below) — update both so they never
+    // fall out of sync with each other.
     function updateWeekLabel() {
-      var pink = document.getElementById('sp-pink-courses');
-      var w = WEEKS[currentWeek];
-      pink.querySelector('.sp-week__date:not(.sp-week__date--right)').textContent = w.start;
-      pink.querySelector('.sp-week__date--right').textContent = w.end;
+      document.querySelectorAll('.sp-week').forEach(function (week) {
+        var w = WEEKS[currentWeek];
+        week.querySelector('.sp-week__date:not(.sp-week__date--right)').textContent = w.start;
+        week.querySelector('.sp-week__date--right').textContent = w.end;
+      });
     }
 
     // Render courses function. `dir` drives the slide-in animation:
@@ -322,6 +360,14 @@
     function renderCourses(day, dir) {
       currentDay = day;
       var courses = scheduleFor(currentWeek, day);
+      // Layer in anything joined from the Socials tab for this exact
+      // week+day (see joinedSocials above) — additive only, never mutates
+      // courseData/scheduleFor's own output, so it doesn't leak into other
+      // weeks that reuse the same base template.
+      var joined = joinedSocials[joinedKey(currentWeek, day)] || [];
+      if (joined.length) {
+        courses = { pink: courses.pink, cream: courses.cream.concat(joined) };
+      }
       var pinkContainer = document.getElementById('sp-pink-courses');
       var creamContainer = document.getElementById('sp-cream-courses');
 
@@ -442,20 +488,37 @@
       })();
 
       // Week arrows — loop around: back from week 1 lands on the last week,
-      // forward from the last week lands on week 1. Never disabled.
-      var prevArrow = pink.querySelector('.sp-week__arrow--prev');
-      var nextArrow = pink.querySelector('.sp-week__arrow:not(.sp-week__arrow--prev)');
+      // forward from the last week lands on week 1. Never disabled. Wired
+      // on EVERY `.sp-week` on the page (the Stundenplan tab's copy and the
+      // Socials tab's copy alike), so both sets of arrows step the same
+      // shared week state and both labels update together via
+      // updateWeekLabel() above.
       function stepWeek(delta) {
         currentWeek = (currentWeek + delta + WEEKS.length) % WEEKS.length;
         updateWeekLabel();
         renderCourses(currentDay);
+        renderSocialsActivities(currentWeek);
+        // The scroll-driven expand/collapse geometry (see further below)
+        // depends on exactly which/how-many activities are in the DOM, so
+        // it must be re-measured after every re-render — but only while the
+        // Socials view is actually visible (not display:none), same
+        // constraint as why that setup is deferred in the first place.
+        var socialsView = document.getElementById('view-socials');
+        if (socialsView && !socialsView.hidden && window.__remeasureSocialsScroll) {
+          window.__remeasureSocialsScroll();
+        }
       }
-      prevArrow.addEventListener('click', function () { stepWeek(-1); });
-      nextArrow.addEventListener('click', function () { stepWeek(1); });
+      document.querySelectorAll('.sp-week').forEach(function (week) {
+        var prevArrow = week.querySelector('.sp-week__arrow--prev');
+        var nextArrow = week.querySelector('.sp-week__arrow:not(.sp-week__arrow--prev)');
+        prevArrow.addEventListener('click', function () { stepWeek(-1); });
+        nextArrow.addEventListener('click', function () { stepWeek(1); });
+      });
 
       // Initialize: week 1, Monday
       updateWeekLabel();
       renderCourses('montag');
+      renderSocialsActivities(currentWeek);
     })();
 
     // Friend list — varied monster shapes (Figma figur 1–8), names, and rooms.
@@ -485,28 +548,40 @@
           { title: 'Interface Design', time: '09:00-10:30', room: '1.019' },
           { title: 'Typography',       time: '11:00-12:30', room: '2.004' },
           { title: 'Photography',       time: '14:00-15:30', room: '0.112' }
+        ], socials: [
+          { title: 'Semester Kickoff', time: '20:00-23:00', room: 'Aula' }
         ] },
         { name: 'Yasira', room: '1.104', monster: 'friend_monster_3.svg', bubbleLeft: 57, online: true, courses: [
           { title: 'Prototyping', time: '08:30-10:00', room: '1.104' },
           { title: 'Ergonomics',   time: '10:15-11:45', room: '1.019' }
+        ], socials: [
+          { title: 'Movie Night', time: '19:00-21:00', room: '0.012' }
         ] },
         { name: 'Jonas', room: '2.007', monster: 'friend_monster_6.svg', online: true, courses: [
           { title: 'Model Making',  time: '09:00-12:00', room: '2.007' },
           { title: 'Math',     time: '13:00-14:30', room: '2.013' },
           { title: 'Statistics', time: '15:00-16:30', room: '2.101' }
+        ], socials: [
+          { title: 'Board Game Night', time: '18:00-21:00', room: 'Mensa' }
         ] },
         { name: 'Lena', room: '0.220', monster: 'friend_monster_8.svg', bubbleLeft: 32, courses: [
           { title: 'Illustration',   time: '09:30-11:00', room: '0.220' },
           { title: 'Design Systems', time: '11:30-13:00', room: '1.019' }
+        ], socials: [
+          { title: 'Life Drawing Jam', time: '17:00-19:00', room: '0.220' }
         ] },
         { name: 'Theo', room: '1.019', monster: 'friend_monster_2.svg', courses: [
           { title: 'Motion Design',  time: '10:00-11:30', room: '1.019' },
           { title: 'ID Fundamentals',  time: '12:00-13:30', room: '1.019' },
           { title: 'Ceramics',        time: '14:30-16:00', room: '0.004' }
+        ], socials: [
+          { title: 'Open Mic', time: '20:00-22:30', room: 'Café' }
         ] },
         { name: 'Marlene', room: '2.113', monster: 'friend_monster_9.svg', courses: [
           { title: 'UX Research', time: '08:00-09:30', room: '2.113' },
           { title: 'Portfolio',   time: '10:00-11:30', room: '2.113' }
+        ], socials: [
+          { title: 'Yoga Session', time: '08:00-09:00', room: 'Studio' }
         ] }
       ];
       var list = document.getElementById('sp-friend-list');
@@ -514,7 +589,7 @@
       list.innerHTML = friends.map(function (f) {
         var dy = FACE_DY[f.monster] || 0;
         var bl = f.bubbleLeft || BUBBLE_LEFT;
-        var coursesHtml = (f.courses || []).map(function (c) {
+        function eventHtml(c) {
           return '<span class="sp-friend-course">' +
             '<span class="sp-friend-course__divider"></span>' +
             '<span class="sp-friend-course__row">' +
@@ -523,8 +598,14 @@
             '</span>' +
             '<span class="sp-friend-course__room">' + c.room + '</span>' +
           '</span>';
-        }).join('');
-        return '<button class="sp-friend-row" style="--bubble-left:' + bl + 'px;--name-pad:' + (NAME_X - bl) + 'px">' +
+        }
+        var coursesHtml = (f.courses || []).map(eventHtml).join('');
+        // Social events get their own pink footer at the bottom of the card —
+        // the reverse of the personal timetable, where courses are pink and
+        // socials sit on the cream section.
+        var socialsHtml = (f.socials || []).map(eventHtml).join('');
+        var socialBlock = socialsHtml ? '<span class="sp-friend-social">' + socialsHtml + '</span>' : '';
+        return '<button class="sp-friend-row' + (socialBlock ? ' has-social' : '') + '" style="--bubble-left:' + bl + 'px;--name-pad:' + (NAME_X - bl) + 'px">' +
           '<img class="sp-friend-row__face" style="top:' + dy + 'px" src="assets/' + f.monster + '" alt="">' +
           '<span class="sp-friend-row__bubble">' +
             '<span class="sp-friend-row__head">' +
@@ -532,7 +613,7 @@
               '<span class="sp-friend-row__room' + (f.online ? ' sp-friend-row__room--online' : '') + '">' + f.room + '</span>' +
               '<span class="sp-friend-row__chevron"><img src="assets/icon_chevron_up.svg" alt=""></span>' +
             '</span>' +
-            '<span class="sp-friend-row__expand"><span class="sp-friend-row__courses">' + coursesHtml + '</span></span>' +
+            '<span class="sp-friend-row__expand"><span class="sp-friend-row__courses">' + coursesHtml + socialBlock + '</span></span>' +
           '</span>' +
         '</button>';
       }).join('');
@@ -543,6 +624,13 @@
         if (row) row.classList.toggle('is-open');
       });
     })();
+
+    // Callbacks that need the socials view to actually be visible (not
+    // display:none) before they can measure geometry — registered by the
+    // scroll-driven expand/collapse setup further below, invoked here every
+    // time the socials tab becomes the shown one (including on initial load
+    // if the page opens directly on it via ?tab=socials).
+    window.__onSocialsTabShown = [];
 
     // Tab switching between Timetable / Socials — same page, no navigation,
     // matching the Figma prototype where these are two states of one frame.
@@ -582,6 +670,10 @@
                 screen.scrollLeft = 0;
               }
               window.scrollTo(0, 0);
+              // The socials scroll-driven expand/collapse geometry (below)
+              // can only be measured correctly while this view is actually
+              // visible (not display:none) — run/re-run it now that it is.
+              window.__onSocialsTabShown.forEach(function (cb) { cb(); });
             });
           });
         }
@@ -596,16 +688,11 @@
       showTab(readInitialTarget());
     })();
 
-    // Plus button: click to "join" (morphs into a checkmark).
-    (function () {
-      document.querySelectorAll('.sp-activity__plus-btn').forEach(function (btn) {
-        btn.addEventListener('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          btn.classList.toggle('is-joined');
-        });
-      });
-    })();
+    // Plus button: click to "join" (morphs into a checkmark). Activities are
+    // rendered dynamically per-week now (see renderSocialsActivities()
+    // above), which rebinds this same toggle on every render — there are no
+    // static .sp-activity__plus-btn elements left at page-load time for a
+    // one-time top-level binding to find.
 
     // Scroll-driven expand/collapse: purely a function of scroll position
     // (no click-to-toggle — reset from an earlier version that mixed both
@@ -625,69 +712,238 @@
     (function () {
       var screen = document.querySelector('.sp-screen');
       var phone = document.querySelector('.phone');
-      var activities = Array.from(document.querySelectorAll('.sp-cards-socials .sp-activity'));
-      var contents = activities.map(function (a) { return a.querySelector('.sp-activity__content'); });
-      if (!screen || !phone || !activities.length) return;
+      if (!screen || !phone) return;
 
-      // ---- one-time geometry measurement (transitions disabled so class
-      // toggles apply instantly and synchronously, with no visible flicker
-      // since nothing is painted between these reads) ----
-      // .phone is rendered through transform:scale(var(--scale)) (see
-      // styles.css) so it fits whatever window it's in — getBoundingClientRect
-      // therefore returns VISUALLY SCALED pixels, while scrollTop/scrollHeight
-      // stay logical/unscaled. Comparing the two directly (as this whole
-      // scheme does) silently breaks on any window small enough for scale to
-      // drop below 1. Fix: pin --scale to 1 for the duration of this
-      // synchronous measurement block (nothing paints in between, so there's
-      // no visible flash), then restore whatever it actually was.
-      var savedScale = document.documentElement.style.getPropertyValue('--scale');
-      document.documentElement.style.setProperty('--scale', '1');
-      contents.forEach(function (c) { c.style.transition = 'none'; });
-      activities.forEach(function (a) { a.classList.remove('sp-activity--open'); });
-      void screen.offsetHeight;
-
-      var savedScrollTop = screen.scrollTop;
-      screen.scrollTop = 0;
-      void screen.offsetHeight;
-      var screenRect = screen.getBoundingClientRect();
-      var closedTops = activities.map(function (a) {
-        return a.getBoundingClientRect().top - screenRect.top;
-      });
-      var openHeights = activities.map(function (a) {
-        a.classList.add('sp-activity--open');
-        void a.offsetHeight;
-        var h = a.getBoundingClientRect().height;
-        a.classList.remove('sp-activity--open');
-        void a.offsetHeight;
-        return h;
-      });
-      var middleY = phone.getBoundingClientRect().height / 2;
-      contents.forEach(function (c) { c.style.transition = ''; });
-      screen.scrollTop = savedScrollTop;
-      document.documentElement.style.setProperty('--scale', savedScale);
-
-      // thresholds[k] = scrollTop at which card k closes and card k+1 opens
-      var thresholds = [];
-      for (var k = 0; k < activities.length - 1; k++) {
-        thresholds.push(closedTops[k] + openHeights[k] - middleY);
+      // Activities are rebuilt from scratch (fresh DOM nodes) by
+      // renderSocialsActivities() every time the week changes, so they're
+      // re-queried at the top of every measureAndBind() call below rather
+      // than captured once here — a one-time capture would go stale (point
+      // at detached nodes) the moment the user steps to another week.
+      function currentActivities() {
+        return Array.from(document.querySelectorAll('.sp-cards-socials .sp-activity'));
       }
 
-      var openIndex = 0;
-
-      function update() {
-        var st = screen.scrollTop;
-        var idx = activities.length - 1;
-        for (var i = 0; i < thresholds.length; i++) {
-          if (st < thresholds[i]) { idx = i; break; }
-        }
-        if (idx !== openIndex) openIndex = idx;
-        activities.forEach(function (a, i) {
-          a.classList.toggle('sp-activity--open', i === openIndex);
+      // The open-state height of each card includes its poster <img>, which
+      // is `height:auto` with no width/height attribute — its box is 0 tall
+      // until the image file actually finishes downloading. Measuring
+      // geometry (below) before that happens silently corrupts every
+      // threshold (each one comes out far too small). Wait for every poster
+      // to actually be loaded (or fail) before measuring.
+      function whenPostersReady(activities, callback) {
+        var posterImgs = activities.map(function (a) { return a.querySelector('.sp-activity__poster img'); })
+          .filter(Boolean);
+        var pending = posterImgs.filter(function (img) { return !img.complete; });
+        if (!pending.length) { callback(); return; }
+        var remaining = pending.length;
+        function done() { if (--remaining <= 0) callback(); }
+        pending.forEach(function (img) {
+          img.addEventListener('load', done, { once: true });
+          img.addEventListener('error', done, { once: true });
         });
       }
 
-      screen.addEventListener('scroll', update, { passive: true });
-      update();
+      // Geometry can only be measured correctly while the socials view is
+      // actually visible — its ancestor is `display:none` (via the [hidden]
+      // attribute) until the Socials tab is selected, and everything inside
+      // a display:none subtree reads as zero-sized. Since the page can open
+      // directly on the Socials tab (?tab=socials) OR the user can switch to
+      // it later by clicking the tab button, this whole setup is deferred:
+      // it's registered as a callback that stundenplan.html's tab-switch
+      // code (above) invokes every time the socials view is actually shown,
+      // rather than running once, unconditionally, at page load — which
+      // would silently measure a hidden (zero-sized) tree and leave every
+      // card stuck if the page didn't happen to open directly on this tab.
+      // It's also re-invoked after every week change (see stepWeek() above)
+      // since the set of activities/their content can change entirely.
+      var scrollBound = false;
+      var updateRef = null;
+      // Each call gets a token; if a rapid run of week-changes fires several
+      // overlapping measureAndBind() calls, an older call's async
+      // whenPostersReady callback can resolve AFTER a newer call already
+      // finished and bound the scroll listener — without this guard the
+      // stale one would win, rebinding against activities from a week that
+      // isn't even showing anymore. Only the call matching the latest token
+      // is allowed to actually bind.
+      var measureToken = 0;
+
+      // ---- auto-scroll used when a new card opens on scroll-down ----
+      // The card collapse/expand is a .85s max-height CSS transition (see
+      // .sp-activity__content in stundenplan.css). A native
+      // scrollTo({behavior:'smooth'}) finishes in ~400ms, so it races ahead
+      // and stops while the card above is still collapsing — the new card
+      // then keeps drifting up for another ~450ms, which reads as a stutter
+      // (fast scroll, then slow drift). Instead we animate scrollTop with
+      // the EXACT same duration and easing curve as the collapse, so both
+      // move on one identical curve and their combined visual motion is a
+      // single smooth glide. (Derivation: the new card's on-screen top is
+      // documentTop(t) − scrollTop(t); when both are driven by the same
+      // eased (1−ease(t)) curve, that difference reduces to a single eased
+      // term → monotonic and smooth.)
+      var COLLAPSE_MS = 850;
+      // cubic-bezier(.4,0,.2,1) — must match the CSS transition-timing.
+      var snapEase = (function () {
+        function A(a, b) { return 1 - 3 * b + 3 * a; }
+        function B(a, b) { return 3 * b - 6 * a; }
+        function C(a) { return 3 * a; }
+        function calc(t, a, b) { return ((A(a, b) * t + B(a, b)) * t + C(a)) * t; }
+        function slope(t, a, b) { return 3 * A(a, b) * t * t + 2 * B(a, b) * t + C(a); }
+        var x1 = 0.4, y1 = 0, x2 = 0.2, y2 = 1;
+        return function (x) {
+          var t = x;
+          for (var i = 0; i < 5; i++) {
+            var s = slope(t, x1, x2);
+            if (s === 0) break;
+            t -= (calc(t, x1, x2) - x) / s;
+          }
+          return calc(t, y1, y2);
+        };
+      })();
+
+      var snapRaf = null;
+      function cancelSnap() {
+        if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = null; }
+      }
+      function animateScrollTo(targetTop) {
+        cancelSnap();
+        var startTop = screen.scrollTop;
+        var dist = targetTop - startTop;
+        if (Math.abs(dist) < 1) return;
+        var startTime = null;
+        function frame(now) {
+          if (startTime === null) startTime = now;
+          var p = Math.min(1, (now - startTime) / COLLAPSE_MS);
+          screen.scrollTop = startTop + dist * snapEase(p);
+          snapRaf = p < 1 ? requestAnimationFrame(frame) : null;
+        }
+        snapRaf = requestAnimationFrame(frame);
+      }
+      // Any genuine user scroll input cancels the auto-glide immediately, so
+      // it can never restrict/fight manual scrolling. (Our own scrollTop
+      // writes fire only 'scroll' events, not these, so the animation never
+      // cancels itself.)
+      ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function (ev) {
+        screen.addEventListener(ev, cancelSnap, { passive: true });
+      });
+
+      function measureAndBind() {
+        var myToken = ++measureToken;
+        var activities = currentActivities();
+        if (!activities.length) return;
+        var contents = activities.map(function (a) { return a.querySelector('.sp-activity__content'); });
+        whenPostersReady(activities, function () {
+          if (myToken !== measureToken) return;
+          // Each card's closed-state height is however tall its poster +
+          // gap + header actually render — computed fresh here (rather than
+          // hand-measured pixel constants baked into markup) so any poster's
+          // aspect ratio, including ones never seen when this was written,
+          // sizes itself correctly with zero manual tuning.
+          activities.forEach(function (a) {
+            var poster = a.querySelector('.sp-activity__poster');
+            var header = a.querySelector('.sp-activity__header');
+            if (!poster || !header) return;
+            var h = poster.getBoundingClientRect().height + 8 + header.getBoundingClientRect().height;
+            a.style.setProperty('--closed-h', h + 'px');
+          });
+          // ---- geometry measurement (transitions disabled so class
+          // toggles apply instantly and synchronously, with no visible
+          // flicker since nothing is painted between these reads) ----
+          // .phone is rendered through transform:scale(var(--scale)) (see
+          // styles.css) so it fits whatever window it's in — getBoundingClientRect
+          // therefore returns VISUALLY SCALED pixels, while scrollTop/scrollHeight
+          // stay logical/unscaled. Comparing the two directly (as this whole
+          // scheme does) silently breaks on any window small enough for scale to
+          // drop below 1. Fix: pin --scale to 1 for the duration of this
+          // synchronous measurement block (nothing paints in between, so there's
+          // no visible flash), then restore whatever it actually was.
+          var savedScale = document.documentElement.style.getPropertyValue('--scale');
+          document.documentElement.style.setProperty('--scale', '1');
+          contents.forEach(function (c) { c.style.transition = 'none'; });
+          activities.forEach(function (a) { a.classList.remove('sp-activity--open'); });
+          void screen.offsetHeight;
+
+          var savedScrollTop = screen.scrollTop;
+          screen.scrollTop = 0;
+          void screen.offsetHeight;
+          var screenRect = screen.getBoundingClientRect();
+          var closedTops = activities.map(function (a) {
+            return a.getBoundingClientRect().top - screenRect.top;
+          });
+          var openHeights = activities.map(function (a) {
+            a.classList.add('sp-activity--open');
+            void a.offsetHeight;
+            var h = a.getBoundingClientRect().height;
+            a.classList.remove('sp-activity--open');
+            void a.offsetHeight;
+            return h;
+          });
+          var middleY = phone.getBoundingClientRect().height / 2;
+          contents.forEach(function (c) { c.style.transition = ''; });
+          screen.scrollTop = savedScrollTop;
+          document.documentElement.style.setProperty('--scale', savedScale);
+
+          // thresholds[k] = scrollTop at which card k closes and card k+1 opens
+          var thresholds = [];
+          for (var k = 0; k < activities.length - 1; k++) {
+            thresholds.push(closedTops[k] + openHeights[k] - middleY);
+          }
+
+          function computeOpenIndex() {
+            var st = screen.scrollTop;
+            var idx = activities.length - 1;
+            for (var i = 0; i < thresholds.length; i++) {
+              if (st < thresholds[i]) { idx = i; break; }
+            }
+            return idx;
+          }
+          function applyOpenIndex(idx) {
+            activities.forEach(function (a, i) {
+              a.classList.toggle('sp-activity--open', i === idx);
+            });
+          }
+
+          // Initial sync for this measurement — sets whichever card the
+          // current scrollTop already lands on with no snap/animation
+          // (there's no "transition" to correct for on a fresh bind/tab
+          // switch, only on an actual scroll-driven handoff below).
+          var openIndex = computeOpenIndex();
+          applyOpenIndex(openIndex);
+
+          function update() {
+            var idx = computeOpenIndex();
+            if (idx === openIndex) return;
+            var movedForward = idx > openIndex;
+            openIndex = idx;
+            applyOpenIndex(openIndex);
+            // Only scrolling DOWN into a later card: collapsing the card
+            // above shrinks the content ahead of it, which can leave the
+            // newly-opened card already scrolled past its own top — cut off
+            // before the user gets a chance to see it. Glide the rest of the
+            // way so its top ends up at the viewport top (closedTops is
+            // measured with earlier cards closed, which matches the state
+            // once the one above has collapsed). animateScrollTo is
+            // duration/easing-matched to the collapse (see above) so the two
+            // move as one smooth motion, and it self-cancels on any user
+            // input so continued manual scrolling is never restricted.
+            if (movedForward) animateScrollTo(closedTops[openIndex]);
+          }
+
+          // Re-measuring (e.g. the user leaves and returns to this tab)
+          // rebinds against a fresh `update` closure over the newly
+          // computed thresholds — drop the previous listener first so they
+          // don't pile up across repeated tab switches.
+          if (scrollBound) screen.removeEventListener('scroll', updateRef);
+          updateRef = update;
+          screen.addEventListener('scroll', update, { passive: true });
+          scrollBound = true;
+        });
+      }
+
+      window.__onSocialsTabShown.push(measureAndBind);
+      // Exposed so stepWeek() (above) can re-run this after re-rendering a
+      // new week's activities while the Socials tab is already the visible
+      // one (the __onSocialsTabShown hook alone only fires on switching TO
+      // the tab, not on content changes while already on it).
+      window.__remeasureSocialsScroll = measureAndBind;
     })();
 
     // ===================== Bottom nav: bounce feedback =====================
@@ -776,5 +1032,6 @@
       });
     })();
   </script>
+  <script src="cursor.js?v=1"></script>
 </body>
 </html>
